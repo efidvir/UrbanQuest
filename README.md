@@ -19,4 +19,13 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 - Choose the code with `?digits=725`; hide the reveal sign with `?reveal=0`
 - Arrows restart from your feet at every corner. If tracking slips, finish the side on foot, face the far end of the garden and tap Continue.
 
+## Mystery walk (the real mechanic)
+
+[`mystery-walk/`](mystery-walk/): players don't know what they're drawing. Arrows show only the next side of the route: gold arrows draw, white arrows just move you. Each drawn side fades a few seconds later, so the picture only exists in the player's head, and at the end they have to work out what they drew.
+
+- Open on a phone: https://efidvir.github.io/UrbanQuest/mystery-walk/
+- The default route draws a hidden digit in a 1 × 2 m area
+- Write a route with `?route=`: one-square moves `F` `B` `L` `R` and diagonals `FR` `FL` `BR` `BL`, as seen facing the far end of the garden. Put `~` in front of a move to walk without drawing, and a number after it to repeat (`F2` = two squares). Example: `?route=F2,~R,FR,BL`
+- `?cell=4` sets the real square size; `?trail=1` keeps the drawn sides visible; `?check=0` hides the "Show the drawing" button at the end
+
 Built with three.js and the 8th Wall engine binary. The engine is © Niantic Spatial, Inc., used under the [XR Engine License Agreement](https://github.com/8thwall/engine/blob/main/LICENSE) and provided as is, without warranty.

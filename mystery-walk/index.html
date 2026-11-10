@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Udi's Route · mystery walk test</title>
+  <meta name="description" content="Habima quest: follow AR arrows along the garden trails without knowing what you are drawing, then work it out.">
+
+  <!-- 8th Wall engine binary (SLAM) + helpers, as in 8th Wall's official three.js example -->
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script>
+  <script type="importmap">
+    {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js"}}
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #hud {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 16px calc(10px + env(safe-area-inset-bottom));
+      box-sizing: border-box;
+    }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    #status {
+      background: rgba(20, 20, 28, .72);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .3s;
+    }
+    #status.good { background: rgba(22, 120, 70, .88); }
+    #status.warn { background: rgba(176, 112, 0, .9); }
+    #reset {
+      pointer-events: auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      color: #1b1b22;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    }
+    .bottom { display: flex; flex-direction: column; gap: 8px; }
+    #card {
+      background: rgba(20, 20, 28, .82);
+      color: #fff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 62vh;
+      overflow-y: auto;
+      pointer-events: auto;
+    }
+    #progress { font-size: 12px; letter-spacing: .02em; color: rgba(255, 255, 255, .7); }
+    #message { font-size: 16px; line-height: 1.45; }
+    #message b { color: #FFC94A; }
+    #message b.w { color: #fff; }
+    .dim { color: rgba(255, 255, 255, .72); font-size: 14px; }
+    #action {
+      align-self: stretch;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1b1b22;
+      background: #FFC94A;
+    }
+    #action:disabled { background: rgba(255, 255, 255, .25); color: rgba(255, 255, 255, .7); }
+    #action:active:not(:disabled) { transform: scale(.98); }
+    #error {
+      display: none;
+      background: rgba(170, 30, 40, .92);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #credit {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .8);
+      text-align: center;
+      text-shadow: 0 1px 2px #000;
+    }
+    #credit a { color: inherit; pointer-events: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="camerafeed"></canvas>
+
+  <div id="hud">
+    <div class="top">
+      <div id="status">Starting camera…</div>
+      <button id="reset" type="button">Reset</button>
+    </div>
+    <div class="bottom">
+      <div id="error"></div>
+      <div id="card">
+        <div id="progress"></div>
+        <div id="message">Loading the AR engine…</div>
+        <button id="action" type="button" disabled>Loading…</button>
+      </div>
+      <div id="credit">
+        AR engine © 2026 Niantic Spatial, Inc. · Used under the
+        <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>
+        · Provided “as is”, without warranty.
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three'
+    window.THREE = THREE  // the 8th Wall three.js module reads window.THREE
+
+    // ---------- Settings ----------
+    // ?route=R,F,L,F,R  one-square moves: F B L R, diagonals FR FL BR BL (as seen facing the far end);
+    //                   "~" in front = walk without drawing; a number after = repeat (F2 = two squares)
+    // ?cell=1           side of one square, in metres
+    // ?trail=1          keep the drawn sides glowing (default: each side fades a few seconds after you draw it)
+    // ?check=0          hide the "Show the drawing" button at the end (players must work it out)
+    const params = new URLSearchParams(location.search)
+    const CELL = Math.min(8, Math.max(0.5, parseFloat(params.get('cell')) || 1))
+    const SCALE = params.get('scale') === 'absolute' ? 'absolute' : 'responsive'
+    const KEEP_TRAIL = params.get('trail') === '1'
+    const ALLOW_CHECK = params.get('check') !== '0'
+    const DEFAULT_ROUTE = 'R,F,L,F,R'
+    const CAMERA_HEIGHT = 1.4      // phone height; in 'responsive' mode units ≈ metres
+    const JUMP = 1.0               // a jump this big in one frame = tracking reset
+    const LOST_AFTER_MS = 2000     // limited tracking this long = lost
+    const FADE_MS = 4000           // how long a drawn side stays visible
+
+    // ---------- HUD ----------
+    const statusEl = document.getElementById('status')
+    const errorEl = document.getElementById('error')
+    const progressEl = document.getElementById('progress')
+    const messageEl = document.getElementById('message')
+    const actionBtn = document.getElementById('action')
+    const resetBtn = document.getElementById('reset')
+
+    const setStatus = (text, cls) => { statusEl.textContent = text; statusEl.className = cls || '' }
+    const setCard = (html, label, enabled = true) => {
+      progressEl.textContent = `Mystery walk · squares of ${CELL} m`
+      messageEl.innerHTML = html
+      actionBtn.textContent = label
+      actionBtn.disabled = !enabled
+    }
+    const showError = (msg) => { errorEl.style.display = 'block'; errorEl.textContent = msg }
+    window.addEventListener('error', (e) => showError(`Error: ${e.message}`))
+    window.addEventListener('unhandledrejection', (e) => showError(`Error: ${e.reason && e.reason.message || e.reason}`))
+
+    // ---------- Route ----------
+    const MOVES = {F: [0, 1], B: [0, -1], R: [1, 0], L: [-1, 0], FR: [1, 1], FL: [-1, 1], BR: [1, -1], BL: [-1, -1]}
+    const parseRoute = (text) => {
+      const out = []
+      for (const tok of text.split(/[\s,]+/).filter(Boolean)) {
+        const m = tok.toUpperCase().match(/^(~?)(FR|FL|BR|BL|F|B|L|R)(\d*)$/)
+        if (!m) throw new Error(`Unknown move "${tok}" in the route`)
+        const [dx, dy] = MOVES[m[2]]
+        const times = Math.max(1, Math.min(20, parseInt(m[3] || '1', 10)))
+        for (let i = 0; i < times; i++) out.push({dx, dy, ink: m[1] !== '~'})
+      }
+      if (!out.length) throw new Error('The route is empty')
+      return out
+    }
+    let ROUTE
+    try {
+      ROUTE = parseRoute(params.get('route') || DEFAULT_ROUTE)
+    } catch (err) {
+      ROUTE = parseRoute(DEFAULT_ROUTE)
+      showError(`${err.message}. Using the default route instead.`)
+    }
+
+    // Top-down picture of the route, far end at the top (only for checking an answer).
+    const drawingSvg = () => {
+      const pts = [[0, 0]]
+      for (const m of ROUTE) {
+        const [x, y] = pts[pts.length - 1]
+        pts.push([x + m.dx, y + m.dy])
+      }
+      const xs = pts.map((p) => p[0])
+      const ys = pts.map((p) => p[1])
+      const minX = Math.min(...xs)
+      const maxY = Math.max(...ys)
+      const w = Math.max(1, Math.max(...xs) - minX)
+      const h = Math.max(1, maxY - Math.min(...ys))
+      const unit = Math.min(150 / w, 150 / h)
+      const pad = 16
+      const X = (x) => (pad + (x - minX) * unit).toFixed(1)
+      const Y = (y) => (pad + (maxY - y) * unit).toFixed(1)
+      const line = (i, m) => {
+        const [x1, y1] = pts[i]
+        const [x2, y2] = pts[i + 1]
+        return m.ink
+          ? `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="#FFC94A" stroke-width="7" stroke-linecap="round"/>`
+          : `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 7"/>`
+      }
+      const travel = ROUTE.map((m, i) => m.ink ? '' : line(i, m)).join('')
+      const ink = ROUTE.map((m, i) => m.ink ? line(i, m) : '').join('')
+      const vw = 2 * pad + w * unit
+      const vh = 2 * pad + h * unit
+      return `<svg viewBox="0 0 ${vw.toFixed(1)} ${vh.toFixed(1)}" width="${Math.round(vw)}" height="${Math.round(vh)}" ` +
+        `style="display:block;margin:8px auto 0;max-width:100%">${travel}${ink}` +
+        `<circle cx="${X(0)}" cy="${Y(0)}" r="7" fill="#5FD3FF"/></svg>`
+    }
+
+    // ---------- State ----------
+    let scene, camera
+    let state = 'loading'        // loading | ready | walking | lost | done
+    let trackingSeen = false
+    let limitedSince = 0
+    let seg = 0
+    let fwd = new THREE.Vector3(0, 0, -1)
+    let right = new THREE.Vector3(1, 0, 0)
+    let segStart = null
+    let segEnd = null
+    let layer = null             // arrows + ring for the current side
+    let arrows = []
+    let crumbs = []              // drawn sides: {mesh, born}
+    let lastPos = null
+    let lastHud = 0
+    let checked = false
+
+    const UP = new THREE.Vector3(0, 1, 0)
+    const Z = new THREE.Vector3(0, 0, 1)
+    const S = Math.min(1, CELL)  // arrow size
+
+    const groundPos = () => new THREE.Vector3(camera.position.x, 0, camera.position.z)
+    const facing = () => {
+      const f = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)
+      f.y = 0
+      if (f.lengthSq() < 1e-6) f.set(0, 0, -1)
+      return f.normalize()
+    }
+    const aimAxes = () => {
+      fwd = facing()
+      right = new THREE.Vector3().crossVectors(fwd, UP).normalize()
+    }
+
+    // ---------- 3D pieces ----------
+    const chevronGeometry = (() => {
+      const s = new THREE.Shape()
+      s.moveTo(0, 0.2)
+      s.lineTo(0.24, -0.04)
+      s.lineTo(0.24, -0.17)
+      s.lineTo(0, 0.07)
+      s.lineTo(-0.24, -0.17)
+      s.lineTo(-0.24, -0.04)
+      s.closePath()
+      const g = new THREE.ExtrudeGeometry(s, {depth: 0.025, bevelEnabled: false})
+      g.rotateX(-Math.PI / 2)  // lay flat: tip points along -Z, thickness points up
+      return g
+    })()
+    const GOLD = 0xFFB300
+    const WHITE = 0xFFFFFF
+
+    const flatRing = (pos, inner, outer, color) => {
+      const m = new THREE.Mesh(
+        new THREE.RingGeometry(inner, outer, 48),
+        new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9, side: THREE.DoubleSide})
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(pos.x, 0.012, pos.z)
+      return m
+    }
+
+    const clearScene = () => {
+      if (layer) scene.remove(layer)
+      layer = null
+      arrows = []
+      for (const c of crumbs) scene.remove(c.mesh)
+      crumbs = []
+    }
+
+    const placeSide = (start) => {
+      if (layer) scene.remove(layer)
+      layer = new THREE.Group()
+      arrows = []
+      const move = ROUTE[seg]
+      const dir = new THREE.Vector3().addScaledVector(right, move.dx).addScaledVector(fwd, move.dy)
+      const len = dir.length() * CELL
+      dir.normalize()
+      segStart = start.clone()
+      segEnd = start.clone().addScaledVector(dir, len)
+      const color = move.ink ? GOLD : WHITE
+      const n = Math.max(2, Math.round(len / 0.45))
+      for (let i = 0; i < n; i++) {
+        const m = new THREE.Mesh(chevronGeometry, new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9}))
+        m.position.copy(segStart.clone().lerp(segEnd, (i + 0.5) / n))
+        m.position.y = 0.01
+        m.rotation.y = Math.atan2(-dir.x, -dir.z)
+        m.scale.setScalar(S)
+        m.userData.index = i
+        m.userData.base = move.ink ? 0.55 : 0.35
+        layer.add(m)
+        arrows.push(m)
+      }
+      layer.add(flatRing(segEnd, 0.16 * S, 0.24 * S, color))
+      scene.add(layer)
+    }
+
+    const addCrumb = (a, b) => {
+      const len = a.distanceTo(b)
+      if (len < 0.05) return
+      const mat = new THREE.MeshBasicMaterial({color: 0xFFD45E, transparent: true, opacity: 0.85})
+      const m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, len), mat)
+      m.position.copy(a).add(b).multiplyScalar(0.5)
+      m.position.y = 0.006
+      m.quaternion.setFromUnitVectors(Z, b.clone().sub(a).normalize())
+      scene.add(m)
+      crumbs.push({mesh: m, born: performance.now()})
+    }
+
+    // ---------- Flow ----------
+    const showReady = () => {
+      state = 'ready'
+      checked = false
+      if (!trackingSeen) {
+        setCard('Point at the floor and move the phone slowly until the status turns green.', 'Waiting for tracking…', false)
+        return
+      }
+      setCard(
+        'Stand on the start point and face the far end of the garden (at home: face into the room).' +
+        '<br><span class="dim"><b>Gold</b> arrows draw, <b class="w">white</b> arrows only move you. ' +
+        'Keep track of where you go: at the end you have to work out what you drew.</span>',
+        'Start')
+    }
+
+    const walkingCard = (dist) => {
+      const ink = ROUTE[seg].ink
+      let html = `Side ${seg + 1}: follow the ${ink ? '<b>gold</b>' : '<b class="w">white</b>'} arrows to the ring.`
+      if (dist != null) html += `<br><span class="dim">${dist.toFixed(1)} m to go</span>`
+      setCard(html, "I'm at the corner")
+    }
+
+    const startWalk = () => {
+      clearScene()
+      aimAxes()
+      seg = 0
+      const here = groundPos()
+      placeSide(here)
+      lastPos = here
+      state = 'walking'
+      walkingCard()
+    }
+
+    const completeSide = () => {
+      const here = groundPos()
+      if (ROUTE[seg].ink) addCrumb(segStart, here)
+      seg++
+      if (navigator.vibrate) navigator.vibrate(40)
+      if (seg >= ROUTE.length) return finishWalk()
+      placeSide(here)  // re-anchor at the player's feet: drift never builds up
+      lastPos = here
+      walkingCard()
+    }
+
+    const enterLost = () => {
+      state = 'lost'
+      if (layer) scene.remove(layer)
+      layer = null
+      arrows = []
+      setCard(
+        'Tracking slipped. Finish this side on foot, then stand at the corner, ' +
+        '<b>face the far end of the garden</b> as you did at the start, and tap Continue.',
+        'Continue')
+    }
+
+    const continueAfterLost = () => {
+      for (const c of crumbs) scene.remove(c.mesh)  // they belong to the old, slipped frame
+      crumbs = []
+      aimAxes()
+      seg++
+      limitedSince = 0
+      const here = groundPos()
+      lastPos = here
+      if (seg >= ROUTE.length) return finishWalk()
+      placeSide(here)
+      state = 'walking'
+      walkingCard()
+    }
+
+    const finishWalk = () => {
+      if (layer) scene.remove(layer)
+      layer = null
+      arrows = []
+      state = 'done'
+      setCard(
+        "That's the whole route. <b>What did you draw?</b>" +
+        '<br><span class="dim">Work it out from the path you walked, then enter your answer in TravelQuest.</span>',
+        ALLOW_CHECK ? 'Show the drawing' : 'Start over')
+    }
+
+    actionBtn.addEventListener('click', () => {
+      if (state === 'ready') startWalk()
+      else if (state === 'walking') completeSide()
+      else if (state === 'lost') continueAfterLost()
+      else if (state === 'done') {
+        if (ALLOW_CHECK && !checked) {
+          checked = true
+          setCard(`Here's the route from above, starting at the blue dot (far end at the top):${drawingSvg()}`, 'Start over')
+        } else {
+          clearScene()
+          showReady()
+        }
+      }
+    })
+
+    resetBtn.addEventListener('click', () => {
+      if (!scene) return
+      clearScene()
+      if (window.XR8) XR8.XrController.recenter()
+      showReady()
+    })
+
+    // ---------- Our camera pipeline module ----------
+    const walkModule = () => ({
+      name: 'udis-mystery-walk',
+
+      onStart: ({canvas}) => {
+        const xr = XR8.Threejs.xrScene()
+        scene = xr.scene
+        camera = xr.camera
+        camera.position.set(0, CAMERA_HEIGHT, 0)
+        XR8.XrController.updateCameraProjectionMatrix({origin: camera.position, facing: camera.quaternion})
+        canvas.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false})
+        setStatus('Move the phone slowly…', 'warn')
+        showReady()
+        // Safety net: if no tracking event arrives, still let the player start after a few seconds.
+        setTimeout(() => {
+          if (trackingSeen) return
+          trackingSeen = true
+          if (state === 'ready') showReady()
+        }, 5000)
+      },
+
+      onUpdate: () => {
+        if (!scene) return
+        const now = performance.now()
+        const t = now / 1000
+
+        // Light runs along the arrows in the walking direction.
+        for (const a of arrows) {
+          const wave = Math.max(0, Math.sin(t * 4 - a.userData.index * 0.8))
+          a.scale.setScalar(S * (1 + 0.25 * wave))
+          a.material.opacity = a.userData.base + (1 - a.userData.base) * wave
+        }
+
+        // Drawn sides fade away, so the picture only exists in the player's head.
+        if (!KEEP_TRAIL) {
+          crumbs = crumbs.filter((c) => {
+            const k = (now - c.born) / FADE_MS
+            if (k >= 1) { scene.remove(c.mesh); return false }
+            c.mesh.material.opacity = 0.85 * (1 - k)
+            return true
+          })
+        }
+
+        if (state !== 'walking') return
+        const here = groundPos()
+
+        // A sudden jump, or weak tracking for a while, means the world origin slipped.
+        if (lastPos && here.distanceTo(lastPos) > JUMP) return enterLost()
+        if (limitedSince && now - limitedSince > LOST_AFTER_MS) return enterLost()
+        lastPos = here
+
+        const arrive = Math.min(0.9, Math.max(0.25, 0.35 * segStart.distanceTo(segEnd)))
+        const dist = here.distanceTo(segEnd)
+        if (dist < arrive) return completeSide()
+        if (now - lastHud > 250) {
+          lastHud = now
+          walkingCard(dist)
+        }
+      },
+
+      listeners: [{
+        event: 'reality.trackingstatus',
+        process: ({detail}) => {
+          const {status, reason} = detail || {}
+          if (status === 'NORMAL') {
+            limitedSince = 0
+            setStatus('Tracking: good', 'good')
+            if (!trackingSeen) {
+              trackingSeen = true
+              if (state === 'ready') showReady()
+            }
+            return
+          }
+          if (!limitedSince) limitedSince = performance.now()
+          if (reason === 'INITIALIZING') setStatus('Starting tracking… move slowly', 'warn')
+          else if (reason === 'TOO_MUCH_MOTION') setStatus('Too fast, slow down', 'warn')
+          else if (reason === 'NOT_ENOUGH_TEXTURE') setStatus('Keep the camera on the ground ahead', 'warn')
+          else setStatus('Tracking limited: hold the phone steady', 'warn')
+        },
+      }],
+
+      onException: (err) => showError(`AR error: ${err && err.message || err}`),
+    })
+
+    // ---------- Start the engine ----------
+    const onxrloaded = () => {
+      XR8.XrController.configure({scale: SCALE})
+      XR8.addCameraPipelineModules([
+        XR8.GlTextureRenderer.pipelineModule(),      // draws the camera feed
+        XR8.Threejs.pipelineModule(),                // three.js scene synced to the camera
+        XR8.XrController.pipelineModule(),           // SLAM world tracking
+        LandingPage.pipelineModule(),                // desktop: shows a QR code to open on a phone
+        XRExtras.FullWindowCanvas.pipelineModule(),  // full-screen canvas
+        XRExtras.Loading.pipelineModule(),           // loading screen + camera/motion permission prompts
+        XRExtras.RuntimeError.pipelineModule(),      // error screen
+        walkModule(),
+      ])
+      XR8.run({canvas: document.getElementById('camerafeed')})
+    }
+
+    window.XR8 ? onxrloaded() : window.addEventListener('xrloaded', onxrloaded)
+  </script>
+</body>
+</html>
