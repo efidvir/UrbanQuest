@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Udi's Key · AR trail test</title>
+  <meta name="description" content="Habima quest: SLAM test. Tap the floor, follow the AR arrows to Udi's lost key.">
+
+  <!-- 8th Wall engine binary (SLAM) + helpers, as in 8th Wall's official three.js example -->
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script>
+  <script type="importmap">
+    {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js"}}
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #hud {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 16px calc(10px + env(safe-area-inset-bottom));
+      box-sizing: border-box;
+    }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    #status {
+      background: rgba(20, 20, 28, .72);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .3s;
+    }
+    #status.good { background: rgba(22, 120, 70, .88); }
+    #status.warn { background: rgba(176, 112, 0, .9); }
+    #status.bad  { background: rgba(170, 30, 40, .9); }
+    #reset {
+      pointer-events: auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      color: #1b1b22;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    }
+    #reset:active { transform: scale(.96); }
+    .bottom { display: flex; flex-direction: column; gap: 8px; }
+    #instructions {
+      background: rgba(20, 20, 28, .8);
+      color: #fff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    #instructions b { color: #FFC94A; }
+    #instructions ol { margin: 4px 0 0; padding-left: 20px; }
+    #instructions.found { background: rgba(22, 120, 70, .9); }
+    #error {
+      display: none;
+      background: rgba(170, 30, 40, .92);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #credit {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .8);
+      text-align: center;
+      text-shadow: 0 1px 2px #000;
+    }
+    #credit a { color: inherit; pointer-events: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="camerafeed"></canvas>
+
+  <div id="hud">
+    <div class="top">
+      <div id="status">Starting camera…</div>
+      <button id="reset" type="button">Reset</button>
+    </div>
+    <div class="bottom">
+      <div id="error"></div>
+      <div id="instructions">
+        <ol>
+          <li>Point at the floor and move the phone slowly for a few seconds.</li>
+          <li>Tap the floor a step ahead of you.</li>
+          <li>Follow the arrows to <b>Udi's lost key</b>.</li>
+        </ol>
+      </div>
+      <div id="credit">
+        AR engine © 2026 Niantic Spatial, Inc. · Used under the
+        <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>
+        · Provided “as is”, without warranty.
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three'
+    window.THREE = THREE  // the 8th Wall three.js module reads window.THREE
+
+    // ---------- Settings (override from the URL, e.g. ?size=garden or ?scale=absolute) ----------
+    const params = new URLSearchParams(location.search)
+    const GARDEN = params.get('size') === 'garden'
+    const STEP = GARDEN ? 0.8 : 0.5        // metres between arrows
+    const LEG1 = GARDEN ? 6 : 4            // arrows straight ahead
+    const LEG2 = GARDEN ? 5 : 3            // arrows after the right turn
+    const FOUND_RADIUS = 0.6               // metres from the key that counts as "found"
+    const CAMERA_HEIGHT = 1.4              // phone height; in 'responsive' mode this makes units ≈ metres
+    const SCALE = params.get('scale') === 'absolute' ? 'absolute' : 'responsive'
+
+    // ---------- HUD helpers ----------
+    const statusEl = document.getElementById('status')
+    const instrEl = document.getElementById('instructions')
+    const errorEl = document.getElementById('error')
+    const resetBtn = document.getElementById('reset')
+    const initialInstructions = instrEl.innerHTML
+
+    const setStatus = (text, cls) => {
+      statusEl.textContent = text
+      statusEl.className = cls || ''
+    }
+    const showError = (msg) => {
+      errorEl.style.display = 'block'
+      errorEl.textContent = msg
+    }
+    window.addEventListener('error', (e) => showError(`Error: ${e.message}`))
+    window.addEventListener('unhandledrejection', (e) => showError(`Error: ${e.reason && e.reason.message || e.reason}`))
+
+    // ---------- Scene objects ----------
+    let scene, camera
+    let trail = null          // THREE.Group holding start ring, arrows and key
+    let arrows = []
+    let key = null
+    let keyPos = null
+    let found = false
+    let lastHud = 0
+
+    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+    const raycaster = new THREE.Raycaster()
+    const tap = new THREE.Vector2()
+    const UP = new THREE.Vector3(0, 1, 0)
+
+    // A flat chevron lying on the floor, tip pointing along -Z.
+    const chevronGeometry = (() => {
+      const s = new THREE.Shape()
+      s.moveTo(0, 0.2)
+      s.lineTo(0.24, -0.04)
+      s.lineTo(0.24, -0.17)
+      s.lineTo(0, 0.07)
+      s.lineTo(-0.24, -0.17)
+      s.lineTo(-0.24, -0.04)
+      s.closePath()
+      const g = new THREE.ExtrudeGeometry(s, {depth: 0.025, bevelEnabled: false})
+      g.rotateX(-Math.PI / 2)  // lay flat: shape +Y becomes -Z, thickness points up
+      return g
+    })()
+
+    const makeKey = () => {
+      const gold = new THREE.MeshStandardMaterial({
+        color: 0xFFC94A, metalness: 0.25, roughness: 0.35, emissive: 0x3a2400,
+      })
+      const k = new THREE.Group()
+      const bow = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.026, 16, 40), gold)
+      bow.position.y = 0.2
+      const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.32, 0.035), gold)
+      shaft.position.y = -0.03
+      const tooth1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.035, 0.035), gold)
+      tooth1.position.set(0.05, -0.15, 0)
+      const tooth2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.035, 0.035), gold)
+      tooth2.position.set(0.04, -0.08, 0)
+      k.add(bow, shaft, tooth1, tooth2)
+      return k
+    }
+
+    const clearTrail = () => {
+      if (trail) scene.remove(trail)
+      trail = null
+      arrows = []
+      key = null
+      keyPos = null
+      found = false
+      instrEl.classList.remove('found')
+      instrEl.innerHTML = initialInstructions
+    }
+
+    const addArrow = (pos, dir, index) => {
+      const mat = new THREE.MeshBasicMaterial({color: 0xFFB300, transparent: true, opacity: 0.95})
+      const m = new THREE.Mesh(chevronGeometry, mat)
+      m.position.copy(pos)
+      m.position.y = 0.01
+      m.rotation.y = Math.atan2(-dir.x, -dir.z)
+      m.userData.index = index
+      trail.add(m)
+      arrows.push(m)
+    }
+
+    const placeTrail = (origin) => {
+      clearTrail()
+      trail = new THREE.Group()
+
+      // Walking direction: where the camera faces, flattened onto the floor.
+      const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)
+      fwd.y = 0
+      if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1)
+      fwd.normalize()
+      const right = new THREE.Vector3().crossVectors(fwd, UP).normalize()
+
+      // Start ring where the player tapped.
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(0.18, 0.26, 48),
+        new THREE.MeshBasicMaterial({color: 0x5FD3FF, transparent: true, opacity: 0.9, side: THREE.DoubleSide})
+      )
+      ring.rotation.x = -Math.PI / 2
+      ring.position.copy(origin)
+      ring.position.y = 0.01
+      trail.add(ring)
+
+      // Leg 1: straight ahead. Leg 2: turn right.
+      let i = 0
+      for (let s = 1; s <= LEG1; s++) addArrow(origin.clone().addScaledVector(fwd, s * STEP), fwd, i++)
+      const corner = origin.clone().addScaledVector(fwd, (LEG1 + 1) * STEP)
+      for (let s = 0; s < LEG2; s++) addArrow(corner.clone().addScaledVector(right, s * STEP), right, i++)
+
+      // Udi's key at the end, floating above a target ring.
+      keyPos = corner.clone().addScaledVector(right, LEG2 * STEP)
+      const target = new THREE.Mesh(
+        new THREE.RingGeometry(0.22, 0.3, 48),
+        new THREE.MeshBasicMaterial({color: 0xFFC94A, transparent: true, opacity: 0.85, side: THREE.DoubleSide})
+      )
+      target.rotation.x = -Math.PI / 2
+      target.position.set(keyPos.x, 0.01, keyPos.z)
+      trail.add(target)
+
+      key = makeKey()
+      key.position.set(keyPos.x, 0.55, keyPos.z)
+      trail.add(key)
+
+      scene.add(trail)
+      if (navigator.vibrate) navigator.vibrate(30)
+    }
+
+    const resetAll = () => {
+      clearTrail()
+      if (window.XR8) XR8.XrController.recenter()
+    }
+    resetBtn.addEventListener('click', resetAll)
+
+    // ---------- Tap handling ----------
+    const onTouch = (e) => {
+      if (e.touches.length >= 2) {
+        resetAll()
+        return
+      }
+      tap.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1
+      tap.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1
+      raycaster.setFromCamera(tap, camera)
+      const hit = new THREE.Vector3()
+      const ok = raycaster.ray.intersectPlane(groundPlane, hit)
+      if (!ok || hit.distanceTo(camera.position) > 10) {
+        instrEl.innerHTML = 'Aim lower and <b>tap the floor</b> a step ahead of you.'
+        return
+      }
+      placeTrail(hit)
+    }
+
+    // ---------- Our camera pipeline module ----------
+    const trailModule = () => ({
+      name: 'udis-key-trail',
+
+      onStart: ({canvas}) => {
+        const xr = XR8.Threejs.xrScene()
+        scene = xr.scene
+        camera = xr.camera
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.4))
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2)
+        sun.position.set(2, 6, 3)
+        scene.add(sun)
+
+        camera.position.set(0, CAMERA_HEIGHT, 0)
+        XR8.XrController.updateCameraProjectionMatrix({origin: camera.position, facing: camera.quaternion})
+
+        canvas.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false})
+        canvas.addEventListener('touchstart', onTouch, true)
+        setStatus('Move the phone slowly…', 'warn')
+      },
+
+      onUpdate: () => {
+        if (!trail) return
+        const t = performance.now() / 1000
+
+        // A wave of light runs along the arrows to show the walking direction.
+        for (const a of arrows) {
+          const wave = Math.max(0, Math.sin(t * 4 - a.userData.index * 0.7))
+          a.scale.setScalar(1 + 0.25 * wave)
+          a.material.opacity = 0.55 + 0.45 * wave
+        }
+
+        if (key) {
+          key.rotation.y = t * (found ? 6 : 1.6)
+          key.position.y = 0.55 + 0.06 * Math.sin(t * 2.2)
+        }
+
+        // Distance from the player to the key, measured along the floor.
+        if (keyPos && t - lastHud > 0.2) {
+          lastHud = t
+          const dx = camera.position.x - keyPos.x
+          const dz = camera.position.z - keyPos.z
+          const d = Math.hypot(dx, dz)
+          if (!found && d < FOUND_RADIUS) {
+            found = true
+            instrEl.classList.add('found')
+            instrEl.innerHTML = '<b style="color:#fff">You found Udi\'s key!</b><br>Did it stay where the trail ends? Tap Reset to try again.'
+            if (navigator.vibrate) navigator.vibrate([80, 60, 160])
+          } else if (!found) {
+            instrEl.innerHTML = `Follow the arrows to <b>Udi's lost key</b>.<br>Key: <b>${d.toFixed(1)} m</b> away`
+          }
+        }
+      },
+
+      listeners: [{
+        event: 'reality.trackingstatus',
+        process: ({detail}) => {
+          const {status, reason} = detail || {}
+          if (status === 'NORMAL') setStatus('Tracking: good', 'good')
+          else if (reason === 'INITIALIZING') setStatus('Starting tracking… move slowly', 'warn')
+          else if (reason === 'TOO_MUCH_MOTION') setStatus('Too fast, slow down', 'warn')
+          else if (reason === 'NOT_ENOUGH_TEXTURE') setStatus('Aim at a textured floor', 'warn')
+          else setStatus('Tracking limited', 'warn')
+        },
+      }],
+
+      onException: (err) => showError(`AR error: ${err && err.message || err}`),
+    })
+
+    // ---------- Start the engine ----------
+    const onxrloaded = () => {
+      XR8.XrController.configure({scale: SCALE})
+      XR8.addCameraPipelineModules([
+        XR8.GlTextureRenderer.pipelineModule(),      // draws the camera feed
+        XR8.Threejs.pipelineModule(),                // three.js scene synced to the camera
+        XR8.XrController.pipelineModule(),           // SLAM world tracking
+        LandingPage.pipelineModule(),                // desktop: shows a QR code to open on a phone
+        XRExtras.FullWindowCanvas.pipelineModule(),  // full-screen canvas
+        XRExtras.Loading.pipelineModule(),           // loading screen + camera/motion permission prompts
+        XRExtras.RuntimeError.pipelineModule(),      // error screen
+        trailModule(),
+      ])
+      XR8.run({canvas: document.getElementById('camerafeed')})
+    }
+
+    window.XR8 ? onxrloaded() : window.addEventListener('xrloaded', onxrloaded)
+  </script>
+</body>
+</html>
