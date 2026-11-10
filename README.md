@@ -27,5 +27,7 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 - The default route draws a hidden digit in a 1 × 2 m area
 - Write a route with `?route=`: one-square moves `F` `B` `L` `R` and diagonals `FR` `FL` `BR` `BL`, as seen facing the far end of the garden. Put `~` in front of a move to walk without drawing, and a number after it to repeat (`F2` = two squares). Example: `?route=F2,~R,FR,BL`
 - `?cell=4` sets the real square size; `?trail=1` keeps the drawn sides visible; `?check=0` hides the "Show the drawing" button at the end
+- The start screen says how much room the route needs around you, so you can pick a direction at home
+- Udi's code 5629 in one unbroken walk over the whole grass grid, written as two lines (56 over 29) joined by a line under the 29: `?route=L,B,R,B,L,R,B,L,B,R3,F2,B,L,F,R,F,L,B,F2,R`. Start on the far edge of the grass where the first trail in from the left meets it, facing away from the flower beds. It's 24 sides, three of them walked straight back.
 
 Built with three.js and the 8th Wall engine binary. The engine is © Niantic Spatial, Inc., used under the [XR Engine License Agreement](https://github.com/8thwall/engine/blob/main/LICENSE) and provided as is, without warranty.

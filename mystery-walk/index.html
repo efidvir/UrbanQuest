@@ -199,6 +199,26 @@
       showError(`${err.message}. Using the default route instead.`)
     }
 
+    // How much room the route needs around the start point, e.g. "2 m behind you, 0.5 m to your left".
+    const roomText = () => {
+      let x = 0, y = 0, minX = 0, maxX = 0, minY = 0, maxY = 0
+      for (const m of ROUTE) {
+        x += m.dx
+        y += m.dy
+        minX = Math.min(minX, x)
+        maxX = Math.max(maxX, x)
+        minY = Math.min(minY, y)
+        maxY = Math.max(maxY, y)
+      }
+      const m = (squares) => `${+(squares * CELL).toFixed(1)} m`
+      const parts = []
+      if (maxY) parts.push(`${m(maxY)} ahead`)
+      if (minY) parts.push(`${m(-minY)} behind you`)
+      if (minX) parts.push(`${m(-minX)} to your left`)
+      if (maxX) parts.push(`${m(maxX)} to your right`)
+      return parts.join(', ')
+    }
+
     // Top-down picture of the route, far end at the top (only for checking an answer).
     const drawingSvg = () => {
       const pts = [[0, 0]]
@@ -348,7 +368,8 @@
         return
       }
       setCard(
-        'Stand on the start point and face the far end of the garden (at home: face into the room).' +
+        'Stand on the start point and face the far end of the garden. ' +
+        `At home, face any way that leaves room for the walk: ${roomText()}.` +
         '<br><span class="dim"><b>Gold</b> arrows draw, <b class="w">white</b> arrows only move you. ' +
         'Keep track of where you go: at the end you have to work out what you drew.</span>',
         'Start')
