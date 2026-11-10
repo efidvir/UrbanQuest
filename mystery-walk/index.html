@@ -170,7 +170,10 @@
       actionBtn.textContent = label
       actionBtn.disabled = !enabled
     }
-    const showError = (msg) => { errorEl.style.display = 'block'; errorEl.textContent = msg }
+    const showError = (msg) => {
+      errorEl.style.display = 'block'
+      errorEl.textContent += (errorEl.textContent ? '\n' : '') + msg
+    }
     window.addEventListener('error', (e) => showError(`Error: ${e.message}`))
     window.addEventListener('unhandledrejection', (e) => showError(`Error: ${e.reason && e.reason.message || e.reason}`))
 
