@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#141a36">
+  <title>הקוד של אודי · Udi's code</title>
+  <meta name="description" content="Habima quest: help Udi the caretaker find the code he hid in the garden paths.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Hebrew:wght@400;600&family=Rubik:wght@400;500;700&family=Secular+One&display=swap">
+  <script type="importmap">
+    {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js"}}
+  </script>
+  <style>
+    :root {
+      --night: #141a36;
+      --sky: #1d2550;
+      --line: rgba(255, 255, 255, .16);
+      --ink: #f6f0e1;
+      --muted: #b8bedb;
+      --gold: #ffc94a;
+      --gold-ink: #2b1e00;
+      --paper: #f8f0da;
+      --paper-line: #e4d7b3;
+      --paper-ink: #3a2e22;
+      --margin: #e8a7a0;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--night); color: var(--ink); }
+    body {
+      font-family: Rubik, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+    }
+    button, a { font-family: inherit; }
+    [hidden] { display: none !important; }
+
+    #app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: calc(10px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
+    .brand { font-size: 13px; color: var(--muted); }
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .07);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 15px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .screen { display: none; flex-direction: column; gap: 16px; }
+    .screen.on { display: flex; animation: rise .35s ease both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    h1, h2 { font-family: "Secular One", Rubik, sans-serif; font-weight: 400; margin: 0; line-height: 1.15; }
+    h1 { font-size: 38px; color: var(--gold); }
+    h2 { font-size: 27px; }
+    p { margin: 0; font-size: 17px; line-height: 1.65; }
+    .lead { display: flex; flex-direction: column; gap: 10px; }
+    .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .art { display: block; width: 100%; height: auto; border-radius: 22px; background: var(--sky); direction: ltr; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      border: 0;
+      border-radius: 15px;
+      padding: 15px 18px;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.25;
+      background: var(--gold);
+      color: var(--gold-ink);
+      cursor: pointer;
+    }
+    .btn small { display: block; font-size: 13px; font-weight: 400; opacity: .8; margin-top: 3px; }
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255, 255, 255, .32); font-weight: 500; }
+    .btn:active { transform: scale(.985); }
+    .btn[disabled] { opacity: .5; pointer-events: none; }
+    .stack { display: flex; flex-direction: column; gap: 10px; }
+
+    .rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: r; }
+    .rules li { counter-increment: r; display: flex; gap: 12px; align-items: flex-start; font-size: 16.5px; line-height: 1.55; }
+    .rules li::before {
+      content: counter(r);
+      flex: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--gold-ink);
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+    .badge {
+      align-self: flex-start;
+      font-size: 13px;
+      color: var(--gold);
+      border: 1px dashed rgba(255, 201, 74, .7);
+      background: rgba(255, 201, 74, .1);
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
+
+    /* Udi's diary paper */
+    .paper {
+      position: relative;
+      background-color: var(--paper);
+      color: var(--paper-ink);
+      border-radius: 6px 16px 16px 6px;
+      padding: 16px 18px 18px 44px;
+      background-image:
+        linear-gradient(to right, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px),
+        repeating-linear-gradient(to bottom, transparent 0 33px, var(--paper-line) 33px 34px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+    }
+    [dir="rtl"] .paper {
+      border-radius: 16px 6px 6px 16px;
+      padding: 16px 44px 18px 18px;
+      background-image:
+        linear-gradient(to left, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px),
+        repeating-linear-gradient(to bottom, transparent 0 33px, var(--paper-line) 33px 34px);
+    }
+    .hand { font-family: "Playpen Sans Hebrew", Rubik, sans-serif; }
+    .quote { font-size: 19px; line-height: 1.75; }
+    .quote::before { content: "“"; }
+    .quote::after { content: "”"; }
+    [dir="rtl"] .quote::before { content: "”"; }
+    [dir="rtl"] .quote::after { content: "“"; }
+
+    /* One diary page = one stretch of path */
+    .page { min-height: 250px; display: flex; flex-direction: column; gap: 14px; }
+    .page.flip { animation: flip .35s ease; }
+    @keyframes flip { from { opacity: .15; transform: translateX(16px) rotate(.8deg); } to { opacity: 1; transform: none; } }
+    [dir="rtl"] .page.flip { animation-name: flip-rtl; }
+    @keyframes flip-rtl { from { opacity: .15; transform: translateX(-16px) rotate(-.8deg); } to { opacity: 1; transform: none; } }
+    .turn { display: flex; align-items: center; gap: 12px; }
+    .turn svg {
+      flex: none;
+      width: 56px;
+      height: 56px;
+      padding: 6px;
+      border-radius: 15px;
+      color: #9a6a00;
+      background: rgba(255, 201, 74, .32);
+    }
+    .turn strong { display: block; font-size: 23px; line-height: 1.2; color: #2a2116; }
+    .turn span { display: block; font-size: 15px; color: #6b5b45; }
+    .noink { font-size: 14px; color: #6b5b45; }
+    .peek { position: absolute; bottom: 0; inset-inline-end: 16px; width: 66px; height: 38px; }
+    .walkhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .progress { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+    .progress i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .3s ease; }
+    .ready-title { font-family: "Secular One", Rubik, sans-serif; font-size: 24px; }
+
+    .diary-list { list-style: none; margin: 0; display: flex; flex-direction: column; gap: 0; }
+    .paper.diary-list { background-image: linear-gradient(to right, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px); }
+    [dir="rtl"] .paper.diary-list { background-image: linear-gradient(to left, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px); }
+    .diary-list li + li { border-top: 1px solid var(--paper-line); }
+    .diary-list li { display: flex; gap: 10px; align-items: flex-start; min-height: 34px; padding: 4px 0; }
+    .diary-list .n { flex: none; width: 22px; font-size: 13px; color: #8a7a62; padding-top: 6px; text-align: center; }
+    .diary-list svg { flex: none; width: 26px; height: 26px; color: #9a6a00; margin-top: 2px; }
+    .diary-list .hand { font-size: 16px; line-height: 1.6; }
+
+    .map-label { fill: #ece6d4; font: 500 13px Rubik, sans-serif; }
+
+    /* Art animations: each animated part pivots on the origin of its parent group */
+    .anim { transform-origin: 0 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .a-scratch { animation: scratch .55s ease-in-out infinite; }
+      .a-bob { animation: bob 1.8s ease-in-out infinite; }
+      .a-tail { animation: tail 2.2s ease-in-out infinite; }
+      .a-blink { animation: blink 1.1s step-end infinite; }
+      .a-tw { animation: tw 2.8s ease-in-out infinite; }
+      .a-fall { animation: fall 7s linear infinite; }
+      .a-z { animation: zz 3s ease-in infinite; }
+      .a-ear { animation: ear 3.6s ease-in-out infinite; }
+      .a-pulse { animation: pulse 1.6s ease-out infinite; }
+      .a-jingle { animation: jingle 2.6s ease-in-out infinite; }
+      .a-read { animation: read 4s ease-in-out infinite; }
+      .a-chev { animation: chev 1.4s ease-in-out infinite; }
+    }
+    @keyframes scratch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes tail { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-16deg); } }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: .15; } }
+    @keyframes tw { 0%, 100% { opacity: .95; } 50% { opacity: .25; } }
+    @keyframes fall {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+      8% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { transform: translate(-40px, 190px) rotate(260deg); opacity: 0; }
+    }
+    @keyframes zz { 0% { transform: translate(0, 0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translate(10px, -26px); opacity: 0; } }
+    @keyframes ear { 0%, 86%, 100% { transform: rotate(0deg); } 90% { transform: rotate(-16deg); } 95% { transform: rotate(7deg); } }
+    @keyframes pulse { 0% { transform: scale(.6); opacity: .95; } 100% { transform: scale(2.3); opacity: 0; } }
+    @keyframes jingle { 0%, 80%, 100% { transform: rotate(0deg); } 85% { transform: rotate(14deg); } 90% { transform: rotate(-10deg); } 95% { transform: rotate(6deg); } }
+    @keyframes read { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(3deg); } }
+    @keyframes chev { 0%, 100% { opacity: .3; } 40% { opacity: 1; } }
+
+    /* AR mode: camera feed with the diary card on top */
+    #camerafeed { position: fixed; inset: 0; width: 100%; height: 100%; display: none; }
+    body.ar #camerafeed { display: block; }
+    body.ar #app { display: none; }
+    #ar {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom));
+    }
+    body.ar #ar { display: flex; }
+    #status {
+      align-self: flex-start;
+      background: rgba(20, 24, 48, .78);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background .3s;
+    }
+    #status.good { background: rgba(22, 120, 70, .9); }
+    #status.warn { background: rgba(176, 112, 0, .92); }
+    #ar .bottom { display: flex; flex-direction: column; gap: 8px; max-width: 480px; width: 100%; margin: 0 auto; }
+    #ar-card { pointer-events: auto; max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    #ar-card .turn svg { width: 46px; height: 46px; }
+    #ar-card .turn strong { font-size: 19px; }
+    #ar-card .quote { font-size: 16px; line-height: 1.6; }
+    #ar-progress { font-size: 12px; color: #7a6a52; }
+    .dist { font-size: 14px; color: #6b5b45; }
+    #credit { font-size: 10px; color: rgba(255, 255, 255, .85); text-align: center; text-shadow: 0 1px 2px #000; pointer-events: auto; }
+    #credit a { color: inherit; }
+    #ar-exit {
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top));
+      inset-inline-end: 14px;
+      z-index: 2147483000;
+      display: none;
+      background: #fff;
+      color: #1b1b22;
+      border: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    }
+    body.ar #ar-exit { display: block; }
+
+    #error {
+      position: fixed;
+      inset-inline: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 2147483001;
+      display: none;
+      max-width: 480px;
+      margin: 0 auto;
+      background: rgba(170, 30, 40, .95);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="camerafeed"></canvas>
+
+  <div id="app">
+    <header class="bar">
+      <span class="brand" data-l="kicker"></span>
+      <button id="lang" class="pill" type="button"></button>
+    </header>
+
+    <section class="screen on" id="s-loading">
+      <p class="muted">…</p>
+    </section>
+
+    <section class="screen" id="s-intro">
+      <div id="art-intro"></div>
+      <h1 data-l="title"></h1>
+      <div class="lead" id="story"></div>
+      <button class="btn" type="button" data-go="s-rules" data-t="helpUdi"></button>
+    </section>
+
+    <section class="screen" id="s-rules">
+      <div id="art-how"></div>
+      <h2 data-t="howTitle"></h2>
+      <ol class="rules" id="rules"></ol>
+      <button class="btn" type="button" data-go="s-start" data-t="next"></button>
+    </section>
+
+    <section class="screen" id="s-start">
+      <h2 data-l="start.title"></h2>
+      <div id="art-map"></div>
+      <span class="badge" id="start-note" data-l="start.note"></span>
+      <p data-l="start.text"></p>
+      <p class="muted" id="room" hidden></p>
+      <div class="stack">
+        <button class="btn" type="button" id="btn-ar"><span data-t="startAR"></span><small id="ar-sub"></small></button>
+        <button class="btn ghost" type="button" id="btn-diary"><span data-t="startDiary"></span><small data-t="startDiarySub"></small></button>
+        <button class="btn ghost" type="button" id="btn-resume" hidden></button>
+      </div>
+    </section>
+
+    <section class="screen" id="s-walk">
+      <div class="walkhead">
+        <span class="muted" id="w-progress"></span>
+        <button class="pill" type="button" id="w-exit" data-t="exit"></button>
+      </div>
+      <div class="progress"><i id="w-bar"></i></div>
+      <div class="paper page" id="w-page" aria-live="polite"></div>
+      <div class="stack">
+        <button class="btn" type="button" id="w-next"></button>
+        <button class="btn ghost" type="button" id="w-prev" data-t="prevPage"></button>
+      </div>
+    </section>
+
+    <section class="screen" id="s-end">
+      <div id="art-end"></div>
+      <h2 data-l="end.title"></h2>
+      <div class="paper"><p class="hand quote" data-l="end.udi"></p></div>
+      <p data-l="end.task"></p>
+      <div class="stack">
+        <a class="btn" id="to-tq" href="https://travelandquest.com/"><span data-t="backToTQ"></span><small data-t="backToTQsub"></small></a>
+        <p class="muted" data-t="backHint"></p>
+        <button class="btn ghost" type="button" data-go="s-diary" data-t="readDiary"></button>
+        <button class="btn ghost" type="button" id="btn-again" data-t="walkAgain"></button>
+      </div>
+    </section>
+
+    <section class="screen" id="s-diary">
+      <h2 data-t="diaryTitle"></h2>
+      <ol class="paper diary-list" id="diary-list"></ol>
+      <button class="btn" type="button" data-go="s-end" data-t="back"></button>
+    </section>
+  </div>
+
+  <div id="ar">
+    <div id="status"></div>
+    <div class="bottom">
+      <div class="paper" id="ar-card">
+        <div id="ar-progress"></div>
+        <div id="ar-page" aria-live="polite"></div>
+        <button class="btn" type="button" id="ar-action"></button>
+      </div>
+      <div id="credit">
+        AR engine © 2026 Niantic Spatial, Inc. · Used under the
+        <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>
+        · Provided “as is”, without warranty.
+      </div>
+    </div>
+  </div>
+  <button id="ar-exit" class="pill" type="button" data-t="exit"></button>
+  <div id="error" role="alert"></div>
+
+  <script type="module">
+    // ---------- Settings ----------
+    // ?r=garden      which riddle file to load from riddles/
+    // ?lang=he|en    language (otherwise the phone's language, then the riddle's default)
+    // ?cell=0.5      square size in metres, for testing at home; also turns on auto-advance
+    // ?auto=0|1      advance automatically when the player reaches the next crossing
+    // ?trail=1       keep the drawn footsteps visible
+    // ?screen=s-end  open a screen directly (for checking the page)
+    const params = new URLSearchParams(location.search)
+    const RIDDLE_ID = (params.get('r') || 'garden').replace(/[^\w-]/g, '')
+    const SCALE = params.get('scale') === 'absolute' ? 'absolute' : 'responsive'
+    const KEEP_TRAIL = params.get('trail') === '1'
+    const CAMERA_HEIGHT = 1.4      // phone height; in 'responsive' mode units ≈ metres
+    const JUMP = 1.0               // a jump this big in one frame = tracking reset
+    const LOST_AFTER_MS = 2000     // limited tracking this long = lost
+    const FADE_MS = 4000           // how long a drawn side stays visible
+    const ENGINE = {
+      xr: 'https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js',
+      extras: 'https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js',
+      landing: 'https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js',
+    }
+
+    // ---------- Words on the page ----------
+    const UI = {
+      he: {
+        langName: 'English',
+        helpUdi: 'עזרו לאודי',
+        howTitle: 'איך משחקים',
+        next: 'הבא',
+        startAR: 'מתחילים עם המצלמה',
+        startARsub: 'חיצים על הקרקע. מומלץ',
+        arPhoneOnly: 'מצב המצלמה עובד בטלפון',
+        startDiary: 'רק היומן, בלי מצלמה',
+        startDiarySub: 'עובד בכל טלפון',
+        resume: 'להמשיך מדף {n}',
+        readyTitle: 'מוכנים?',
+        readyText: 'עמדו בנקודת ההתחלה עם הפנים לקצה הרחוק של הדשא. כל דף ביומן מוביל אתכם לצומת הבא.',
+        readyResume: 'חזרו לצומת שבו עצרתם ועמדו עם הפנים לכיוון שבו הלכתם.',
+        imThere: 'אני בנקודה, מתחילים',
+        page: 'דף {n} מתוך {total}',
+        atCrossing: 'הגעתי לצומת',
+        prevPage: 'לדף הקודם',
+        exit: 'יציאה',
+        toCrossingTurn: 'והמשיכו עד הצומת הבא',
+        toCrossingStraight: 'עד הצומת הבא',
+        toLastCrossing: 'וחזרו לצומת הקודם',
+        noInk: 'כאן אודי רק הלך, בלי לכתוב.',
+        turn: {
+          straight: 'המשיכו ישר', left: 'פנו שמאלה', right: 'פנו ימינה', back: 'הסתובבו',
+          'bear-left': 'פנו קלות שמאלה', 'bear-right': 'פנו קלות ימינה',
+          'sharp-left': 'פנו חדות שמאלה', 'sharp-right': 'פנו חדות ימינה',
+        },
+        backToTQ: 'חזרה לטרוול קווסט',
+        backToTQsub: 'שם מקלידים את הקוד',
+        backHint: 'אם טרוול קווסט פתוח בלשונית אחרת, אפשר פשוט לחזור אליה.',
+        readDiary: 'לקרוא שוב את היומן',
+        walkAgain: 'ללכת שוב מההתחלה',
+        diaryTitle: 'היומן של אודי',
+        back: 'חזרה',
+        farEnd: 'הקצה הרחוק',
+        flowerBeds: 'ערוגות',
+        startHere: 'מתחילים כאן',
+        room: 'בדיקה בבית: השאירו מקום: {room}.',
+        ahead: '{m} מ׳ קדימה',
+        behind: '{m} מ׳ מאחוריכם',
+        left: '{m} מ׳ משמאל',
+        right: '{m} מ׳ מימין',
+        loadingAR: 'מפעילים את המצלמה…',
+        pointGround: 'כוונו את הטלפון לקרקע והזיזו אותו לאט, עד שהסטטוס יהפוך לירוק.',
+        waiting: 'מחכים למעקב…',
+        arReady: 'עמדו בנקודת ההתחלה עם הפנים לקצה הרחוק, כוונו לקרקע ולחצו "מתחילים".',
+        arResume: 'עמדו בצומת שבו עצרתם עם הפנים לקצה הרחוק, ולחצו "מתחילים".',
+        go: 'מתחילים',
+        toGo: 'עוד {d} מ׳',
+        lost: 'המעקב התבלבל. סיימו את הקטע ברגל, עמדו בצומת עם הפנים לקצה הרחוק ולחצו "המשך".',
+        cont: 'המשך',
+        stGood: 'מעקב: טוב',
+        stMove: 'הזיזו את הטלפון לאט…',
+        stInit: 'מתחילים מעקב… לאט',
+        stFast: 'לאט יותר',
+        stTexture: 'כוונו לקרקע שלפניכם',
+        stLimited: 'החזיקו את הטלפון יציב',
+        arFail: 'המצלמה לא נפתחה. אפשר להמשיך עם היומן בלבד.',
+        loadFail: 'משהו לא נטען. בדקו את החיבור ונסו שוב.',
+      },
+      en: {
+        langName: 'עברית',
+        helpUdi: 'Help Udi',
+        howTitle: 'How to play',
+        next: 'Next',
+        startAR: 'Start with the camera',
+        startARsub: 'Arrows on the ground. Recommended',
+        arPhoneOnly: 'Camera mode works on phones',
+        startDiary: 'Diary only, no camera',
+        startDiarySub: 'Works on any phone',
+        resume: 'Continue from page {n}',
+        readyTitle: 'Ready?',
+        readyText: 'Stand at the starting point facing the far end of the lawn. Each diary page takes you to the next crossing.',
+        readyResume: 'Go back to the crossing where you stopped, facing the way you were walking.',
+        imThere: "I'm at the start, let's go",
+        page: 'Page {n} of {total}',
+        atCrossing: "I'm at the crossing",
+        prevPage: 'Previous page',
+        exit: 'Exit',
+        toCrossingTurn: 'and walk to the next crossing',
+        toCrossingStraight: 'to the next crossing',
+        toLastCrossing: 'and go back to the last crossing',
+        noInk: 'Udi only walked here, without writing.',
+        turn: {
+          straight: 'Straight on', left: 'Turn left', right: 'Turn right', back: 'Turn around',
+          'bear-left': 'Bear left', 'bear-right': 'Bear right',
+          'sharp-left': 'Sharp left', 'sharp-right': 'Sharp right',
+        },
+        backToTQ: 'Back to TravelQuest',
+        backToTQsub: 'Enter the code there',
+        backHint: 'If TravelQuest is open in another tab, you can just switch back to it.',
+        readDiary: 'Read the diary again',
+        walkAgain: 'Walk it again from the start',
+        diaryTitle: "Udi's diary",
+        back: 'Back',
+        farEnd: 'far end',
+        flowerBeds: 'flower beds',
+        startHere: 'start here',
+        room: 'Testing at home: leave room: {room}.',
+        ahead: '{m} m ahead',
+        behind: '{m} m behind you',
+        left: '{m} m to your left',
+        right: '{m} m to your right',
+        loadingAR: 'Starting the camera…',
+        pointGround: 'Point the phone at the ground and move it slowly until the status turns green.',
+        waiting: 'Waiting for tracking…',
+        arReady: 'Stand at the starting point facing the far end, point at the ground and tap Start.',
+        arResume: 'Stand at the crossing where you stopped, facing the far end, and tap Start.',
+        go: 'Start',
+        toGo: '{d} m to go',
+        lost: 'Tracking slipped. Finish this stretch on foot, stand at the crossing facing the far end, and tap Continue.',
+        cont: 'Continue',
+        stGood: 'Tracking: good',
+        stMove: 'Move the phone slowly…',
+        stInit: 'Starting tracking… move slowly',
+        stFast: 'Too fast, slow down',
+        stTexture: 'Point at the ground ahead',
+        stLimited: 'Hold the phone steady',
+        arFail: "The camera didn't start. You can carry on with the diary only.",
+        loadFail: "Something didn't load. Check your connection and try again.",
+      },
+    }
+
+    // ---------- Small helpers ----------
+    const $ = (sel) => document.querySelector(sel)
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))
+    const get = (obj, path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), obj)
+    const safe = (fn, fallback = null) => { try { return fn() } catch { return fallback } }
+    const store = {
+      get: (k) => safe(() => localStorage.getItem(k)),
+      set: (k, v) => safe(() => localStorage.setItem(k, v)),
+      del: (k) => safe(() => localStorage.removeItem(k)),
+    }
+    const session = {
+      get: (k) => safe(() => sessionStorage.getItem(k)),
+      set: (k, v) => safe(() => sessionStorage.setItem(k, v)),
+    }
+
+    let lang = 'he'
+    let riddle = null
+    const t = (key, vars = {}) => String(get(UI[lang], key) ?? get(UI.en, key) ?? key)
+      .replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '')
+    const L = (obj) => (obj == null ? '' : (typeof obj === 'string' ? obj : (obj[lang] ?? obj.en ?? obj.he ?? '')))
+
+    const errorEl = $('#error')
+    const showError = (msg) => {
+      errorEl.style.display = 'block'
+      errorEl.textContent += (errorEl.textContent ? '\n' : '') + msg
+    }
+    errorEl.addEventListener('click', () => { errorEl.style.display = 'none'; errorEl.textContent = '' })
+    window.addEventListener('error', (e) => showError(`Error: ${e.message}`))
+    window.addEventListener('unhandledrejection', (e) => showError(`Error: ${(e.reason && e.reason.message) || e.reason}`))
+
+    // ---------- Route ----------
+    // One-square moves as seen facing the far end at the start: F B L R and diagonals FR FL BR BL.
+    // "~" in front = walk without writing; a number after = repeat (F2 = two squares).
+    const MOVES = {F: [0, 1], B: [0, -1], R: [1, 0], L: [-1, 0], FR: [1, 1], FL: [-1, 1], BR: [1, -1], BL: [-1, -1]}
+    const parseRoute = (text) => {
+      const out = []
+      for (const tok of String(text).split(/[\s,]+/).filter(Boolean)) {
+        const m = tok.toUpperCase().match(/^(~?)(FR|FL|BR|BL|F|B|L|R)(\d*)$/)
+        if (!m) throw new Error(`Unknown move "${tok}" in the route`)
+        const [dx, dy] = MOVES[m[2]]
+        const times = Math.max(1, Math.min(20, parseInt(m[3] || '1', 10)))
+        for (let i = 0; i < times; i++) out.push({dx, dy, ink: m[1] !== '~'})
+      }
+      if (!out.length) throw new Error('The route is empty')
+      return out
+    }
+    // The turn a walker makes at the start of each stretch, from the way they were walking.
+    const turnsOf = (route) => {
+      let h = [0, 1]  // at the start the player faces the far end
+      return route.map(({dx, dy}) => {
+        let d = (Math.atan2(dx, dy) - Math.atan2(h[0], h[1])) * 180 / Math.PI
+        d = ((d + 540) % 360) - 180
+        const a = Math.abs(d)
+        h = [dx, dy]
+        if (a < 22.5) return 'straight'
+        if (a > 157.5) return 'back'
+        const side = d > 0 ? 'right' : 'left'
+        if (a < 67.5) return `bear-${side}`
+        if (a < 112.5) return side
+        return `sharp-${side}`
+      })
+    }
+    let ROUTE = []
+    let TURNS = []
+    let N = 0
+    let CELL = 4
+    let AUTO = false
+
+    // ---------- Pictures ----------
+    const ICON = {
+      straight: 'M24 41V9M14 19l10-10 10 10',
+      right: 'M15 41V24a8 8 0 0 1 8-8h14M30 9l7 7-7 7',
+      left: 'M33 41V24a8 8 0 0 0-8-8H11M18 9l-7 7 7 7',
+      back: 'M31 41V19a9 9 0 0 0-18 0v16M7 29l6 6 6-6',
+      'bear-right': 'M17 41V29L35 11M24 11h11v11',
+      'bear-left': 'M31 41V29L13 11M24 11H13v11',
+      'sharp-right': 'M15 41V13l20 20M35 22v11H24',
+      'sharp-left': 'M33 41V13L13 33M13 22v11h11',
+    }
+    const turnIcon = (k) => `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="${ICON[k]}" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+
+    const C = {
+      skin: '#f2c38f', skinD: '#d99a63', shirt: '#efe0bd', over: '#3f63ad', overD: '#2f4d8c',
+      cap: '#2a8c8c', capD: '#1f6b6b', hair: '#b4b4bb', must: '#6e4f37', shoe: '#2a2a33',
+      gold: '#ffc94a', paper: '#fbf5e6', book: '#8b5a2b', cat: '#e8913f', catD: '#c46f24', catL: '#f6b26b',
+    }
+    const STARS = [[22, 24, 1.4, 0], [58, 52, 1, .8], [96, 18, 1.2, 1.6], [140, 40, 1, .4], [176, 14, 1.3, 2],
+      [214, 34, 1, 1.1], [250, 20, 1.2, .6], [282, 50, 1, 1.9], [30, 92, 1, 1.3], [118, 70, 1.1, 2.4], [346, 84, 1, .2]]
+    const sky = () => `
+      <rect width="360" height="250" fill="#1d2550"/>
+      ${STARS.map(([x, y, r, d]) => `<circle class="a-tw" style="animation-delay:${d}s" cx="${x}" cy="${y}" r="${r}" fill="#fff6d5"/>`).join('')}
+      <circle cx="320" cy="36" r="16" fill="#f7e9b5"/><circle cx="314" cy="32" r="3" fill="#e6d391"/><circle cx="325" cy="42" r="2.2" fill="#e6d391"/>`
+    const theatre = () => `
+      <rect x="186" y="66" width="174" height="12" fill="#3a4684"/>
+      <rect x="192" y="78" width="168" height="114" fill="#2a3468"/>
+      ${[0, 1, 2, 3, 4, 5].map((i) => `<rect x="${202 + i * 22}" y="86" width="9" height="106" fill="#35417c"/>`).join('')}
+      ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<circle class="a-tw" style="animation-delay:${(i * .3).toFixed(1)}s" cx="${197 + i * 21}" cy="72" r="1.8" fill="${C.gold}"/>`).join('')}
+      <rect x="294" y="126" width="38" height="66" rx="2" fill="#6a4330"/>
+      <rect x="299" y="131" width="28" height="56" fill="none" stroke="#80543f" stroke-width="2"/>
+      <circle cx="322" cy="162" r="2.6" fill="${C.gold}"/>`
+    const ground = () => `
+      <rect x="0" y="192" width="360" height="58" fill="#2c6a3c"/>
+      <path d="M0 207H360M64 192L44 250M300 192L320 250" stroke="#c9b48a" stroke-width="5" opacity=".7"/>
+      ${[[18, 240, '#ff7aa8'], [30, 232, '#ffd166'], [342, 238, '#ff9f6b'], [330, 230, '#f3f0ff']]
+        .map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="${c}"/>`).join('')}`
+
+    const udiBody = () => `
+      <ellipse cx="0" cy="0" rx="38" ry="6" fill="rgba(0,0,0,.28)"/>
+      <rect x="-21" y="-62" width="18" height="60" rx="7" fill="${C.overD}"/>
+      <rect x="3" y="-62" width="18" height="60" rx="7" fill="${C.overD}"/>
+      <ellipse cx="-13" cy="-4" rx="13" ry="6" fill="${C.shoe}"/>
+      <ellipse cx="13" cy="-4" rx="13" ry="6" fill="${C.shoe}"/>
+      <rect x="-28" y="-118" width="56" height="66" rx="18" fill="${C.shirt}"/>
+      <path d="M-22 -98H22V-58Q22 -52 16 -52H-16Q-22 -52 -22 -58Z" fill="${C.over}"/>
+      <rect x="-21" y="-116" width="7" height="22" rx="3" fill="${C.over}"/>
+      <rect x="14" y="-116" width="7" height="22" rx="3" fill="${C.over}"/>
+      <circle cx="-17.5" cy="-95" r="2.3" fill="${C.gold}"/>
+      <circle cx="17.5" cy="-95" r="2.3" fill="${C.gold}"/>
+      <rect x="-9" y="-90" width="18" height="13" rx="3" fill="${C.overD}"/>
+      <g transform="translate(25 -57)"><g class="anim a-jingle">
+        <circle r="6" fill="none" stroke="${C.gold}" stroke-width="2.4"/>
+        <rect x="-5" y="4" width="4" height="13" rx="1.5" fill="${C.gold}" transform="rotate(14 -3 4)"/>
+        <rect x="1" y="4" width="4" height="11" rx="1.5" fill="#cfd3da" transform="rotate(-12 3 4)"/>
+      </g></g>`
+    const udiHead = (look = 0) => `
+      <rect x="-8" y="-125" width="16" height="10" fill="${C.skinD}"/>
+      <rect x="-31" y="-160" width="4" height="18" rx="1.5" fill="#f4c542" transform="rotate(-28 -29 -151)"/>
+      <circle cx="-23" cy="-140" r="6" fill="${C.skin}"/>
+      <circle cx="23" cy="-140" r="6" fill="${C.skin}"/>
+      <circle cx="0" cy="-142" r="24" fill="${C.skin}"/>
+      <rect x="-24.5" y="-148" width="5" height="13" rx="2" fill="${C.hair}"/>
+      <rect x="19.5" y="-148" width="5" height="13" rx="2" fill="${C.hair}"/>
+      <path d="M-25.5 -148Q-25 -172 0 -172Q25 -172 25.5 -148Z" fill="${C.cap}"/>
+      <path d="M-4 -149H31Q35 -149 33 -145H-4Z" fill="${C.capD}"/>
+      <circle cx="0" cy="-172" r="3" fill="${C.capD}"/>
+      <circle cx="-8.5" cy="${-143 + look}" r="2.8" fill="#2a2a33"/>
+      <circle cx="8.5" cy="${-143 + look}" r="2.8" fill="#2a2a33"/>
+      <path d="M-14 -150L-4 -153.5M4 -153.5L14 -150" stroke="${C.must}" stroke-width="2.6" stroke-linecap="round"/>
+      <ellipse cx="0" cy="-136" rx="4.5" ry="5.5" fill="${C.skinD}"/>
+      <path d="M-15 -129Q-8 -135 0 -130Q8 -135 15 -129Q8 -125 0 -127Q-8 -125 -15 -129Z" fill="${C.must}"/>
+      <path d="M-5 -120Q0 -123 5 -120" stroke="#8a4b36" stroke-width="2" fill="none" stroke-linecap="round"/>`
+
+    // Udi scratching his head, the closed diary under his arm.
+    const udiPuzzled = () => `
+      ${udiBody()}
+      <g transform="translate(-25 -110)">
+        <rect x="-6.5" y="-2" width="13" height="52" rx="6.5" fill="${C.shirt}" transform="rotate(12)"/>
+        <g transform="rotate(-8 -13 44)">
+          <rect x="-25" y="28" width="23" height="30" rx="3" fill="${C.book}"/>
+          <rect x="-21" y="36" width="15" height="7" rx="1.5" fill="${C.paper}"/>
+        </g>
+        <circle cx="-10.4" cy="48.9" r="7" fill="${C.skin}"/>
+      </g>
+      ${udiHead()}
+      <g transform="translate(24 -110)"><g class="anim a-scratch">
+        <rect x="-6.5" y="-52" width="13" height="56" rx="6.5" fill="${C.shirt}" transform="rotate(-20)"/>
+        <circle cx="-17.8" cy="-48.9" r="7.5" fill="${C.skin}"/>
+      </g></g>`
+
+    // Udi reading his open diary.
+    const udiReading = () => `
+      ${udiBody()}
+      ${udiHead(2.5)}
+      <g transform="translate(-25 -108)"><rect x="-6.5" y="-2" width="13" height="32" rx="6.5" fill="${C.shirt}" transform="rotate(12)"/></g>
+      <g transform="translate(25 -108)"><rect x="-6.5" y="-2" width="13" height="32" rx="6.5" fill="${C.shirt}" transform="rotate(-12)"/></g>
+      <g transform="translate(0 -88)"><g class="anim a-read">
+        <path d="M-37 14L0 18L37 14V11L0 15L-37 11Z" fill="${C.book}"/>
+        <path d="M0 15Q-17 9 -35 12V-12Q-17 -16 0 -9Z" fill="${C.paper}" stroke="#cdbb8f"/>
+        <path d="M0 15Q17 9 35 12V-12Q17 -16 0 -9Z" fill="${C.paper}" stroke="#cdbb8f"/>
+        <path d="M-29 -6H-7M-29 0H-9M-29 6H-12M7 -6H29M9 0H29M12 6H26" stroke="#9aa3c7" stroke-width="1.3" stroke-linecap="round"/>
+        <circle cx="-34" cy="4" r="6.5" fill="${C.skin}"/>
+        <circle cx="34" cy="4" r="6.5" fill="${C.skin}"/>
+      </g></g>`
+
+    // Mitzi the theatre cat, with a torn diary page in her mouth.
+    const mitziSitting = () => `
+      <ellipse cx="0" cy="0" rx="22" ry="4" fill="rgba(0,0,0,.25)"/>
+      <g transform="translate(14 -8)"><g class="anim a-tail">
+        <path d="M0 0Q22 -2 20 -22Q19 -34 28 -38" stroke="${C.cat}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </g></g>
+      <ellipse cx="0" cy="-16" rx="17" ry="15" fill="${C.cat}"/>
+      <path d="M-6 -27Q1 -21 8 -26M-9 -18Q0 -12 11 -18" stroke="${C.catD}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="-7" cy="-2" rx="5" ry="3.5" fill="${C.catL}"/>
+      <ellipse cx="5" cy="-2" rx="5" ry="3.5" fill="${C.catL}"/>
+      <circle cx="-12" cy="-36" r="12" fill="${C.cat}"/>
+      <path d="M-22 -41L-20 -55L-12 -46ZM-12 -46L-4 -55L-2 -41Z" fill="${C.cat}"/>
+      <path d="M-19.5 -44L-18.5 -51L-14 -46ZM-10 -46L-5.5 -51L-4.5 -44Z" fill="#f4a3a8"/>
+      <ellipse cx="-16.5" cy="-38.5" rx="2" ry="2.6" fill="#2a2a33"/>
+      <ellipse cx="-7.5" cy="-38.5" rx="2" ry="2.6" fill="#2a2a33"/>
+      <path d="M-13.5 -33.5H-10.5L-12 -31.5Z" fill="#f08a8f"/>
+      <path d="M-31 -31L-14 -29.5L-13 -23L-16 -21L-19 -24L-23 -20L-29 -23Z" fill="${C.paper}" stroke="#d9cfb6"/>
+      <path d="M-28 -27.5H-18M-27 -25H-21" stroke="#9aa3c7" stroke-width="1"/>`
+
+    const mitziSleeping = () => `
+      <ellipse cx="0" cy="0" rx="28" ry="4" fill="rgba(0,0,0,.25)"/>
+      <path d="M22 -6Q32 -1 22 4Q6 8 -16 2" stroke="${C.cat}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="2" cy="-10" rx="24" ry="11" fill="${C.cat}"/>
+      <path d="M-2 -17Q6 -13 14 -17M4 -9Q10 -6 16 -9" stroke="${C.catD}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <circle cx="-16" cy="-11" r="9.5" fill="${C.cat}"/>
+      <path d="M-24 -16L-23 -26L-17 -19ZM-14 -19L-9 -26L-8.5 -15Z" fill="${C.cat}"/>
+      <path d="M-21 -11Q-19 -9 -17 -11M-14.5 -11Q-12.5 -9 -10.5 -11" stroke="#2a2a33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <g transform="translate(-6 -26)"><text class="anim a-z" font-size="12" font-weight="700" fill="#c9d1ff">z</text></g>
+      <g transform="translate(2 -34)"><text class="anim a-z" style="animation-delay:1.5s" font-size="10" font-weight="700" fill="#c9d1ff">z</text></g>`
+
+    const bubble = (x, y) => `
+      <g transform="translate(${x} ${y})"><g class="anim a-bob">
+        <circle r="14" fill="#fff"/><circle cx="-11" cy="15" r="3.5" fill="#fff"/><circle cx="-16" cy="22" r="2" fill="#fff"/>
+        <text y="6.5" text-anchor="middle" font-size="19" font-weight="700" font-family="Rubik, sans-serif" fill="#1d2550">?</text>
+      </g></g>`
+
+    const introArt = () => `
+      <svg class="art" viewBox="0 0 360 250" role="img" aria-label="">
+        ${sky()}${theatre()}
+        <rect x="273" y="142" width="15" height="21" rx="2.5" fill="#14141b"/>
+        ${[0, 1, 2].flatMap((r) => [0, 1, 2].map((c) => `<circle cx="${277 + c * 3.6}" cy="${148 + r * 4.6}" r="1.1" fill="#8d93ad"/>`)).join('')}
+        <circle class="a-blink" cx="280.5" cy="137" r="2.6" fill="#ff4d4d"/>
+        ${ground()}
+        <path d="M232 236l8-2 2 5-7 3ZM176 244l7 1-1 5-7-1Z" fill="${C.paper}"/>
+        <g transform="translate(118 240)">${udiPuzzled()}</g>
+        ${bubble(162, 60)}
+        <g transform="translate(214 244)">${mitziSitting()}</g>
+        <g transform="translate(244 22)"><g class="anim a-fall">
+          <path d="M-8 -10H8V8L4 11L1 7L-3 11L-8 8Z" fill="${C.paper}" stroke="#d9cfb6"/>
+          <path d="M-5 -5H5M-5 -1H3" stroke="#9aa3c7" stroke-width="1"/>
+        </g></g>
+      </svg>`
+
+    const endArt = () => `
+      <svg class="art" viewBox="0 0 360 250" role="img" aria-label="">
+        ${sky()}${theatre()}
+        <rect x="236" y="92" width="108" height="58" rx="9" fill="#101016" stroke="#46528f" stroke-width="2"/>
+        ${[0, 1, 2, 3].map((k) => `<rect x="${250 + k * 22}" y="132" width="15" height="3.2" rx="1.6" fill="${C.gold}"/>`).join('')}
+        <rect class="a-blink" x="255.5" y="106" width="3" height="20" fill="${C.gold}"/>
+        <circle class="a-blink" cx="334" cy="101" r="3" fill="#ff4d4d"/>
+        ${ground()}
+        <g transform="translate(128 240)">${udiReading()}</g>
+        ${bubble(170, 62)}
+        <g transform="translate(222 246)">${mitziSleeping()}</g>
+      </svg>`
+
+    // Arrows lead along the path to the ring at the next crossing; the stretch already walked glows, then fades.
+    const howArt = () => `
+      <svg class="art" viewBox="0 0 360 120" role="img" aria-label="">
+        <rect width="360" height="120" fill="#2c6a3c"/>
+        <path d="M0 74H360M118 0V120M262 0V120" stroke="#cdb98f" stroke-width="14"/>
+        <path d="M16 74H104" stroke="#ffd45e" stroke-width="5" stroke-linecap="round" opacity=".35"/>
+        <path d="M118 74V14" stroke="#ffd45e" stroke-width="5" stroke-linecap="round" opacity=".18"/>
+        ${[0, 1, 2, 3, 4].map((i) => `<g transform="translate(${142 + i * 25} 74)"><path class="a-chev" style="animation-delay:${(i * .16).toFixed(2)}s" d="M-6 -9L6 0L-6 9" fill="none" stroke="#ffb300" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>`).join('')}
+        <circle cx="262" cy="74" r="11" fill="none" stroke="#ffb300" stroke-width="4"/>
+        <circle cx="118" cy="74" r="8" fill="#5fd3ff" stroke="#fff" stroke-width="2.5"/>
+      </svg>`
+
+    // Top view of the lawn: the grid of grass squares, the flower beds and the starting point.
+    const mapArt = () => {
+      const {cols = 3, rows = 4, x = 1, y = rows} = (riddle.start && riddle.start.map) || {}
+      const sq = 46
+      const gap = 8
+      const W = cols * sq + (cols + 1) * gap
+      const H = rows * sq + (rows + 1) * gap
+      const x0 = (360 - W) / 2
+      const y0 = 76
+      const bedsY = y0 + H + 6
+      const vbH = bedsY + 26 + 32
+      const px = x0 + gap / 2 + x * (sq + gap)
+      const py = y0 + gap / 2 + (rows - y) * (sq + gap)
+      let squares = ''
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          squares += `<rect x="${x0 + gap + i * (sq + gap)}" y="${y0 + gap + j * (sq + gap)}" width="${sq}" height="${sq}" rx="3" fill="#3d8b4e"/>`
+        }
+      }
+      const flowers = Array.from({length: 13}, (_, k) =>
+        `<circle cx="${(x0 + 10 + k * (W - 20) / 12).toFixed(1)}" cy="${bedsY + 13 + (k % 2 ? -4 : 4)}" r="3.2" fill="${['#ff7aa8', '#ffd166', '#ff9f6b', '#f3f0ff'][k % 4]}"/>`).join('')
+      const labelLeft = px > 180
+      return `
+        <svg class="art" viewBox="0 0 360 ${vbH}" role="img" aria-label="">
+          <rect width="360" height="${vbH}" fill="#1d2550"/>
+          <text class="map-label" x="180" y="26" text-anchor="middle" data-t="farEnd"></text>
+          <rect x="${x0}" y="${y0}" width="${W}" height="${H}" rx="4" fill="#cdb98f"/>
+          ${squares}
+          <rect x="${x0}" y="${bedsY}" width="${W}" height="26" rx="6" fill="#2f6d36"/>
+          ${flowers}
+          <text class="map-label" x="180" y="${bedsY + 26 + 20}" text-anchor="middle" data-t="flowerBeds"></text>
+          <g transform="translate(${px} ${py})"><circle class="anim a-pulse" r="9" fill="none" stroke="${C.gold}" stroke-width="3"/></g>
+          <g transform="translate(${px} ${py})">
+            <circle r="7.5" fill="${C.gold}"/>
+            <path d="M0 -30L-7 -18H7Z" fill="${C.gold}"/>
+            <rect x="-1.8" y="-20" width="3.6" height="11" fill="${C.gold}"/>
+          </g>
+          <text class="map-label" x="${labelLeft ? px + 16 : px - 16}" y="${py - 14}" text-anchor="${labelLeft ? 'start' : 'end'}" data-t="startHere"></text>
+        </svg>`
+    }
+
+    // Mitzi peeking over the edge of the diary page.
+    const peekArt = () => `
+      <svg class="peek" viewBox="0 0 66 38" aria-hidden="true">
+        <g transform="translate(18 20)"><g class="anim a-ear"><path d="M-6 0L-2 -16L7 -4Z" fill="${C.cat}"/></g></g>
+        <path d="M38 16L46 0L50 18Z" fill="${C.cat}"/>
+        <ellipse cx="33" cy="38" rx="22" ry="20" fill="${C.cat}"/>
+        <ellipse cx="25" cy="30" rx="2.4" ry="3" fill="#2a2a33"/>
+        <ellipse cx="41" cy="30" rx="2.4" ry="3" fill="#2a2a33"/>
+        <path d="M31.5 35.5H34.5L33 37.5Z" fill="#f08a8f"/>
+      </svg>`
+
+    // ---------- Screens ----------
+    const show = (id) => {
+      document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.id === id))
+      window.scrollTo(0, 0)
+      if (id === 's-start') prepareStart()
+    }
+    document.addEventListener('click', (e) => {
+      const go = e.target.closest('[data-go]')
+      if (go) show(go.dataset.go)
+    })
+
+    const pageHtml = (i) => {
+      const turn = TURNS[i]
+      const suffix = turn === 'back' ? t('toLastCrossing') : turn === 'straight' ? t('toCrossingStraight') : t('toCrossingTurn')
+      const line = get(riddle, `diary.${lang}`)?.[i]
+      return `
+        <div class="turn">${turnIcon(turn)}<div><strong>${esc(t(`turn.${turn}`))}</strong><span>${esc(suffix)}</span></div></div>
+        ${ROUTE[i].ink ? '' : `<p class="noink">${esc(t('noInk'))}</p>`}
+        ${line ? `<p class="hand quote">${esc(line)}</p>` : ''}`
+    }
+
+    const roomText = () => {
+      let x = 0, y = 0, minX = 0, maxX = 0, minY = 0, maxY = 0
+      for (const m of ROUTE) {
+        x += m.dx
+        y += m.dy
+        minX = Math.min(minX, x)
+        maxX = Math.max(maxX, x)
+        minY = Math.min(minY, y)
+        maxY = Math.max(maxY, y)
+      }
+      const m = (squares) => +(squares * CELL).toFixed(1)
+      const parts = []
+      if (maxY) parts.push(t('ahead', {m: m(maxY)}))
+      if (minY) parts.push(t('behind', {m: m(-minY)}))
+      if (minX) parts.push(t('left', {m: m(-minX)}))
+      if (maxX) parts.push(t('right', {m: m(maxX)}))
+      return parts.join(', ')
+    }
+
+    // ---------- Progress, so a reload doesn't lose the walk ----------
+    const PKEY = `urbanquest-riddle-${RIDDLE_ID}`
+    const saveProgress = () => store.set(PKEY, JSON.stringify({seg, mode}))
+    const loadProgress = () => safe(() => JSON.parse(store.get(PKEY) || 'null'))
+    const clearProgress = () => store.del(PKEY)
+
+    let wakeLock = null
+    const keepAwake = async () => { try { wakeLock = await navigator.wakeLock?.request('screen') } catch { wakeLock = null } }
+    const letSleep = () => { try { wakeLock?.release() } catch {} wakeLock = null }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && walkingNow()) keepAwake()
+    })
+
+    const isPhone = () => matchMedia('(pointer: coarse)').matches
+
+    const prepareStart = () => {
+      const saved = loadProgress()
+      const resume = $('#btn-resume')
+      if (saved && saved.seg > 0 && saved.seg < N) {
+        resume.hidden = false
+        resume.textContent = t('resume', {n: saved.seg + 1})
+      } else {
+        resume.hidden = true
+      }
+      // Fetch the AR engine in the background, so the camera starts faster if they choose it.
+      if (isPhone()) loadEngine().catch(() => {})
+    }
+
+    // ---------- Render everything in the current language ----------
+    const render = () => {
+      const he = lang === 'he'
+      document.documentElement.lang = lang
+      document.documentElement.dir = he ? 'rtl' : 'ltr'
+      document.title = `${L(riddle.title)} · ${L(riddle.kicker)}`
+      $('#lang').textContent = t('langName')
+      $('#story').innerHTML = (get(riddle, `story.${lang}`) || []).map((p) => `<p>${esc(p)}</p>`).join('')
+      $('#rules').innerHTML = (get(riddle, `rules.${lang}`) || []).map((r) => `<li>${esc(r)}</li>`).join('')
+      $('#start-note').hidden = !(riddle.start && riddle.start.placeholder)
+      $('#ar-sub').textContent = isPhone() ? t('startARsub') : t('arPhoneOnly')
+      const room = $('#room')
+      room.hidden = !params.has('cell')
+      room.textContent = t('room', {room: roomText()})
+      $('#diary-list').innerHTML = TURNS.map((turn, i) => `
+        <li><span class="n">${i + 1}</span>${turnIcon(turn)}<span class="hand">${esc(get(riddle, `diary.${lang}`)?.[i] || t(`turn.${turn}`))}</span></li>`).join('')
+      $('#to-tq').href = tqUrl()
+      document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t) })
+      document.querySelectorAll('[data-l]').forEach((el) => { el.textContent = L(get(riddle, el.dataset.l)) })
+      if ($('#s-start').classList.contains('on')) prepareStart()
+      if ($('#s-walk').classList.contains('on')) renderDiaryPage(false)
+      if (document.body.classList.contains('ar')) refreshArCard()
+    }
+    $('#lang').addEventListener('click', () => {
+      lang = lang === 'he' ? 'en' : 'he'
+      store.set('urbanquest-lang', lang)
+      render()
+    })
+
+    // ---------- Shared walk state ----------
+    let mode = null      // 'diary' | 'ar'
+    let seg = 0          // the stretch being walked now (0-based)
+    let diaryState = 'ready'
+    const walkingNow = () => (mode === 'diary' && $('#s-walk').classList.contains('on')) || document.body.classList.contains('ar')
+
+    const finish = () => {
+      clearProgress()
+      letSleep()
+      mode = null
+      show('s-end')
+    }
+
+    // ---------- Diary mode: no camera, any phone ----------
+    const startDiary = (from = 0) => {
+      mode = 'diary'
+      seg = from
+      diaryState = 'ready'
+      saveProgress()
+      keepAwake()
+      show('s-walk')
+      renderDiaryPage(false)
+    }
+    const renderDiaryPage = (animate = true) => {
+      const pageEl = $('#w-page')
+      const ready = diaryState === 'ready'
+      $('#w-progress').textContent = ready ? '' : t('page', {n: seg + 1, total: N})
+      $('#w-bar').style.width = `${(seg / N) * 100}%`
+      pageEl.innerHTML = ready
+        ? `<div class="ready-title">${esc(t('readyTitle'))}</div><p>${esc(seg > 0 ? t('readyResume') : t('readyText'))}</p>${peekArt()}`
+        : pageHtml(seg) + peekArt()
+      $('#w-next').textContent = ready ? t('imThere') : t('atCrossing')
+      $('#w-prev').hidden = ready || seg === 0
+      if (animate) {
+        pageEl.classList.remove('flip')
+        void pageEl.offsetWidth
+        pageEl.classList.add('flip')
+      }
+    }
+    $('#w-next').addEventListener('click', () => {
+      if (diaryState === 'ready') {
+        diaryState = 'walking'
+      } else {
+        seg++
+        if (navigator.vibrate) navigator.vibrate(30)
+        if (seg >= N) return finish()
+        saveProgress()
+      }
+      renderDiaryPage()
+    })
+    $('#w-prev').addEventListener('click', () => {
+      if (seg > 0) seg--
+      saveProgress()
+      renderDiaryPage()
+    })
+    $('#w-exit').addEventListener('click', () => {
+      letSleep()
+      show('s-start')
+    })
+
+    $('#btn-diary').addEventListener('click', () => startDiary(0))
+    $('#btn-ar').addEventListener('click', () => startAR(0))
+    $('#btn-resume').addEventListener('click', () => {
+      const saved = loadProgress() || {}
+      const from = Math.max(0, Math.min(N - 1, saved.seg || 0))
+      if (saved.mode === 'ar') startAR(from)
+      else startDiary(from)
+    })
+    $('#btn-again').addEventListener('click', () => {
+      clearProgress()
+      show('s-start')
+    })
+
+    // ---------- Back to TravelQuest ----------
+    // Logins there are per site, so go back to whichever TravelQuest site the player came from.
+    const TQ_HOST = /(^|\.)(travelandquest\.com|travelquest\.xyz)$/i
+    const fromTQ = safe(() => {
+      const ref = document.referrer ? new URL(document.referrer) : null
+      if (ref && TQ_HOST.test(ref.hostname)) {
+        session.set('urbanquest-tq-origin', ref.origin)
+        return true
+      }
+      return false
+    }, false)
+    const tqUrl = () => {
+      const tq = (riddle && riddle.travelQuest) || {}
+      const origin = session.get('urbanquest-tq-origin') || tq.origin || 'https://travelandquest.com'
+      return origin + ((tq.path && tq.path[lang]) || (lang === 'he' ? '/iw/' : '/en/'))
+    }
+    $('#to-tq').addEventListener('click', (e) => {
+      e.preventDefault()
+      if (fromTQ && history.length > 1) {
+        history.back()   // opened from TravelQuest in this tab: step back to the mission
+        return
+      }
+      window.close()     // opened in a new tab: closing it shows TravelQuest again
+      setTimeout(() => { location.href = tqUrl() }, 350)
+    })
+
+    // ---------- AR mode: arrows on the ground (8th Wall SLAM) ----------
+    let THREE = null
+    let enginePromise = null
+    let pipelineAdded = false
+    let scene, camera
+    let state = 'off'            // off | loading | ready | walking | lost | failed
+    let trackingSeen = false
+    let limitedSince = 0
+    let fwd, right, UP, Z
+    let segStart = null
+    let segEnd = null
+    let segDir = null
+    let segLen = 0
+    let layer = null             // arrows + ring for the current stretch
+    let arrows = []
+    let crumbs = []              // drawn stretches: {mesh, born}
+    let lastPos = null
+    let lastHud = 0
+    let chevronGeometry = null
+    const GOLD = 0xFFB300
+    const WHITE = 0xFFFFFF
+
+    const loadScript = (src, attrs = {}) => new Promise((resolve, reject) => {
+      const s = document.createElement('script')
+      s.src = src
+      s.crossOrigin = 'anonymous'
+      for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v)
+      s.onload = resolve
+      s.onerror = () => reject(new Error(`Couldn't load ${src}`))
+      document.head.appendChild(s)
+    })
+    const loadEngine = () => {
+      enginePromise = enginePromise || (async () => {
+        const three = await import('three')
+        window.THREE = three  // the 8th Wall three.js module reads window.THREE
+        await loadScript(ENGINE.extras)
+        await loadScript(ENGINE.landing)
+        const loaded = new Promise((resolve) => {
+          if (window.XR8) resolve()
+          else window.addEventListener('xrloaded', resolve, {once: true})
+        })
+        await loadScript(ENGINE.xr, {'data-preload-chunks': 'slam'})
+        await loaded
+        return three
+      })()
+      enginePromise.catch(() => { enginePromise = null })  // allow a retry later
+      return enginePromise
+    }
+
+    const statusEl = $('#status')
+    const setStatus = (text, cls) => { statusEl.textContent = text; statusEl.className = cls || '' }
+    let arAction = null
+    const arCard = (html, label, onAction, enabled = true) => {
+      $('#ar-page').innerHTML = html
+      const btn = $('#ar-action')
+      btn.textContent = label
+      btn.disabled = !enabled
+      arAction = onAction
+    }
+    $('#ar-action').addEventListener('click', () => { if (arAction) arAction() })
+
+    const refreshArCard = () => {
+      if (state === 'ready' || state === 'loading') arReadyCard()
+      else if (state === 'walking') walkingCard()
+      else if (state === 'lost') lostCard()
+      else if (state === 'failed') failedCard()
+    }
+
+    const groundPos = () => new THREE.Vector3(camera.position.x, 0, camera.position.z)
+    const facing = () => {
+      const f = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion)
+      f.y = 0
+      if (f.lengthSq() < 1e-6) f.set(0, 0, -1)
+      return f.normalize()
+    }
+    const aimAxes = () => {
+      fwd = facing()
+      right = new THREE.Vector3().crossVectors(fwd, UP).normalize()
+    }
+
+    const buildThree = () => {
+      UP = new THREE.Vector3(0, 1, 0)
+      Z = new THREE.Vector3(0, 0, 1)
+      fwd = new THREE.Vector3(0, 0, -1)
+      right = new THREE.Vector3(1, 0, 0)
+      const s = new THREE.Shape()
+      s.moveTo(0, 0.2)
+      s.lineTo(0.24, -0.04)
+      s.lineTo(0.24, -0.17)
+      s.lineTo(0, 0.07)
+      s.lineTo(-0.24, -0.17)
+      s.lineTo(-0.24, -0.04)
+      s.closePath()
+      chevronGeometry = new THREE.ExtrudeGeometry(s, {depth: 0.025, bevelEnabled: false})
+      chevronGeometry.rotateX(-Math.PI / 2)  // lay flat: tip points along -Z, thickness points up
+    }
+    const arrowSize = () => Math.min(1, CELL)
+
+    const flatRing = (pos, inner, outer, color) => {
+      const m = new THREE.Mesh(
+        new THREE.RingGeometry(inner, outer, 48),
+        new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9, side: THREE.DoubleSide})
+      )
+      m.rotation.x = -Math.PI / 2
+      m.position.set(pos.x, 0.012, pos.z)
+      return m
+    }
+
+    const clearScene = () => {
+      if (scene && layer) scene.remove(layer)
+      layer = null
+      arrows = []
+      if (scene) for (const c of crumbs) scene.remove(c.mesh)
+      crumbs = []
+    }
+
+    const placeSide = (start) => {
+      if (layer) scene.remove(layer)
+      layer = new THREE.Group()
+      arrows = []
+      const move = ROUTE[seg]
+      const dir = new THREE.Vector3().addScaledVector(right, move.dx).addScaledVector(fwd, move.dy)
+      const len = dir.length() * CELL
+      dir.normalize()
+      segStart = start.clone()
+      segEnd = start.clone().addScaledVector(dir, len)
+      segDir = dir.clone()
+      segLen = len
+      const color = move.ink ? GOLD : WHITE
+      const S = arrowSize()
+      const n = Math.max(2, Math.round(len / 0.45))
+      for (let i = 0; i < n; i++) {
+        const m = new THREE.Mesh(chevronGeometry, new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9}))
+        m.position.copy(segStart.clone().lerp(segEnd, (i + 0.5) / n))
+        m.position.y = 0.01
+        m.rotation.y = Math.atan2(-dir.x, -dir.z)
+        m.scale.setScalar(S)
+        m.userData.index = i
+        m.userData.base = move.ink ? 0.55 : 0.35
+        layer.add(m)
+        arrows.push(m)
+      }
+      layer.add(flatRing(segEnd, 0.16 * S, 0.24 * S, color))
+      scene.add(layer)
+    }
+
+    const addCrumb = (a, b) => {
+      const len = a.distanceTo(b)
+      if (len < 0.05) return
+      const mat = new THREE.MeshBasicMaterial({color: 0xFFD45E, transparent: true, opacity: 0.85})
+      const m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, len), mat)
+      m.position.copy(a).add(b).multiplyScalar(0.5)
+      m.position.y = 0.006
+      m.quaternion.setFromUnitVectors(Z, b.clone().sub(a).normalize())
+      scene.add(m)
+      crumbs.push({mesh: m, born: performance.now()})
+    }
+
+    const arReadyCard = () => {
+      $('#ar-progress').textContent = seg > 0 ? t('page', {n: seg + 1, total: N}) : ''
+      if (!trackingSeen) {
+        arCard(`<p>${esc(t('pointGround'))}</p>`, t('waiting'), null, false)
+        return
+      }
+      arCard(`<p>${esc(seg > 0 ? t('arResume') : t('arReady'))}</p>`, t('go'), beginArWalk)
+    }
+    const walkingCard = () => {
+      $('#ar-progress').textContent = t('page', {n: seg + 1, total: N})
+      arCard(pageHtml(seg) + (AUTO ? '<p class="dist"></p>' : ''), t('atCrossing'), () => completeSide())
+    }
+    const lostCard = () => arCard(`<p>${esc(t('lost'))}</p>`, t('cont'), continueAfterLost)
+    const failedCard = () => arCard(`<p>${esc(t('arFail'))}</p>`, t('startDiary'), () => {
+      stopAR()
+      startDiary(seg)
+    })
+
+    const startAR = async (from = 0) => {
+      mode = 'ar'
+      seg = from
+      saveProgress()
+      document.body.classList.add('ar')
+      state = 'loading'
+      trackingSeen = false
+      limitedSince = 0
+      setStatus(t('loadingAR'), 'warn')
+      arReadyCard()
+      keepAwake()
+      try {
+        THREE = await loadEngine()
+      } catch (err) {
+        state = 'failed'
+        setStatus(t('loadFail'), 'warn')
+        failedCard()
+        return
+      }
+      if (!document.body.classList.contains('ar')) return  // they left while it loaded
+      if (!chevronGeometry) buildThree()
+      if (!pipelineAdded) {
+        XR8.XrController.configure({scale: SCALE})
+        XR8.addCameraPipelineModules([
+          XR8.GlTextureRenderer.pipelineModule(),      // draws the camera feed
+          XR8.Threejs.pipelineModule(),                // three.js scene synced to the camera
+          XR8.XrController.pipelineModule(),           // SLAM world tracking
+          LandingPage.pipelineModule(),                // desktop: shows a QR code to open on a phone
+          XRExtras.FullWindowCanvas.pipelineModule(),  // full-screen canvas
+          XRExtras.Loading.pipelineModule(),           // loading screen + camera/motion permission prompts
+          XRExtras.RuntimeError.pipelineModule(),      // error screen
+          walkModule(),
+        ])
+        pipelineAdded = true
+      }
+      XR8.run({canvas: $('#camerafeed')})
+    }
+
+    const stopAR = () => {
+      clearScene()
+      safe(() => window.XR8 && XR8.stop())
+      document.body.classList.remove('ar')
+      document.documentElement.removeAttribute('style')
+      document.body.removeAttribute('style')
+      state = 'off'
+      letSleep()
+    }
+    $('#ar-exit').addEventListener('click', () => {
+      stopAR()
+      mode = null
+      show('s-start')
+    })
+
+    const beginArWalk = () => {
+      clearScene()
+      aimAxes()
+      const here = groundPos()
+      placeSide(here)
+      lastPos = here
+      state = 'walking'
+      walkingCard()
+    }
+
+    // auto: the player came within reach of the crossing, so the next stretch starts at the crossing itself.
+    // A tap means "I'm at the crossing", so it starts at the player's feet: tracking drift never builds up.
+    const completeSide = (auto = false) => {
+      const here = groundPos()
+      const anchor = auto ? segEnd.clone() : here
+      if (ROUTE[seg].ink) addCrumb(segStart, anchor)
+      seg++
+      if (navigator.vibrate) navigator.vibrate(40)
+      if (seg >= N) return finishAr()
+      saveProgress()
+      placeSide(anchor)
+      lastPos = here
+      walkingCard()
+    }
+
+    const enterLost = () => {
+      state = 'lost'
+      if (layer) scene.remove(layer)
+      layer = null
+      arrows = []
+      lostCard()
+    }
+
+    const continueAfterLost = () => {
+      for (const c of crumbs) scene.remove(c.mesh)  // they belong to the old, slipped frame
+      crumbs = []
+      aimAxes()
+      seg++
+      limitedSince = 0
+      const here = groundPos()
+      lastPos = here
+      if (seg >= N) return finishAr()
+      saveProgress()
+      placeSide(here)
+      state = 'walking'
+      walkingCard()
+    }
+
+    const finishAr = () => {
+      stopAR()
+      finish()
+    }
+
+    // Our camera pipeline module
+    const walkModule = () => ({
+      name: 'udis-garden-walk',
+
+      onStart: ({canvas}) => {
+        const xr = XR8.Threejs.xrScene()
+        scene = xr.scene
+        camera = xr.camera
+        camera.position.set(0, CAMERA_HEIGHT, 0)
+        XR8.XrController.updateCameraProjectionMatrix({origin: camera.position, facing: camera.quaternion})
+        canvas.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false})
+        setStatus(t('stMove'), 'warn')
+        state = 'ready'
+        arReadyCard()
+        // Safety net: if no tracking event arrives, still let the player start after a few seconds.
+        setTimeout(() => {
+          if (trackingSeen) return
+          trackingSeen = true
+          if (state === 'ready') arReadyCard()
+        }, 5000)
+      },
+
+      onUpdate: () => {
+        if (!scene) return
+        const now = performance.now()
+        const tt = now / 1000
+
+        // Light runs along the arrows in the walking direction.
+        const S = arrowSize()
+        for (const a of arrows) {
+          const wave = Math.max(0, Math.sin(tt * 4 - a.userData.index * 0.8))
+          a.scale.setScalar(S * (1 + 0.25 * wave))
+          a.material.opacity = a.userData.base + (1 - a.userData.base) * wave
+        }
+
+        // Drawn stretches fade away, so the picture only exists in the player's head.
+        if (!KEEP_TRAIL) {
+          crumbs = crumbs.filter((c) => {
+            const k = (now - c.born) / FADE_MS
+            if (k >= 1) { scene.remove(c.mesh); return false }
+            c.mesh.material.opacity = 0.85 * (1 - k)
+            return true
+          })
+        }
+
+        if (state !== 'walking') return
+        const here = groundPos()
+
+        // A sudden jump, or weak tracking for a while, means the world origin slipped.
+        if (lastPos && here.distanceTo(lastPos) > JUMP) return enterLost()
+        if (limitedSince && now - limitedSince > LOST_AFTER_MS) return enterLost()
+        lastPos = here
+
+        if (!AUTO) return
+        // Arrived = near the crossing and well along the stretch (so turning straight back can't skip a page).
+        const arrive = Math.min(0.9, Math.max(0.25, 0.35 * segLen))
+        const dist = here.distanceTo(segEnd)
+        const along = here.clone().sub(segStart).dot(segDir)
+        if (dist < arrive && along > 0.6 * segLen) return completeSide(true)
+        if (now - lastHud > 250) {
+          lastHud = now
+          const d = document.querySelector('#ar-page .dist')
+          if (d) d.textContent = t('toGo', {d: dist.toFixed(1)})
+        }
+      },
+
+      listeners: [{
+        event: 'reality.trackingstatus',
+        process: ({detail}) => {
+          const {status, reason} = detail || {}
+          if (status === 'NORMAL') {
+            limitedSince = 0
+            setStatus(t('stGood'), 'good')
+            if (!trackingSeen) {
+              trackingSeen = true
+              if (state === 'ready') arReadyCard()
+            }
+            return
+          }
+          if (!limitedSince) limitedSince = performance.now()
+          if (reason === 'INITIALIZING') setStatus(t('stInit'), 'warn')
+          else if (reason === 'TOO_MUCH_MOTION') setStatus(t('stFast'), 'warn')
+          else if (reason === 'NOT_ENOUGH_TEXTURE') setStatus(t('stTexture'), 'warn')
+          else setStatus(t('stLimited'), 'warn')
+        },
+      }],
+
+      onCameraStatusChange: ({status}) => {
+        if (status === 'failed') {
+          state = 'failed'
+          failedCard()
+        }
+      },
+
+      onException: (err) => {
+        let msg = err && err.message
+        if (!msg) msg = safe(() => JSON.stringify(err), String(err))
+        showError(`AR error: ${msg}`)
+      },
+    })
+
+    // ---------- Start ----------
+    const pickLang = () => {
+      const q = params.get('lang')
+      if (q === 'he' || q === 'en') return q
+      const saved = store.get('urbanquest-lang')
+      if (saved === 'he' || saved === 'en') return saved
+      const phone = (navigator.language || '').slice(0, 2)
+      if (phone === 'he' || phone === 'iw') return 'he'
+      if (phone === 'en') return 'en'
+      return riddle.defaultLang || 'he'
+    }
+
+    const boot = async () => {
+      try {
+        const res = await fetch(`riddles/${RIDDLE_ID}.json`, {cache: 'no-cache'})
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        riddle = await res.json()
+        ROUTE = parseRoute(riddle.route)
+      } catch (err) {
+        $('#s-loading').innerHTML = `<p>${esc(UI.he.loadFail)}</p><p>${esc(UI.en.loadFail)}</p><p class="muted">${esc(err.message)}</p>`
+        return
+      }
+      TURNS = turnsOf(ROUTE)
+      N = ROUTE.length
+      const cell = parseFloat(params.get('cell'))
+      CELL = Math.min(8, Math.max(0.5, cell || riddle.cell || 1))
+      AUTO = params.has('auto') ? params.get('auto') === '1' : (params.has('cell') ? true : !!riddle.autoAdvance)
+      lang = pickLang()
+      $('#art-intro').innerHTML = introArt()
+      $('#art-how').innerHTML = howArt()
+      $('#art-map').innerHTML = mapArt()
+      $('#art-end').innerHTML = endArt()
+      render()
+      const first = params.get('screen')
+      show(first && document.getElementById(first) ? first : 's-intro')
+    }
+    boot()
+  </script>
+</body>
+</html>

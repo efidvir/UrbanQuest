@@ -1,0 +1,130 @@
+{
+  "id": "garden",
+  "defaultLang": "he",
+  "codeLength": 4,
+  "title": {
+    "he": "הקוד של אודי",
+    "en": "Udi's code"
+  },
+  "kicker": {
+    "he": "הבימה · טיול בגינה",
+    "en": "Habima · A walk in the garden"
+  },
+  "story": {
+    "he": [
+      "עוד שעתיים עולה הבכורה בהבימה. הדלת לבמה נעולה, ואודי, אב הבית של התיאטרון, לא זוכר את הקוד החדש.",
+      "בחודש שעבר מיצי, החתולה של התיאטרון, לעסה לו את הפנקס. אז אתמול בלילה הוא החביא את הקוד איפה שאף חתול לא יגיע: הוא כתב אותו ברגליים על שבילי הגינה, ספרה אחרי ספרה, ורשם ביומן לאן הלך.",
+      "עכשיו נשאר לו רק היומן. לכו בעקבותיו וגלו מה הוא כתב."
+    ],
+    "en": [
+      "Two hours to opening night at Habima. The stage door is locked, and Udi, the theatre's caretaker, can't remember the new code.",
+      "Last month Mitzi, the theatre cat, chewed up his notebook. So last night he hid the code where no cat could reach it: he wrote it with his feet on the garden paths, number by number, and noted in his diary where he walked.",
+      "Now the diary is all he has. Follow in his footsteps and work out what he wrote."
+    ]
+  },
+  "rules": {
+    "he": [
+      "גשו לנקודת ההתחלה של אודי ועמדו עם הפנים לקצה הרחוק של הדשא.",
+      "כל דף ביומן הוא קטע שביל אחד, מצומת לצומת. עם המצלמה יופיעו חיצים על הקרקע.",
+      "הצעדים של אודי זוהרים לרגע ונעלמים. שמרו את הצורה בראש.",
+      "בסוף, גלו את הקוד והקלידו אותו בטרוול קווסט."
+    ],
+    "en": [
+      "Go to Udi's starting point and face the far end of the lawn.",
+      "Each diary page is one stretch of path, from one crossing to the next. With the camera on, arrows appear on the ground.",
+      "Udi's footsteps glow for a moment, then fade. Keep the shape in your head.",
+      "At the end, work out the code and enter it in TravelQuest."
+    ]
+  },
+  "start": {
+    "placeholder": true,
+    "map": {"cols": 3, "rows": 4, "x": 1, "y": 4},
+    "title": {
+      "he": "נקודת ההתחלה",
+      "en": "The starting point"
+    },
+    "text": {
+      "he": "עמדו בקצה הרחוק של הדשא, איפה שהשביל הראשון משמאל פוגש אותו, עם הגב לערוגות.",
+      "en": "Stand at the far edge of the lawn, where the first path from the left meets it, with your back to the flower beds."
+    },
+    "note": {
+      "he": "זמני: הנקודה המדויקת תסומן כאן בהמשך.",
+      "en": "Placeholder: the exact spot will be marked here later."
+    }
+  },
+  "route": "L,B,R,B,L,R,B,L,B,R3,F2,B,L,F,R,F,L,B,F2,R",
+  "cell": 4,
+  "autoAdvance": false,
+  "diary": {
+    "he": [
+      "קודם שמאלה. אמא תמיד אמרה: כשמתלבטים, הולכים שמאלה.",
+      "שוב שמאלה, לכיוון הערוגות.",
+      "ועוד פעם שמאלה. שלוש פעמים שמאלה ברצף... אני הולך במעגלים?",
+      "לא, אין מעגלים! ימינה, לכיוון הערוגות.",
+      "שוב ימינה. מבפנים כבר שומעים את הכינורות מתכווננים.",
+      "רגע, איפה העיפרון? הסתובבתי וחזרתי באותה דרך. (הוא היה מאחורי האוזן.)",
+      "ימינה, לכיוון הערוגות.",
+      "שוב ימינה. מיצי הולכת אחריי. קישטה, מיצי!",
+      "שמאלה, עד הערוגות עצמן.",
+      "שמאלה, לאורך הערוגות. איזה ריח של יסמין.",
+      "ישר. אל תדרוך על הפטוניות, אודי.",
+      "ישר, עד הפינה.",
+      "בפינה שמאלה, הרחק מהפרחים.",
+      "ישר. הקפה נגמר.",
+      "המפתחות! הם נפלו לי. הסתובבתי וחזרתי צומת אחד אחורה.",
+      "מצאתי. ימינה, לרוחב הדשא.",
+      "ימינה, לכיוון הקצה הרחוק.",
+      "שוב ימינה. הברכיים שלי מתלוננות.",
+      "שמאלה, לכיוון הקצה הרחוק.",
+      "שוב שמאלה. מישהו מסתכל עליי? רק מיצי.",
+      "ושוב שמאלה, בחזרה לכיוון הערוגות.",
+      "מיצי התיישבה לי באמצע הדרך. הסתובבתי וחזרתי.",
+      "ישר, עד הקצה הרחוק.",
+      "ימינה, עד הפינה. סיימתי! הקוד מוסתר היטב. אף אחד לא ימצא אותו... כולל אני?"
+    ],
+    "en": [
+      "Left first. Mum always said: when in doubt, go left.",
+      "Left again, toward the flower beds.",
+      "And left once more. Three lefts in a row... am I walking in circles?",
+      "No circles! Right, toward the flower beds.",
+      "Right again. I can hear the violins tuning up inside.",
+      "Wait, where's my pencil? I turned around and went back the same way. (It was behind my ear.)",
+      "Right, toward the flower beds.",
+      "Right again. Mitzi is following me. Shoo, Mitzi!",
+      "Left, all the way to the flower beds.",
+      "Left, along the flower beds. Mmm, jasmine.",
+      "Straight on. Don't step on the petunias, Udi.",
+      "Straight on, to the corner.",
+      "Left at the corner, away from the flowers.",
+      "Straight on. My coffee's finished.",
+      "My keys! I dropped them. I turned around and went back one crossing.",
+      "Found them. Right, across the lawn.",
+      "Right, toward the far end.",
+      "Right again. My knees are complaining.",
+      "Left, toward the far end.",
+      "Left again. Is someone watching me? Only Mitzi.",
+      "And left, back toward the flower beds.",
+      "Mitzi sat down right in my way. I turned around and went back.",
+      "Straight on, to the far end.",
+      "Right, to the corner. Done! The code is safely hidden. Nobody will ever find it... including me?"
+    ]
+  },
+  "end": {
+    "title": {
+      "he": "זה סוף היומן",
+      "en": "That's the end of the diary"
+    },
+    "udi": {
+      "he": "נו... מה כתבתי? אני תמיד כותב עם הפנים לקצה הרחוק, ותמיד מותח קו מתחת לקוד.",
+      "en": "So... what did I write? I always write facing the far end, and I always underline my codes."
+    },
+    "task": {
+      "he": "דמיינו את המסלול שלכם מלמעלה, גלו את ארבע הספרות והקלידו אותן בטרוול קווסט.",
+      "en": "Picture your walk from above, work out the four digits, and enter them in TravelQuest."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {"he": "/iw/", "en": "/en/"}
+  }
+}
