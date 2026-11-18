@@ -10,6 +10,16 @@
     "he": "הבימה · טיול בגינה",
     "en": "Habima · A walk in the garden"
   },
+  "art": {
+    "intro": "art/intro.webp",
+    "end": "art/end.webp",
+    "udiWave": "art/udi-wave.webp",
+    "udiRead": "art/udi-read.webp",
+    "mitziSit": "art/mitzi-sit.webp",
+    "mitziWalk": "art/mitzi-walk.webp",
+    "key": "art/key.webp",
+    "cup": "art/cup.webp"
+  },
   "story": {
     "he": [
       "עוד שעתיים עולה הבכורה בהבימה. הדלת לבמה נעולה, ואודי, אב הבית של התיאטרון, לא זוכר את הקוד החדש.",

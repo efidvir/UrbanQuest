@@ -70,6 +70,9 @@
     .lead { display: flex; flex-direction: column; gap: 10px; }
     .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
     .art { display: block; width: 100%; height: auto; border-radius: 22px; background: var(--sky); direction: ltr; }
+    /* A picture file for a story screen drifts slowly, like a camera moving over the scene. */
+    .scene { overflow: hidden; border-radius: 22px; isolation: isolate; }
+    .scene .art { border-radius: 0; transform-origin: 55% 45%; }
 
     .btn {
       display: block;
@@ -162,6 +165,8 @@
     .turn span { display: block; font-size: 15px; color: #6b5b45; }
     .noink { font-size: 14px; color: #6b5b45; }
     .peek { position: absolute; bottom: 0; inset-inline-end: 16px; width: 66px; height: 38px; }
+    .peek-img { width: 72px; height: 44px; overflow: hidden; }
+    .peek-img img { display: block; width: 100%; height: auto; }
     .walkhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .progress { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .12); overflow: hidden; }
     .progress i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .3s ease; }
@@ -193,7 +198,11 @@
       .a-jingle { animation: jingle 2.6s ease-in-out infinite; }
       .a-read { animation: read 4s ease-in-out infinite; }
       .a-step { animation: step 1.6s ease-in-out infinite; }
+      .scene .art { animation: drift 18s ease-in-out infinite alternate; }
+      .a-peek { animation: peek 5s ease-in-out infinite; }
     }
+    @keyframes drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, 1%); } }
+    @keyframes peek { 0%, 100% { transform: translateY(9px); } 40%, 75% { transform: translateY(0); } }
     @keyframes scratch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     @keyframes tail { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-16deg); } }
@@ -879,7 +888,9 @@
         <path d="M0 74H360M118 0V120M262 0V120" stroke="#cdb98f" stroke-width="16"/>
         ${[0, 1, 2, 3, 4, 5].map((i) => `<g transform="translate(${136 + i * 21} ${74 + (i % 2 ? 4 : -4)}) rotate(90)"><g class="a-step" style="animation-delay:${(i * .18).toFixed(2)}s"><ellipse cx="0" cy="-3.5" rx="3.2" ry="5.5" fill="#ffb300"/><ellipse cx="0" cy="5" rx="2.7" ry="3" fill="#ffb300"/></g></g>`).join('')}
         <circle cx="262" cy="74" r="13" fill="none" stroke="#ffb300" stroke-width="4"/>
-        <g transform="translate(266 78) scale(.62)">${mitziSitting(false)}</g>
+        ${get(riddle, 'art.mitziSit')
+          ? `<image href="${esc(get(riddle, 'art.mitziSit'))}" x="248" y="38" width="32" height="47" preserveAspectRatio="xMidYMax meet"/>`
+          : `<g transform="translate(266 78) scale(.62)">${mitziSitting(false)}</g>`}
         <circle cx="104" cy="74" r="8" fill="#5fd3ff" stroke="#fff" stroke-width="2.5"/>
       </svg>`
 
@@ -924,8 +935,10 @@
         </svg>`
     }
 
-    // Mitzi peeking over the edge of the diary page.
-    const peekArt = () => `
+    // Mitzi peeking over the edge of the diary page: the top of her picture if the riddle has one, or a drawing.
+    const peekArt = () => get(riddle, 'art.mitziSit')
+      ? `<div class="peek peek-img" aria-hidden="true"><img class="a-peek" src="${esc(get(riddle, 'art.mitziSit'))}" alt=""></div>`
+      : `
       <svg class="peek" viewBox="0 0 66 38" aria-hidden="true">
         <g transform="translate(18 20)"><g class="anim a-ear"><path d="M-6 0L-2 -16L7 -4Z" fill="${C.cat}"/></g></g>
         <path d="M38 16L46 0L50 18Z" fill="${C.cat}"/>
@@ -1901,7 +1914,7 @@
       const img = new Image()
       img.className = 'art'
       img.alt = ''
-      img.onload = () => el.replaceChildren(img)
+      img.onload = () => { el.classList.add('scene'); el.replaceChildren(img) }
       img.src = file
     }
 

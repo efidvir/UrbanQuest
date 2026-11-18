@@ -32,7 +32,7 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 
 ## Riddle page (the playable version)
 
-[`riddle/`](riddle/) is the page players open from the TravelQuest mission. It tells the story in Hebrew and English with animated drawings of Udi and Mitzi the cat, then opens the camera. The walk happens in AR:
+[`riddle/`](riddle/) is the page players open from the TravelQuest mission. It tells the story in Hebrew and English with cartoon pictures of Udi and Mitzi the cat, then opens the camera. The walk happens in AR:
 
 - **At the start:** Udi stands on the ground in front of you, waves, and explains in speech bubbles. Mitzi sits next to him.
 - **Along the way:** Mitzi runs ahead to the next crossing and waits on a glowing ring. Udi's footprints light up the stretch to walk, gold where he was "writing". Walked footprints fade after a few seconds, so the shape only lives in the player's head. Each stretch shows a short note from Udi's diary above the crossing.
@@ -44,6 +44,8 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden
 
 It's a template: each riddle is one file in [`riddle/riddles/`](riddle/riddles/), with its story, start point, route (same notation as the mystery walk), diary lines, Udi's opening and closing lines, story props, ending and return address, in both languages. Copy `garden.json`, change it, and link to `riddle/?r=<file name>`. The starting point is a placeholder until it's marked on site.
+
+The cartoon pictures live in [`riddle/art/`](riddle/art/), with the prompts used to make them and a script that cuts the figures out of their green background. A riddle file lists its pictures in its `art` block; anything missing falls back to the page's own drawings.
 
 Options for testing: `?lang=en`, `?cell=0.5` (half-metre squares at home, no measuring; the start screen says how much room you need), `?auto=0` or `?auto=1`, `?trail=1` (keep walked footprints visible), `?screen=s-end` (open a screen directly).
 
