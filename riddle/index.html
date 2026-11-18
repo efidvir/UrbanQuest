@@ -1203,7 +1203,7 @@
       const k = 512 / Math.max(w, h)
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(w * k)}" height="${Math.round(h * k)}" viewBox="${vb}">${art()}</svg>`
     }
-    const loadTexture = (svg) => new Promise((resolve) => {
+    const loadTexture = (src, aspect = null) => new Promise((resolve) => {
       const img = new Image()
       img.onload = () => {
         try {
@@ -1212,21 +1212,29 @@
           c.height = img.naturalHeight
           const g = c.getContext('2d')
           g.drawImage(img, 0, 0)
-          g.getImageData(0, 0, 1, 1)  // throws if this browser won't let a drawing become a texture
+          g.getImageData(0, 0, 1, 1)  // throws if this browser won't let a picture become a texture
           const tx = new THREE.CanvasTexture(c)
           tx.colorSpace = THREE.SRGBColorSpace
-          resolve(tx)
+          resolve({tex: tx, aspect: aspect || c.width / c.height})
         } catch {
           resolve(null)
         }
       }
       img.onerror = () => resolve(null)
-      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+      img.src = src
     })
+    // Picture files named in the riddle's "art" list (transparent PNGs, feet at the bottom edge).
+    const ART_FOR = {mitziSit: 'mitziSit', mitziWalkA: 'mitziWalk', mitziWalkB: 'mitziWalk', udiWaveA: 'udiWave', udiWaveB: 'udiWave', udiRead: 'udiRead', key: 'key', cup: 'cup'}
+    const artFile = (name) => get(riddle, `art.${ART_FOR[name] || name}`)
     const loadSprites = async () => {
       if (sprites) return
       const out = {}
-      await Promise.all(Object.keys(SPRITE).map(async (k) => { out[k] = await loadTexture(spriteSvg(SPRITE[k])) }))
+      await Promise.all(Object.keys(SPRITE).map(async (k) => {
+        const file = artFile(k)
+        const [, , w, h] = SPRITE[k].vb.split(' ').map(Number)
+        out[k] = (file && await loadTexture(file)) ||
+          await loadTexture(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(spriteSvg(SPRITE[k]))}`, w / h)
+      }))
       sprites = out
     }
 
@@ -1244,9 +1252,9 @@
       group.add(shadow)
       let card
       if (sprites && sprites[name]) {
-        const geo = new THREE.PlaneGeometry((height * w) / h, height)
+        const geo = new THREE.PlaneGeometry(height * (sprites[name].aspect || w / h), height)
         geo.translate(0, height / 2, 0)
-        card = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: sprites[name], transparent: true, alphaTest: 0.04, side: THREE.DoubleSide, depthWrite: false}))
+        card = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: sprites[name].tex, transparent: true, alphaTest: 0.04, side: THREE.DoubleSide, depthWrite: false}))
       } else {
         // The drawing didn't load on this phone: a glowing marker stands in for it.
         card = new THREE.Mesh(new THREE.SphereGeometry(height * 0.3, 16, 12), new THREE.MeshBasicMaterial({color: GOLD, transparent: true}))
@@ -1259,7 +1267,7 @@
     }
     const setPicture = (st, name) => {
       if (st.userData.name === name || !sprites || !sprites[name]) return
-      st.userData.card.material.map = sprites[name]
+      st.userData.card.material.map = sprites[name].tex
       st.userData.name = name
     }
     const faceCamera = (st, at = st.position) => {
@@ -1408,6 +1416,7 @@
       if (moving) {
         setPicture(mitzi.walk, Math.floor(now / 130) % 2 ? 'mitziWalkA' : 'mitziWalkB')
         mitzi.walk.userData.card.position.y = Math.abs(Math.sin((now / 130) * Math.PI)) * 0.025 * actScale
+        mitzi.walk.userData.card.rotation.z = Math.sin((now / 130) * Math.PI) * 0.05
         const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion)
         mitzi.walk.userData.card.scale.x = mitzi.heading.dot(camRight) < 0 ? -1 : 1
       } else {
@@ -1443,6 +1452,7 @@
       }
       setOpacity(udi, Math.min(1, (now - udi.userData.born) / 500))
       if (udi.userData.pose === 'wave') setPicture(udi, Math.floor(now / 380) % 2 ? 'udiWaveA' : 'udiWaveB')
+      udi.userData.card.rotation.z = Math.sin(now / 420) * 0.025
       faceCamera(udi)
     }
 
@@ -1883,6 +1893,18 @@
       return riddle.defaultLang || 'he'
     }
 
+    // The drawing shows at once; a picture file, if the riddle names one, replaces it when it has loaded.
+    const showArt = (sel, file, drawing) => {
+      const el = $(sel)
+      el.innerHTML = drawing
+      if (!file) return
+      const img = new Image()
+      img.className = 'art'
+      img.alt = ''
+      img.onload = () => el.replaceChildren(img)
+      img.src = file
+    }
+
     const boot = async () => {
       try {
         const res = await fetch(`riddles/${RIDDLE_ID}.json`, {cache: 'no-cache'})
@@ -1899,10 +1921,10 @@
       CELL = Math.min(8, Math.max(0.5, cell || riddle.cell || 1))
       cellKnown = !!cell || !get(riddle, 'ar.calibrate')
       lang = pickLang()
-      $('#art-intro').innerHTML = introArt()
-      $('#art-how').innerHTML = howArt()
+      showArt('#art-intro', get(riddle, 'art.intro'), introArt())
+      showArt('#art-how', get(riddle, 'art.how'), howArt())
       $('#art-map').innerHTML = mapArt()
-      $('#art-end').innerHTML = endArt()
+      showArt('#art-end', get(riddle, 'art.end'), endArt())
       render()
       const first = params.get('screen')
       show(first && document.getElementById(first) ? first : 's-intro')
