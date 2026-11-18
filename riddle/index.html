@@ -142,7 +142,7 @@
     [dir="rtl"] .quote::before { content: "”"; }
     [dir="rtl"] .quote::after { content: "“"; }
 
-    /* One diary page = one stretch of path */
+    /* Diary pages: only used when the camera can't start */
     .page { min-height: 250px; display: flex; flex-direction: column; gap: 14px; }
     .page.flip { animation: flip .35s ease; }
     @keyframes flip { from { opacity: .15; transform: translateX(16px) rotate(.8deg); } to { opacity: 1; transform: none; } }
@@ -170,8 +170,8 @@
     .diary-list { list-style: none; margin: 0; display: flex; flex-direction: column; gap: 0; }
     .paper.diary-list { background-image: linear-gradient(to right, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px); }
     [dir="rtl"] .paper.diary-list { background-image: linear-gradient(to left, transparent 28px, var(--margin) 28px, var(--margin) 29.5px, transparent 29.5px); }
-    .diary-list li + li { border-top: 1px solid var(--paper-line); }
     .diary-list li { display: flex; gap: 10px; align-items: flex-start; min-height: 34px; padding: 4px 0; }
+    .diary-list li + li { border-top: 1px solid var(--paper-line); }
     .diary-list .n { flex: none; width: 22px; font-size: 13px; color: #8a7a62; padding-top: 6px; text-align: center; }
     .diary-list svg { flex: none; width: 26px; height: 26px; color: #9a6a00; margin-top: 2px; }
     .diary-list .hand { font-size: 16px; line-height: 1.6; }
@@ -192,7 +192,7 @@
       .a-pulse { animation: pulse 1.6s ease-out infinite; }
       .a-jingle { animation: jingle 2.6s ease-in-out infinite; }
       .a-read { animation: read 4s ease-in-out infinite; }
-      .a-chev { animation: chev 1.4s ease-in-out infinite; }
+      .a-step { animation: step 1.6s ease-in-out infinite; }
     }
     @keyframes scratch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
@@ -210,9 +210,9 @@
     @keyframes pulse { 0% { transform: scale(.6); opacity: .95; } 100% { transform: scale(2.3); opacity: 0; } }
     @keyframes jingle { 0%, 80%, 100% { transform: rotate(0deg); } 85% { transform: rotate(14deg); } 90% { transform: rotate(-10deg); } 95% { transform: rotate(6deg); } }
     @keyframes read { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(3deg); } }
-    @keyframes chev { 0%, 100% { opacity: .3; } 40% { opacity: 1; } }
+    @keyframes step { 0%, 100% { opacity: .25; } 35% { opacity: 1; } }
 
-    /* AR mode: camera feed with the diary card on top */
+    /* AR mode: the camera view, with Udi, Mitzi and the footprints in it */
     #camerafeed { position: fixed; inset: 0; width: 100%; height: 100%; display: none; }
     body.ar #camerafeed { display: block; }
     body.ar #app { display: none; }
@@ -227,27 +227,103 @@
       padding: calc(12px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom));
     }
     body.ar #ar { display: flex; }
-    #status {
-      align-self: flex-start;
+    .ar-top { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .ar-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
       background: rgba(20, 24, 48, .78);
       color: #fff;
       border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 14px;
-      font-weight: 500;
-      transition: background .3s;
+      padding: 6px 13px;
+      font-size: 15px;
+      font-weight: 700;
     }
-    #status.good { background: rgba(22, 120, 70, .9); }
-    #status.warn { background: rgba(176, 112, 0, .92); }
-    #ar .bottom { display: flex; flex-direction: column; gap: 8px; max-width: 480px; width: 100%; margin: 0 auto; }
-    #ar-card { pointer-events: auto; max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    #ar-card .turn svg { width: 46px; height: 46px; }
-    #ar-card .turn strong { font-size: 19px; }
-    #ar-card .quote { font-size: 16px; line-height: 1.6; }
-    #ar-progress { font-size: 12px; color: #7a6a52; }
-    .dist { font-size: 14px; color: #6b5b45; }
+    .ar-pill svg { width: 20px; height: 20px; }
+    #ar-count { display: flex; align-items: center; gap: 6px; direction: ltr; unicode-bidi: isolate; }
+    #ar-key { display: flex; }
+    #ar-dot { width: 10px; height: 10px; border-radius: 50%; background: #f5a623; transition: background .3s; }
+    #ar-dot.good { background: #3ccf7a; }
+    #ar-status {
+      background: rgba(176, 112, 0, .92);
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    #ar .bottom { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 480px; width: 100%; margin: 0 auto; }
+    #ar-panel {
+      pointer-events: auto;
+      align-self: stretch;
+      background: rgba(20, 24, 48, .9);
+      color: #fff;
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    #ar-panel p { font-size: 16px; line-height: 1.5; }
+    .tilt { width: 64px; height: 64px; margin: 0 auto; display: block; }
+    .tilt .phone { transform-origin: 32px 50px; animation: tilt 2.4s ease-in-out infinite; }
+    @keyframes tilt { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+    #ar-here {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 22px 12px 16px;
+      background: var(--gold);
+      color: var(--gold-ink);
+      font-size: 17px;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+      cursor: pointer;
+    }
+    #ar-here svg { width: 30px; height: 30px; flex: none; }
+    #ar-here:active { transform: scale(.96); }
+    #ar-here.pulse { animation: here 1.6s ease-in-out infinite; }
+    @keyframes here { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 201, 74, .7), 0 6px 18px rgba(0, 0, 0, .4); } 50% { box-shadow: 0 0 0 14px rgba(255, 201, 74, 0), 0 6px 18px rgba(0, 0, 0, .4); } }
     #credit { font-size: 10px; color: rgba(255, 255, 255, .85); text-align: center; text-shadow: 0 1px 2px #000; pointer-events: auto; }
     #credit a { color: inherit; }
+
+    /* Speech bubbles and diary notes, pinned to Udi, Mitzi or a crossing in the camera view */
+    #ar-bubble {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 12;
+      max-width: min(76vw, 330px);
+      background: #fff;
+      color: #1d2550;
+      border-radius: 18px;
+      padding: 11px 15px;
+      font: 600 17px/1.45 "Playpen Sans Hebrew", Rubik, sans-serif;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
+      pointer-events: auto;
+      display: none;
+      cursor: pointer;
+    }
+    body.ar #ar-bubble.on { display: block; animation: pop .25s ease both; }
+    @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+    #ar-bubble::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      margin-left: -10px;
+      border: 10px solid transparent;
+      border-top-color: #fff;
+      border-bottom: 0;
+    }
+    #ar-bubble.note { background: var(--paper); color: var(--paper-ink); font-weight: 400; font-size: 15px; border-radius: 4px 14px 14px 4px; }
+    #ar-bubble.note::after { border-top-color: var(--paper); }
+
     #ar-exit {
       position: fixed;
       top: calc(12px + env(safe-area-inset-top));
@@ -314,7 +390,6 @@
       <p class="muted" id="room" hidden></p>
       <div class="stack">
         <button class="btn" type="button" id="btn-ar"><span data-t="startAR"></span><small id="ar-sub"></small></button>
-        <button class="btn ghost" type="button" id="btn-diary"><span data-t="startDiary"></span><small data-t="startDiarySub"></small></button>
         <button class="btn ghost" type="button" id="btn-resume" hidden></button>
       </div>
     </section>
@@ -353,13 +428,16 @@
   </div>
 
   <div id="ar">
-    <div id="status"></div>
+    <div class="ar-top">
+      <div class="ar-pill"><span id="ar-dot"></span><span id="ar-count"></span><span id="ar-key" hidden></span></div>
+      <div id="ar-status" hidden></div>
+    </div>
     <div class="bottom">
-      <div class="paper" id="ar-card">
-        <div id="ar-progress"></div>
-        <div id="ar-page" aria-live="polite"></div>
-        <button class="btn" type="button" id="ar-action"></button>
+      <div id="ar-panel" hidden>
+        <div id="ar-panel-text"></div>
+        <button class="btn" type="button" id="ar-panel-btn" hidden></button>
       </div>
+      <button type="button" id="ar-here" hidden><span id="ar-here-icon"></span><span id="ar-here-label"></span></button>
       <div id="credit">
         AR engine © 2026 Niantic Spatial, Inc. · Used under the
         <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>
@@ -367,6 +445,7 @@
       </div>
     </div>
   </div>
+  <div id="ar-bubble" role="status"></div>
   <button id="ar-exit" class="pill" type="button" data-t="exit"></button>
   <div id="error" role="alert"></div>
 
@@ -374,9 +453,9 @@
     // ---------- Settings ----------
     // ?r=garden      which riddle file to load from riddles/
     // ?lang=he|en    language (otherwise the phone's language, then the riddle's default)
-    // ?cell=0.5      square size in metres, for testing at home; also turns on auto-advance
+    // ?cell=0.5      square size in metres, for testing at home (skips measuring it on the first stretch)
     // ?auto=0|1      advance automatically when the player reaches the next crossing
-    // ?trail=1       keep the drawn footsteps visible
+    // ?trail=1       keep the walked footprints visible
     // ?screen=s-end  open a screen directly (for checking the page)
     const params = new URLSearchParams(location.search)
     const RIDDLE_ID = (params.get('r') || 'garden').replace(/[^\w-]/g, '')
@@ -385,7 +464,7 @@
     const CAMERA_HEIGHT = 1.4      // phone height; in 'responsive' mode units ≈ metres
     const JUMP = 1.0               // a jump this big in one frame = tracking reset
     const LOST_AFTER_MS = 2000     // limited tracking this long = lost
-    const FADE_MS = 4000           // how long a drawn side stays visible
+    const FADE_MS = 4000           // how long walked footprints stay visible
     const ENGINE = {
       xr: 'https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js',
       extras: 'https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js',
@@ -399,18 +478,17 @@
         helpUdi: 'עזרו לאודי',
         howTitle: 'איך משחקים',
         next: 'הבא',
-        startAR: 'מתחילים עם המצלמה',
-        startARsub: 'חיצים על הקרקע. מומלץ',
-        arPhoneOnly: 'מצב המצלמה עובד בטלפון',
-        startDiary: 'רק היומן, בלי מצלמה',
-        startDiarySub: 'עובד בכל טלפון',
-        resume: 'להמשיך מדף {n}',
+        startAR: 'פותחים את המצלמה',
+        startARsub: 'אודי ומיצי מחכים לכם בגינה',
+        arPhoneOnly: 'עובד בטלפון עם מצלמה',
+        resume: 'להמשיך מקטע {n}',
         readyTitle: 'מוכנים?',
         readyText: 'עמדו בנקודת ההתחלה עם הפנים לקצה הרחוק של הדשא. כל דף ביומן מוביל אתכם לצומת הבא.',
         readyResume: 'חזרו לצומת שבו עצרתם ועמדו עם הפנים לכיוון שבו הלכתם.',
         imThere: 'אני בנקודה, מתחילים',
         page: 'דף {n} מתוך {total}',
         atCrossing: 'הגעתי לצומת',
+        atFirstCrossing: 'הגעתי לצומת הראשון',
         prevPage: 'לדף הקודם',
         exit: 'יציאה',
         toCrossingTurn: 'והמשיכו עד הצומת הבא',
@@ -438,21 +516,19 @@
         left: '{m} מ׳ משמאל',
         right: '{m} מ׳ מימין',
         loadingAR: 'מפעילים את המצלמה…',
-        pointGround: 'כוונו את הטלפון לקרקע והזיזו אותו לאט, עד שהסטטוס יהפוך לירוק.',
-        waiting: 'מחכים למעקב…',
-        arReady: 'עמדו בנקודת ההתחלה עם הפנים לקצה הרחוק, כוונו לקרקע ולחצו "מתחילים".',
-        arResume: 'עמדו בצומת שבו עצרתם עם הפנים לקצה הרחוק, ולחצו "מתחילים".',
+        pointGround: 'כוונו את הטלפון לקרקע והזיזו אותו לאט.',
+        arReady: 'עמדו בנקודת ההתחלה, עם הפנים לקצה הרחוק.',
+        arResume: 'עמדו בצומת שבו עצרתם, עם הפנים לקצה הרחוק.',
         go: 'מתחילים',
-        toGo: 'עוד {d} מ׳',
-        lost: 'המעקב התבלבל. סיימו את הקטע ברגל, עמדו בצומת עם הפנים לקצה הרחוק ולחצו "המשך".',
+        lost: 'המעקב התבלבל. לכו ברגל עד הצומת, עמדו עם הפנים לקצה הרחוק ולחצו "המשך".',
         cont: 'המשך',
-        stGood: 'מעקב: טוב',
         stMove: 'הזיזו את הטלפון לאט…',
         stInit: 'מתחילים מעקב… לאט',
         stFast: 'לאט יותר',
         stTexture: 'כוונו לקרקע שלפניכם',
         stLimited: 'החזיקו את הטלפון יציב',
-        arFail: 'המצלמה לא נפתחה. אפשר להמשיך עם היומן בלבד.',
+        arFail: 'המצלמה לא נפתחה בטלפון הזה.',
+        playNoCamera: 'לשחק בלי מצלמה',
         loadFail: 'משהו לא נטען. בדקו את החיבור ונסו שוב.',
       },
       en: {
@@ -460,18 +536,17 @@
         helpUdi: 'Help Udi',
         howTitle: 'How to play',
         next: 'Next',
-        startAR: 'Start with the camera',
-        startARsub: 'Arrows on the ground. Recommended',
-        arPhoneOnly: 'Camera mode works on phones',
-        startDiary: 'Diary only, no camera',
-        startDiarySub: 'Works on any phone',
-        resume: 'Continue from page {n}',
+        startAR: 'Open the camera',
+        startARsub: 'Udi and Mitzi are waiting in the garden',
+        arPhoneOnly: 'Works on a phone with a camera',
+        resume: 'Continue from stretch {n}',
         readyTitle: 'Ready?',
         readyText: 'Stand at the starting point facing the far end of the lawn. Each diary page takes you to the next crossing.',
         readyResume: 'Go back to the crossing where you stopped, facing the way you were walking.',
         imThere: "I'm at the start, let's go",
         page: 'Page {n} of {total}',
         atCrossing: "I'm at the crossing",
+        atFirstCrossing: "I'm at the first crossing",
         prevPage: 'Previous page',
         exit: 'Exit',
         toCrossingTurn: 'and walk to the next crossing',
@@ -499,21 +574,19 @@
         left: '{m} m to your left',
         right: '{m} m to your right',
         loadingAR: 'Starting the camera…',
-        pointGround: 'Point the phone at the ground and move it slowly until the status turns green.',
-        waiting: 'Waiting for tracking…',
-        arReady: 'Stand at the starting point facing the far end, point at the ground and tap Start.',
-        arResume: 'Stand at the crossing where you stopped, facing the far end, and tap Start.',
+        pointGround: 'Point the phone at the ground and move it slowly.',
+        arReady: 'Stand at the starting point, facing the far end.',
+        arResume: 'Stand at the crossing where you stopped, facing the far end.',
         go: 'Start',
-        toGo: '{d} m to go',
-        lost: 'Tracking slipped. Finish this stretch on foot, stand at the crossing facing the far end, and tap Continue.',
+        lost: 'Tracking slipped. Walk to the crossing, face the far end and tap Continue.',
         cont: 'Continue',
-        stGood: 'Tracking: good',
         stMove: 'Move the phone slowly…',
         stInit: 'Starting tracking… move slowly',
         stFast: 'Too fast, slow down',
         stTexture: 'Point at the ground ahead',
         stLimited: 'Hold the phone steady',
-        arFail: "The camera didn't start. You can carry on with the diary only.",
+        arFail: "The camera didn't start on this phone.",
+        playNoCamera: 'Play without the camera',
         loadFail: "Something didn't load. Check your connection and try again.",
       },
     }
@@ -583,8 +656,8 @@
     let ROUTE = []
     let TURNS = []
     let N = 0
-    let CELL = 4
-    let AUTO = false
+    let CELL = 4                 // size of one square in metres
+    let cellKnown = false        // false: the first stretch measures it
 
     // ---------- Pictures ----------
     const ICON = {
@@ -598,6 +671,9 @@
       'sharp-left': 'M33 41V13L13 33M13 22v11h11',
     }
     const turnIcon = (k) => `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="${ICON[k]}" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    const PAW = `<svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><ellipse cx="16" cy="21" rx="7.5" ry="6.5"/><ellipse cx="8" cy="12.5" rx="3" ry="3.8"/><ellipse cx="13" cy="8" rx="3" ry="3.8"/><ellipse cx="19" cy="8" rx="3" ry="3.8"/><ellipse cx="24" cy="12.5" rx="3" ry="3.8"/></g></svg>`
+    const KEY_ICON = `<svg viewBox="-30 -14 60 28" aria-hidden="true"><circle cx="-16" cy="0" r="10" fill="none" stroke="#ffc94a" stroke-width="6"/><path d="M-6 -3.5H26V3.5H-6ZM16 2H21V11H16ZM23 2H27V9H23Z" fill="#ffc94a"/></svg>`
+    const PHONE_TILT = `<svg class="tilt" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 58H56" stroke="#7fd99b" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 6"/><g class="phone"><rect x="22" y="10" width="20" height="36" rx="4" fill="none" stroke="#fff" stroke-width="3"/><circle cx="32" cy="40" r="2" fill="#fff"/></g></svg>`
 
     const C = {
       skin: '#f2c38f', skinD: '#d99a63', shirt: '#efe0bd', over: '#3f63ad', overD: '#2f4d8c',
@@ -624,8 +700,8 @@
       ${[[18, 240, '#ff7aa8'], [30, 232, '#ffd166'], [342, 238, '#ff9f6b'], [330, 230, '#f3f0ff']]
         .map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="${c}"/>`).join('')}`
 
-    const udiBody = () => `
-      <ellipse cx="0" cy="0" rx="38" ry="6" fill="rgba(0,0,0,.28)"/>
+    const udiBody = (shadow = true) => `
+      ${shadow ? '<ellipse cx="0" cy="0" rx="38" ry="6" fill="rgba(0,0,0,.28)"/>' : ''}
       <rect x="-21" y="-62" width="18" height="60" rx="7" fill="${C.overD}"/>
       <rect x="3" y="-62" width="18" height="60" rx="7" fill="${C.overD}"/>
       <ellipse cx="-13" cy="-4" rx="13" ry="6" fill="${C.shoe}"/>
@@ -659,10 +735,7 @@
       <ellipse cx="0" cy="-136" rx="4.5" ry="5.5" fill="${C.skinD}"/>
       <path d="M-15 -129Q-8 -135 0 -130Q8 -135 15 -129Q8 -125 0 -127Q-8 -125 -15 -129Z" fill="${C.must}"/>
       <path d="M-5 -120Q0 -123 5 -120" stroke="#8a4b36" stroke-width="2" fill="none" stroke-linecap="round"/>`
-
-    // Udi scratching his head, the closed diary under his arm.
-    const udiPuzzled = () => `
-      ${udiBody()}
+    const udiDiaryArm = () => `
       <g transform="translate(-25 -110)">
         <rect x="-6.5" y="-2" width="13" height="52" rx="6.5" fill="${C.shirt}" transform="rotate(12)"/>
         <g transform="rotate(-8 -13 44)">
@@ -670,16 +743,34 @@
           <rect x="-21" y="36" width="15" height="7" rx="1.5" fill="${C.paper}"/>
         </g>
         <circle cx="-10.4" cy="48.9" r="7" fill="${C.skin}"/>
-      </g>
+      </g>`
+
+    // Udi scratching his head, the closed diary under his arm.
+    const udiPuzzled = () => `
+      ${udiBody()}
+      ${udiDiaryArm()}
       ${udiHead()}
       <g transform="translate(24 -110)"><g class="anim a-scratch">
         <rect x="-6.5" y="-52" width="13" height="56" rx="6.5" fill="${C.shirt}" transform="rotate(-20)"/>
         <circle cx="-17.8" cy="-48.9" r="7.5" fill="${C.skin}"/>
       </g></g>`
 
+    // Udi waving hello (two arm positions make the wave in the camera view).
+    const udiWave = (angle) => {
+      const a = (angle * Math.PI) / 180
+      return `
+        ${udiBody(false)}
+        ${udiDiaryArm()}
+        ${udiHead()}
+        <g transform="translate(24 -110)">
+          <rect x="-6.5" y="-2" width="13" height="52" rx="6.5" fill="${C.shirt}" transform="rotate(${angle})"/>
+          <circle cx="${(-50 * Math.sin(a)).toFixed(1)}" cy="${(50 * Math.cos(a)).toFixed(1)}" r="7.5" fill="${C.skin}"/>
+        </g>`
+    }
+
     // Udi reading his open diary.
-    const udiReading = () => `
-      ${udiBody()}
+    const udiReading = (shadow = true) => `
+      ${udiBody(shadow)}
       ${udiHead(2.5)}
       <g transform="translate(-25 -108)"><rect x="-6.5" y="-2" width="13" height="32" rx="6.5" fill="${C.shirt}" transform="rotate(12)"/></g>
       <g transform="translate(25 -108)"><rect x="-6.5" y="-2" width="13" height="32" rx="6.5" fill="${C.shirt}" transform="rotate(-12)"/></g>
@@ -692,9 +783,9 @@
         <circle cx="34" cy="4" r="6.5" fill="${C.skin}"/>
       </g></g>`
 
-    // Mitzi the theatre cat, with a torn diary page in her mouth.
-    const mitziSitting = () => `
-      <ellipse cx="0" cy="0" rx="22" ry="4" fill="rgba(0,0,0,.25)"/>
+    // Mitzi the theatre cat, sitting (with a torn diary page in her mouth on the story screens).
+    const mitziSitting = (page = true, shadow = true) => `
+      ${shadow ? '<ellipse cx="0" cy="0" rx="22" ry="4" fill="rgba(0,0,0,.25)"/>' : ''}
       <g transform="translate(14 -8)"><g class="anim a-tail">
         <path d="M0 0Q22 -2 20 -22Q19 -34 28 -38" stroke="${C.cat}" stroke-width="6" fill="none" stroke-linecap="round"/>
       </g></g>
@@ -708,8 +799,20 @@
       <ellipse cx="-16.5" cy="-38.5" rx="2" ry="2.6" fill="#2a2a33"/>
       <ellipse cx="-7.5" cy="-38.5" rx="2" ry="2.6" fill="#2a2a33"/>
       <path d="M-13.5 -33.5H-10.5L-12 -31.5Z" fill="#f08a8f"/>
-      <path d="M-31 -31L-14 -29.5L-13 -23L-16 -21L-19 -24L-23 -20L-29 -23Z" fill="${C.paper}" stroke="#d9cfb6"/>
-      <path d="M-28 -27.5H-18M-27 -25H-21" stroke="#9aa3c7" stroke-width="1"/>`
+      ${page ? `<path d="M-31 -31L-14 -29.5L-13 -23L-16 -21L-19 -24L-23 -20L-29 -23Z" fill="${C.paper}" stroke="#d9cfb6"/>
+      <path d="M-28 -27.5H-18M-27 -25H-21" stroke="#9aa3c7" stroke-width="1"/>` : `<path d="M-15 -29.5Q-12 -27.5 -9 -29.5" stroke="#8a4b36" stroke-width="1.4" fill="none" stroke-linecap="round"/>`}`
+
+    // Mitzi trotting, seen from the side (two leg positions).
+    const mitziWalk = (frame) => `
+      <path d="M-20 -24Q-34 -30 -31 -46" stroke="${C.cat}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="${frame ? 'M14 -13L9 -1M18 -13L23 -1M-12 -13L-17 -1M-8 -13L-3 -1' : 'M14 -13L15 -1M18 -13L17 -1M-12 -13L-11 -1M-8 -13L-9 -1'}" stroke="${C.catD}" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="0" cy="-20" rx="22" ry="11" fill="${C.cat}"/>
+      <path d="M-10 -29Q-8 -20 -11 -12M0 -31Q2 -21 -1 -10M10 -29Q12 -20 9 -12" stroke="${C.catD}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="-31" r="10.5" fill="${C.cat}"/>
+      <path d="M14 -37L16 -49L23 -40ZM22 -40L29 -48L31 -36Z" fill="${C.cat}"/>
+      <path d="M16.5 -39L17.5 -45.5L21 -40.5ZM24 -40L28 -45L29 -38Z" fill="#f4a3a8"/>
+      <ellipse cx="26" cy="-32" rx="1.8" ry="2.4" fill="#2a2a33"/>
+      <path d="M31 -28.5L33.5 -28L32 -26.5Z" fill="#f08a8f"/>`
 
     const mitziSleeping = () => `
       <ellipse cx="0" cy="0" rx="28" ry="4" fill="rgba(0,0,0,.25)"/>
@@ -721,6 +824,17 @@
       <path d="M-21 -11Q-19 -9 -17 -11M-14.5 -11Q-12.5 -9 -10.5 -11" stroke="#2a2a33" stroke-width="1.6" fill="none" stroke-linecap="round"/>
       <g transform="translate(-6 -26)"><text class="anim a-z" font-size="12" font-weight="700" fill="#c9d1ff">z</text></g>
       <g transform="translate(2 -34)"><text class="anim a-z" style="animation-delay:1.5s" font-size="10" font-weight="700" fill="#c9d1ff">z</text></g>`
+
+    // Things Udi left on the paths last night.
+    const keyArt = () => `
+      <circle cx="-16" cy="0" r="10" fill="none" stroke="#b07a00" stroke-width="8"/>
+      <circle cx="-16" cy="0" r="10" fill="none" stroke="${C.gold}" stroke-width="5.5"/>
+      <path d="M-6 -3.5H26V3.5H-6ZM16 2H21V11H16ZM23 2H27V9H23Z" fill="${C.gold}" stroke="#b07a00" stroke-width="1"/>`
+    const cupArt = () => `
+      <path d="M-12 -30H12L9 -2Q8 2 4 2H-4Q-8 2 -9 -2Z" fill="#f4f1ea" stroke="#c9c2b0" stroke-width="1.5"/>
+      <ellipse cx="0" cy="-30" rx="12" ry="3.5" fill="#6b4226"/>
+      <path d="M12 -24Q20 -24 19 -16Q18 -10 10 -11" stroke="#f4f1ea" stroke-width="3.5" fill="none"/>
+      <path d="M-7 -18H6" stroke="#c96f22" stroke-width="3" stroke-linecap="round"/>`
 
     const bubble = (x, y) => `
       <g transform="translate(${x} ${y})"><g class="anim a-bob">
@@ -758,16 +872,15 @@
         <g transform="translate(222 246)">${mitziSleeping()}</g>
       </svg>`
 
-    // Arrows lead along the path to the ring at the next crossing; the stretch already walked glows, then fades.
+    // How it plays: Udi's glowing footprints lead along the path to Mitzi, waiting at the next crossing.
     const howArt = () => `
       <svg class="art" viewBox="0 0 360 120" role="img" aria-label="">
         <rect width="360" height="120" fill="#2c6a3c"/>
-        <path d="M0 74H360M118 0V120M262 0V120" stroke="#cdb98f" stroke-width="14"/>
-        <path d="M16 74H104" stroke="#ffd45e" stroke-width="5" stroke-linecap="round" opacity=".35"/>
-        <path d="M118 74V14" stroke="#ffd45e" stroke-width="5" stroke-linecap="round" opacity=".18"/>
-        ${[0, 1, 2, 3, 4].map((i) => `<g transform="translate(${142 + i * 25} 74)"><path class="a-chev" style="animation-delay:${(i * .16).toFixed(2)}s" d="M-6 -9L6 0L-6 9" fill="none" stroke="#ffb300" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>`).join('')}
-        <circle cx="262" cy="74" r="11" fill="none" stroke="#ffb300" stroke-width="4"/>
-        <circle cx="118" cy="74" r="8" fill="#5fd3ff" stroke="#fff" stroke-width="2.5"/>
+        <path d="M0 74H360M118 0V120M262 0V120" stroke="#cdb98f" stroke-width="16"/>
+        ${[0, 1, 2, 3, 4, 5].map((i) => `<g transform="translate(${136 + i * 21} ${74 + (i % 2 ? 4 : -4)}) rotate(90)"><g class="a-step" style="animation-delay:${(i * .18).toFixed(2)}s"><ellipse cx="0" cy="-3.5" rx="3.2" ry="5.5" fill="#ffb300"/><ellipse cx="0" cy="5" rx="2.7" ry="3" fill="#ffb300"/></g></g>`).join('')}
+        <circle cx="262" cy="74" r="13" fill="none" stroke="#ffb300" stroke-width="4"/>
+        <g transform="translate(266 78) scale(.62)">${mitziSitting(false)}</g>
+        <circle cx="104" cy="74" r="8" fill="#5fd3ff" stroke="#fff" stroke-width="2.5"/>
       </svg>`
 
     // Top view of the lawn: the grid of grass squares, the flower beds and the starting point.
@@ -864,7 +977,7 @@
 
     // ---------- Progress, so a reload doesn't lose the walk ----------
     const PKEY = `urbanquest-riddle-${RIDDLE_ID}`
-    const saveProgress = () => store.set(PKEY, JSON.stringify({seg, mode}))
+    const saveProgress = () => store.set(PKEY, JSON.stringify({seg, mode, cell: cellKnown ? CELL : null, key: gotKey}))
     const loadProgress = () => safe(() => JSON.parse(store.get(PKEY) || 'null'))
     const clearProgress = () => store.del(PKEY)
 
@@ -886,7 +999,7 @@
       } else {
         resume.hidden = true
       }
-      // Fetch the AR engine in the background, so the camera starts faster if they choose it.
+      // Fetch the AR engine in the background, so the camera starts faster.
       if (isPhone()) loadEngine().catch(() => {})
     }
 
@@ -911,7 +1024,6 @@
       document.querySelectorAll('[data-l]').forEach((el) => { el.textContent = L(get(riddle, el.dataset.l)) })
       if ($('#s-start').classList.contains('on')) prepareStart()
       if ($('#s-walk').classList.contains('on')) renderDiaryPage(false)
-      if (document.body.classList.contains('ar')) refreshArCard()
     }
     $('#lang').addEventListener('click', () => {
       lang = lang === 'he' ? 'en' : 'he'
@@ -920,8 +1032,9 @@
     })
 
     // ---------- Shared walk state ----------
-    let mode = null      // 'diary' | 'ar'
+    let mode = null      // 'ar' | 'diary'
     let seg = 0          // the stretch being walked now (0-based)
+    let gotKey = false
     let diaryState = 'ready'
     const walkingNow = () => (mode === 'diary' && $('#s-walk').classList.contains('on')) || document.body.classList.contains('ar')
 
@@ -932,7 +1045,7 @@
       show('s-end')
     }
 
-    // ---------- Diary mode: no camera, any phone ----------
+    // ---------- Diary pages: the fallback when the camera can't start ----------
     const startDiary = (from = 0) => {
       mode = 'diary'
       seg = from
@@ -979,13 +1092,12 @@
       show('s-start')
     })
 
-    $('#btn-diary').addEventListener('click', () => startDiary(0))
     $('#btn-ar').addEventListener('click', () => startAR(0))
     $('#btn-resume').addEventListener('click', () => {
       const saved = loadProgress() || {}
       const from = Math.max(0, Math.min(N - 1, saved.seg || 0))
-      if (saved.mode === 'ar') startAR(from)
-      else startDiary(from)
+      if (saved.mode === 'diary') startDiary(from)
+      else startAR(from)
     })
     $('#btn-again').addEventListener('click', () => {
       clearProgress()
@@ -1018,25 +1130,33 @@
       setTimeout(() => { location.href = tqUrl() }, 350)
     })
 
-    // ---------- AR mode: arrows on the ground (8th Wall SLAM) ----------
+    // ---------- AR: Udi, Mitzi and glowing footprints on the real ground (8th Wall SLAM) ----------
     let THREE = null
     let enginePromise = null
     let pipelineAdded = false
     let scene, camera
-    let state = 'off'            // off | loading | ready | walking | lost | failed
+    let state = 'off'            // off | loading | ready | intro | walking | lost | outro | failed
     let trackingSeen = false
     let limitedSince = 0
-    let fwd, right, UP, Z
+    let fwd, right, UP
     let segStart = null
     let segEnd = null
     let segDir = null
     let segLen = 0
-    let layer = null             // arrows + ring for the current stretch
-    let arrows = []
-    let crumbs = []              // drawn stretches: {mesh, born}
     let lastPos = null
-    let lastHud = 0
-    let chevronGeometry = null
+    let lastFrame = 0
+    let calibrating = false      // the first stretch measures how big the squares really are
+    let auto = false             // advance by itself when the player reaches the next crossing
+    let prints = []              // footprints of the stretch being walked
+    let fading = []              // footprints already walked: {meshes, born}
+    let ring = null
+    let props = []               // things Udi left on the paths
+    let sprites = null           // the drawings, as textures
+    let mitzi = null
+    let udi = null
+    let footGeometry = null
+    let talk = null              // speech bubble or diary note showing now
+    let actScale = 1             // Udi and Mitzi are life size in the garden, smaller at home
     const GOLD = 0xFFB300
     const WHITE = 0xFFFFFF
 
@@ -1067,23 +1187,87 @@
       return enginePromise
     }
 
-    const statusEl = $('#status')
-    const setStatus = (text, cls) => { statusEl.textContent = text; statusEl.className = cls || '' }
-    let arAction = null
-    const arCard = (html, label, onAction, enabled = true) => {
-      $('#ar-page').innerHTML = html
-      const btn = $('#ar-action')
-      btn.textContent = label
-      btn.disabled = !enabled
-      arAction = onAction
+    // The drawings become flat cut-outs standing on the ground. vb = the drawing's viewBox, h = height in metres.
+    const SPRITE = {
+      mitziSit: {vb: '-30 -58 76 62', h: 0.45, art: () => mitziSitting(false, false)},
+      mitziWalkA: {vb: '-36 -52 72 54', h: 0.39, art: () => mitziWalk(0)},
+      mitziWalkB: {vb: '-36 -52 72 54', h: 0.39, art: () => mitziWalk(1)},
+      udiWaveA: {vb: '-76 -182 152 186', h: 1.71, art: () => udiWave(-150)},
+      udiWaveB: {vb: '-76 -182 152 186', h: 1.71, art: () => udiWave(-122)},
+      udiRead: {vb: '-76 -182 152 186', h: 1.71, art: () => udiReading(false)},
+      key: {vb: '-30 -14 60 28', h: 0.13, art: keyArt},
+      cup: {vb: '-16 -38 38 42', h: 0.15, art: cupArt},
     }
-    $('#ar-action').addEventListener('click', () => { if (arAction) arAction() })
+    const spriteSvg = ({vb, art}) => {
+      const [, , w, h] = vb.split(' ').map(Number)
+      const k = 512 / Math.max(w, h)
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(w * k)}" height="${Math.round(h * k)}" viewBox="${vb}">${art()}</svg>`
+    }
+    const loadTexture = (svg) => new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        try {
+          const c = document.createElement('canvas')
+          c.width = img.naturalWidth
+          c.height = img.naturalHeight
+          const g = c.getContext('2d')
+          g.drawImage(img, 0, 0)
+          g.getImageData(0, 0, 1, 1)  // throws if this browser won't let a drawing become a texture
+          const tx = new THREE.CanvasTexture(c)
+          tx.colorSpace = THREE.SRGBColorSpace
+          resolve(tx)
+        } catch {
+          resolve(null)
+        }
+      }
+      img.onerror = () => resolve(null)
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+    })
+    const loadSprites = async () => {
+      if (sprites) return
+      const out = {}
+      await Promise.all(Object.keys(SPRITE).map(async (k) => { out[k] = await loadTexture(spriteSvg(SPRITE[k])) }))
+      sprites = out
+    }
 
-    const refreshArCard = () => {
-      if (state === 'ready' || state === 'loading') arReadyCard()
-      else if (state === 'walking') walkingCard()
-      else if (state === 'lost') lostCard()
-      else if (state === 'failed') failedCard()
+    // A cut-out standing on the ground, with a soft shadow. It turns to face the camera each frame.
+    const standee = (name, scale) => {
+      const spec = SPRITE[name]
+      const [, , w, h] = spec.vb.split(' ').map(Number)
+      const height = spec.h * scale
+      const group = new THREE.Group()
+      const shadow = new THREE.Mesh(
+        new THREE.CircleGeometry(height * (name.startsWith('udi') ? 0.13 : 0.3), 24),
+        new THREE.MeshBasicMaterial({color: 0x000000, transparent: true, opacity: 0.18, depthWrite: false}))
+      shadow.rotation.x = -Math.PI / 2
+      shadow.position.y = 0.003
+      group.add(shadow)
+      let card
+      if (sprites && sprites[name]) {
+        const geo = new THREE.PlaneGeometry((height * w) / h, height)
+        geo.translate(0, height / 2, 0)
+        card = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: sprites[name], transparent: true, alphaTest: 0.04, side: THREE.DoubleSide, depthWrite: false}))
+      } else {
+        // The drawing didn't load on this phone: a glowing marker stands in for it.
+        card = new THREE.Mesh(new THREE.SphereGeometry(height * 0.3, 16, 12), new THREE.MeshBasicMaterial({color: GOLD, transparent: true}))
+        card.position.y = height * 0.3
+      }
+      card.renderOrder = 3
+      group.add(card)
+      group.userData = {card, shadow, name, height}
+      return group
+    }
+    const setPicture = (st, name) => {
+      if (st.userData.name === name || !sprites || !sprites[name]) return
+      st.userData.card.material.map = sprites[name]
+      st.userData.name = name
+    }
+    const faceCamera = (st, at = st.position) => {
+      st.userData.card.rotation.y = Math.atan2(camera.position.x - at.x, camera.position.z - at.z)
+    }
+    const setOpacity = (st, o) => {
+      st.userData.card.material.opacity = o
+      st.userData.shadow.material.opacity = 0.18 * o
     }
 
     const groundPos = () => new THREE.Vector3(camera.position.x, 0, camera.position.z)
@@ -1097,124 +1281,332 @@
       fwd = facing()
       right = new THREE.Vector3().crossVectors(fwd, UP).normalize()
     }
+    const sideOf = (dir) => new THREE.Vector3(-dir.z, 0, dir.x)
 
     const buildThree = () => {
       UP = new THREE.Vector3(0, 1, 0)
-      Z = new THREE.Vector3(0, 0, 1)
       fwd = new THREE.Vector3(0, 0, -1)
       right = new THREE.Vector3(1, 0, 0)
-      const s = new THREE.Shape()
-      s.moveTo(0, 0.2)
-      s.lineTo(0.24, -0.04)
-      s.lineTo(0.24, -0.17)
-      s.lineTo(0, 0.07)
-      s.lineTo(-0.24, -0.17)
-      s.lineTo(-0.24, -0.04)
-      s.closePath()
-      chevronGeometry = new THREE.ExtrudeGeometry(s, {depth: 0.025, bevelEnabled: false})
-      chevronGeometry.rotateX(-Math.PI / 2)  // lay flat: tip points along -Z, thickness points up
+      // A shoe print: sole and heel, lying flat with the toe pointing along -Z.
+      const sole = new THREE.Shape()
+      sole.absellipse(0, 0.1, 0.042, 0.08, 0, Math.PI * 2, false, 0)
+      const heel = new THREE.Shape()
+      heel.absellipse(0, -0.035, 0.034, 0.042, 0, Math.PI * 2, false, 0)
+      footGeometry = new THREE.ShapeGeometry([sole, heel], 12)
+      footGeometry.rotateX(-Math.PI / 2)
     }
-    const arrowSize = () => Math.min(1, CELL)
 
     const flatRing = (pos, inner, outer, color) => {
       const m = new THREE.Mesh(
         new THREE.RingGeometry(inner, outer, 48),
-        new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9, side: THREE.DoubleSide})
+        new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false})
       )
       m.rotation.x = -Math.PI / 2
       m.position.set(pos.x, 0.012, pos.z)
       return m
     }
 
-    const clearScene = () => {
-      if (scene && layer) scene.remove(layer)
-      layer = null
-      arrows = []
-      if (scene) for (const c of crumbs) scene.remove(c.mesh)
-      crumbs = []
-    }
-
-    const placeSide = (start) => {
-      if (layer) scene.remove(layer)
-      layer = new THREE.Group()
-      arrows = []
-      const move = ROUTE[seg]
-      const dir = new THREE.Vector3().addScaledVector(right, move.dx).addScaledVector(fwd, move.dy)
-      const len = dir.length() * CELL
-      dir.normalize()
-      segStart = start.clone()
-      segEnd = start.clone().addScaledVector(dir, len)
-      segDir = dir.clone()
-      segLen = len
-      const color = move.ink ? GOLD : WHITE
-      const S = arrowSize()
-      const n = Math.max(2, Math.round(len / 0.45))
+    // ---------- Footprints ----------
+    const footScale = () => Math.max(0.45, Math.min(1, CELL / 1.5))
+    const layPrints = (from, dir, len, ink) => {
+      const s = footScale()
+      const n = Math.max(2, Math.round(len / (0.34 * s)))
+      const side = sideOf(dir)
+      const out = []
       for (let i = 0; i < n; i++) {
-        const m = new THREE.Mesh(chevronGeometry, new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.9}))
-        m.position.copy(segStart.clone().lerp(segEnd, (i + 0.5) / n))
-        m.position.y = 0.01
+        const m = new THREE.Mesh(footGeometry, new THREE.MeshBasicMaterial({color: ink ? GOLD : WHITE, transparent: true, opacity: 0, depthWrite: false}))
+        m.position.copy(from).addScaledVector(dir, ((i + 0.5) * len) / n).addScaledVector(side, (i % 2 ? 1 : -1) * 0.065 * s)
+        m.position.y = 0.006
         m.rotation.y = Math.atan2(-dir.x, -dir.z)
-        m.scale.setScalar(S)
-        m.userData.index = i
-        m.userData.base = move.ink ? 0.55 : 0.35
-        layer.add(m)
-        arrows.push(m)
+        m.scale.setScalar(s)
+        m.userData.i = i
+        m.userData.tail = 1
+        scene.add(m)
+        out.push(m)
       }
-      layer.add(flatRing(segEnd, 0.16 * S, 0.24 * S, color))
-      scene.add(layer)
+      return out
+    }
+    const animatePrints = (tt, now) => {
+      // The stretch to walk: prints light up one after another, as if someone walks it just ahead of you.
+      for (const p of prints) {
+        const wave = Math.max(0, Math.sin(tt * 3.2 - p.userData.i * 0.55))
+        p.material.opacity = (0.22 + 0.78 * wave) * p.userData.tail
+      }
+      // Walked stretches glow, then fade: the picture only lives in the player's head.
+      fading = fading.filter((f) => {
+        const k = KEEP_TRAIL ? 0 : (now - f.born) / FADE_MS
+        if (k >= 1) {
+          f.meshes.forEach((m) => scene.remove(m))
+          return false
+        }
+        f.meshes.forEach((m) => { m.material.opacity = 0.9 * (1 - k) * m.userData.tail })
+        return true
+      })
+      if (ring) ring.material.opacity = 0.55 + 0.35 * Math.sin(tt * 4)
+    }
+    const clearStretch = () => {
+      for (const p of prints) scene.remove(p)
+      prints = []
+      if (ring) scene.remove(ring)
+      ring = null
+    }
+    const dropLastFading = () => {
+      const last = fading.pop()
+      if (last) last.meshes.forEach((m) => scene.remove(m))
+    }
+    const dropAllFading = () => {
+      fading.forEach((f) => f.meshes.forEach((m) => scene.remove(m)))
+      fading = []
     }
 
-    const addCrumb = (a, b) => {
-      const len = a.distanceTo(b)
-      if (len < 0.05) return
-      const mat = new THREE.MeshBasicMaterial({color: 0xFFD45E, transparent: true, opacity: 0.85})
-      const m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, len), mat)
-      m.position.copy(a).add(b).multiplyScalar(0.5)
-      m.position.y = 0.006
-      m.quaternion.setFromUnitVectors(Z, b.clone().sub(a).normalize())
-      scene.add(m)
-      crumbs.push({mesh: m, born: performance.now()})
+    // ---------- Mitzi: runs ahead to the next crossing and waits there ----------
+    const makeMitzi = (pos) => {
+      const sit = standee('mitziSit', actScale)
+      const walk = standee('mitziWalkA', actScale)
+      walk.visible = false
+      const group = new THREE.Group()
+      group.add(sit, walk)
+      group.position.copy(pos)
+      scene.add(group)
+      return {group, sit, walk, mode: 'sit', from: null, to: null, t0: 0, dur: 0, heading: new THREE.Vector3(1, 0, 0)}
+    }
+    const mitziSpeed = () => Math.max(1, Math.min(3, CELL * 0.8))
+    const mitziRunTo = (point) => {
+      mitzi.from = mitzi.group.position.clone()
+      mitzi.to = point.clone()
+      mitzi.t0 = performance.now()
+      mitzi.dur = Math.max(450, (mitzi.from.distanceTo(point) / mitziSpeed()) * 1000)
+      mitzi.mode = 'run'
+    }
+    const mitziHead = () => (mitzi ? mitzi.group.position.clone().add(new THREE.Vector3(0, 0.55 * actScale, 0)) : null)
+    const updateMitzi = (now, dt) => {
+      if (!mitzi) return
+      let moving = false
+      const pos = mitzi.group.position
+      if (mitzi.mode === 'run') {
+        const k = Math.min(1, (now - mitzi.t0) / mitzi.dur)
+        const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2
+        pos.lerpVectors(mitzi.from, mitzi.to, e)
+        mitzi.heading.subVectors(mitzi.to, mitzi.from)
+        moving = k < 1
+        if (!moving) mitzi.mode = 'sit'
+      } else if (mitzi.mode === 'follow') {
+        // First stretch, while the size of the squares is still unknown: lead the player a step or two ahead.
+        const done = Math.max(0, groundPos().sub(segStart).dot(segDir))
+        const target = segStart.clone().addScaledVector(segDir, Math.min(done + 1.4 * actScale, segLen * 1.5))
+        const gap = target.sub(pos)
+        gap.y = 0
+        const d = gap.length()
+        if (d > 0.08) {
+          pos.addScaledVector(gap.normalize(), Math.min(d, mitziSpeed() * dt))
+          mitzi.heading.copy(gap)
+          moving = true
+        }
+      }
+      mitzi.sit.visible = !moving
+      mitzi.walk.visible = moving
+      if (moving) {
+        setPicture(mitzi.walk, Math.floor(now / 130) % 2 ? 'mitziWalkA' : 'mitziWalkB')
+        mitzi.walk.userData.card.position.y = Math.abs(Math.sin((now / 130) * Math.PI)) * 0.025 * actScale
+        const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion)
+        mitzi.walk.userData.card.scale.x = mitzi.heading.dot(camRight) < 0 ? -1 : 1
+      } else {
+        mitzi.sit.userData.card.scale.y = 1 + Math.sin(now / 600) * 0.015
+      }
+      faceCamera(mitzi.sit, pos)
+      faceCamera(mitzi.walk, pos)
     }
 
-    const arReadyCard = () => {
-      $('#ar-progress').textContent = seg > 0 ? t('page', {n: seg + 1, total: N}) : ''
-      if (!trackingSeen) {
-        arCard(`<p>${esc(t('pointGround'))}</p>`, t('waiting'), null, false)
+    // ---------- Udi: greets the player at the start, and asks what he wrote at the end ----------
+    const hideUdi = () => {
+      if (udi) scene.remove(udi)
+      udi = null
+    }
+    const showUdi = (pos, pose) => {
+      hideUdi()
+      udi = standee(pose === 'read' ? 'udiRead' : 'udiWaveA', actScale)
+      udi.position.copy(pos)
+      udi.userData.pose = pose
+      udi.userData.born = performance.now()
+      setOpacity(udi, 0)
+      scene.add(udi)
+    }
+    const udiDistance = () => 2.4 * actScale + 0.5
+    const udiHeadPos = () => (udi ? udi.position.clone().add(new THREE.Vector3(0, 1.8 * actScale, 0)) : null)
+    const updateUdi = (now) => {
+      if (!udi) return
+      if (udi.userData.leaving) {
+        const k = Math.min(1, (now - udi.userData.leaving) / 600)
+        setOpacity(udi, 1 - k)
+        if (k >= 1) hideUdi()
         return
       }
-      arCard(`<p>${esc(seg > 0 ? t('arResume') : t('arReady'))}</p>`, t('go'), beginArWalk)
+      setOpacity(udi, Math.min(1, (now - udi.userData.born) / 500))
+      if (udi.userData.pose === 'wave') setPicture(udi, Math.floor(now / 380) % 2 ? 'udiWaveA' : 'udiWaveB')
+      faceCamera(udi)
     }
-    const walkingCard = () => {
-      $('#ar-progress').textContent = t('page', {n: seg + 1, total: N})
-      arCard(pageHtml(seg) + (AUTO ? '<p class="dist"></p>' : ''), t('atCrossing'), () => completeSide())
+
+    // ---------- Things Udi left on the paths: the empty coffee cup, the dropped keys ----------
+    const placeProps = () => {
+      for (const p of get(riddle, 'ar.props') || []) {
+        if (p.page !== seg + 1 || !SPRITE[p.item]) continue
+        const st = standee(p.item, actScale)
+        st.position.copy(segEnd)
+        st.userData.page = p.page
+        st.userData.collect = !!p.collect
+        st.userData.item = p.item
+        scene.add(st)
+        props.push(st)
+      }
     }
-    const lostCard = () => arCard(`<p>${esc(t('lost'))}</p>`, t('cont'), continueAfterLost)
-    const failedCard = () => arCard(`<p>${esc(t('arFail'))}</p>`, t('startDiary'), () => {
+    const collectProps = (page) => {
+      props = props.filter((st) => {
+        if (!st.userData.collect || st.userData.page !== page) return true
+        scene.remove(st)
+        if (st.userData.item === 'key') gotKey = true
+        if (navigator.vibrate) navigator.vibrate([30, 40, 30])
+        return false
+      })
+    }
+    const clearProps = () => {
+      props.forEach((st) => scene.remove(st))
+      props = []
+    }
+    const updateProps = (tt) => {
+      for (const st of props) {
+        if (st.userData.collect) st.userData.card.position.y = (0.2 + Math.sin(tt * 2.6) * 0.05) * actScale
+        faceCamera(st)
+      }
+    }
+
+    // ---------- Speech bubbles and diary notes, pinned to a point in the camera view ----------
+    const bubbleEl = $('#ar-bubble')
+    const readMs = (s) => Math.min(9000, 1700 + s.length * 60)
+    const hideBubble = () => {
+      talk = null
+      bubbleEl.classList.remove('on')
+    }
+    const showTalk = (lines, anchor, done, kind) => {
+      if (!lines || !lines.length) {
+        if (done) done()
+        return
+      }
+      talk = {lines, i: 0, anchor, done, kind, until: performance.now() + readMs(lines[0])}
+      bubbleEl.className = kind === 'note' ? 'note on' : 'on'
+      bubbleEl.textContent = lines[0]
+      placeBubble()
+    }
+    const say = (lines, anchor, done) => showTalk(lines, anchor, done, 'say')
+    const note = (line, anchor) => showTalk([line], anchor, null, 'note')
+    const nextLine = () => {
+      if (!talk) return
+      talk.i++
+      if (talk.i >= talk.lines.length) {
+        const done = talk.done
+        hideBubble()
+        if (done) done()
+        return
+      }
+      talk.until = performance.now() + readMs(talk.lines[talk.i])
+      bubbleEl.textContent = talk.lines[talk.i]
+    }
+    bubbleEl.addEventListener('click', nextLine)
+    const placeBubble = () => {
+      if (!talk || !camera) return
+      const p = talk.anchor && talk.anchor()
+      const w = innerWidth
+      const h = innerHeight
+      let x = w / 2
+      let y = h * 0.32
+      if (p) {
+        const v = p.project(camera)
+        if (v.z < 1) {
+          x = ((v.x + 1) / 2) * w
+          y = ((1 - v.y) / 2) * h
+        }
+      }
+      x = Math.min(w - 100, Math.max(100, x))
+      y = Math.min(h - 210, Math.max(120, y))
+      bubbleEl.style.transform = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px) translate(-50%, -100%)`
+    }
+
+    // ---------- The few words on top of the camera view ----------
+    let panelAction = null
+    const panel = (html, label = null, action = null) => {
+      $('#ar-panel').hidden = false
+      $('#ar-panel-text').innerHTML = html
+      const btn = $('#ar-panel-btn')
+      btn.hidden = !label
+      btn.textContent = label || ''
+      panelAction = action
+    }
+    const hidePanel = () => {
+      $('#ar-panel').hidden = true
+      panelAction = null
+    }
+    $('#ar-panel-btn').addEventListener('click', () => { if (panelAction) panelAction() })
+    const setHere = (on) => {
+      $('#ar-here').hidden = !on
+      $('#ar-here-icon').innerHTML = PAW
+      $('#ar-here-label').textContent = calibrating ? t('atFirstCrossing') : t('atCrossing')
+      $('#ar-here').classList.toggle('pulse', calibrating)
+    }
+    $('#ar-here').addEventListener('click', () => completeStretch(true))
+    const updateCount = () => {
+      $('#ar-count').innerHTML = `${PAW}${state === 'intro' ? '' : `${Math.min(seg + 1, N)} / ${N}`}`
+      $('#ar-key').hidden = !gotKey
+      $('#ar-key').innerHTML = KEY_ICON
+    }
+    const setStatus = (text, good) => {
+      $('#ar-dot').classList.toggle('good', !!good)
+      $('#ar-status').hidden = !text
+      $('#ar-status').textContent = text || ''
+    }
+
+    const hasIntro = () => (get(riddle, `ar.intro.${lang}`) || []).length > 0
+    const readyPanel = () => {
+      if (!trackingSeen) return panel(`${PHONE_TILT}<p>${esc(t('pointGround'))}</p>`)
+      panel(`<p>${esc(seg > 0 ? t('arResume') : t('arReady'))}</p>`, t('go'), () => (seg === 0 && hasIntro() ? startIntro() : beginWalk(true)))
+    }
+    const lostPanel = () => panel(`<p>${esc(t('lost'))}</p>`, t('cont'), continueAfterLost)
+    const failedPanel = () => panel(`<p>${esc(t('arFail'))}</p>`, t('playNoCamera'), () => {
       stopAR()
       startDiary(seg)
     })
 
+    // ---------- The walk, step by step ----------
     const startAR = async (from = 0) => {
       mode = 'ar'
       seg = from
+      const saved = loadProgress()
+      gotKey = !!(from > 0 && saved && saved.key)
+      if (from > 0 && saved && saved.cell && !params.has('cell')) {
+        CELL = saved.cell
+        cellKnown = true
+      }
+      calibrating = !cellKnown && !!get(riddle, 'ar.calibrate')
+      auto = params.has('auto') ? params.get('auto') === '1' : cellKnown
       saveProgress()
       document.body.classList.add('ar')
       state = 'loading'
       trackingSeen = false
       limitedSince = 0
-      setStatus(t('loadingAR'), 'warn')
-      arReadyCard()
+      setStatus('', false)
+      setHere(false)
+      updateCount()
+      panel(`<p>${esc(t('loadingAR'))}</p>`)
       keepAwake()
       try {
         THREE = await loadEngine()
-      } catch (err) {
+        await loadSprites()
+      } catch {
         state = 'failed'
-        setStatus(t('loadFail'), 'warn')
-        failedCard()
+        failedPanel()
         return
       }
       if (!document.body.classList.contains('ar')) return  // they left while it loaded
-      if (!chevronGeometry) buildThree()
+      if (!footGeometry) buildThree()
+      actScale = Math.max(0.5, Math.min(1, CELL / 2))
       if (!pipelineAdded) {
         XR8.XrController.configure({scale: SCALE})
         XR8.addCameraPipelineModules([
@@ -1232,6 +1624,17 @@
       XR8.run({canvas: $('#camerafeed')})
     }
 
+    const clearScene = () => {
+      if (!scene) return
+      clearStretch()
+      dropAllFading()
+      clearProps()
+      if (mitzi) scene.remove(mitzi.group)
+      mitzi = null
+      hideUdi()
+      hideBubble()
+    }
+
     const stopAR = () => {
       clearScene()
       safe(() => window.XR8 && XR8.stop())
@@ -1239,6 +1642,7 @@
       document.documentElement.removeAttribute('style')
       document.body.removeAttribute('style')
       state = 'off'
+      hidePanel()
       letSleep()
     }
     $('#ar-exit').addEventListener('click', () => {
@@ -1247,52 +1651,133 @@
       show('s-start')
     })
 
-    const beginArWalk = () => {
+    // Udi waits at the start, waves, and tells the player what to do; then Mitzi takes over.
+    const startIntro = () => {
+      state = 'intro'
       clearScene()
       aimAxes()
-      const here = groundPos()
-      placeSide(here)
-      lastPos = here
-      state = 'walking'
-      walkingCard()
+      hidePanel()
+      setHere(false)
+      updateCount()
+      const pos = groundPos().addScaledVector(fwd, udiDistance())
+      showUdi(pos, 'wave')
+      mitzi = makeMitzi(pos.clone().addScaledVector(right, 0.6 * actScale))
+      say(get(riddle, `ar.intro.${lang}`), udiHeadPos, () => {
+        if (udi) udi.userData.leaving = performance.now()
+        beginWalk(false)
+      })
     }
 
-    // auto: the player came within reach of the crossing, so the next stretch starts at the crossing itself.
-    // A tap means "I'm at the crossing", so it starts at the player's feet: tracking drift never builds up.
-    const completeSide = (auto = false) => {
+    const beginWalk = (reaim) => {
+      if (reaim) {
+        clearScene()
+        aimAxes()
+      }
+      state = 'walking'
+      hidePanel()
       const here = groundPos()
-      const anchor = auto ? segEnd.clone() : here
-      if (ROUTE[seg].ink) addCrumb(segStart, anchor)
+      lastPos = here
+      startStretch(here)
+    }
+
+    const startStretch = (start) => {
+      clearStretch()
+      const move = ROUTE[seg]
+      const dir = new THREE.Vector3().addScaledVector(right, move.dx).addScaledVector(fwd, move.dy)
+      const len = dir.length() * CELL
+      dir.normalize()
+      segStart = start.clone()
+      segDir = dir
+      segLen = len
+      segEnd = start.clone().addScaledVector(dir, len)
+      if (TURNS[seg] === 'back') dropLastFading()   // walking straight back: clear the old prints at once
+      prints = layPrints(start, dir, calibrating ? len * 1.5 : len, move.ink)
+      if (calibrating) {
+        // The real length isn't known yet, so the prints just fade out ahead of the player.
+        prints.forEach((p) => { p.userData.tail = Math.min(1, (prints.length - p.userData.i) / (prints.length * 0.4)) })
+      } else {
+        const s = footScale()
+        ring = flatRing(segEnd, 0.2 * s, 0.29 * s, move.ink ? GOLD : WHITE)
+        scene.add(ring)
+      }
+      if (!mitzi) mitzi = makeMitzi(start.clone().addScaledVector(dir, 0.6 * actScale))
+      if (calibrating) mitzi.mode = 'follow'
+      else mitziRunTo(segEnd)
+      placeProps()
+      updateCount()
+      setHere(true)
+      const line = get(riddle, `diary.${lang}`)?.[seg]
+      if (line && (!talk || talk.kind === 'note')) {
+        const end = segEnd.clone()
+        note(line, calibrating ? mitziHead : () => end.clone().add(new THREE.Vector3(0, 0.75 * actScale, 0)))
+      }
+    }
+
+    // byTap: the player says they're at the crossing, so the next stretch starts at their feet
+    // (tracking drift never builds up). Otherwise they came within reach of it, and it starts at the crossing itself.
+    const completeStretch = (byTap) => {
+      if (state !== 'walking') return
+      const here = groundPos()
+      if (calibrating) {
+        // Every stretch is one side of a square, so the first one tells us how big the squares are.
+        const walked = here.distanceTo(segStart)
+        if (walked >= 0.8 && walked <= 9) CELL = walked
+        cellKnown = true
+        calibrating = false
+        auto = params.has('auto') ? params.get('auto') === '1' : true
+      }
+      const anchor = byTap ? here : segEnd.clone()
+      fading.push({meshes: prints, born: performance.now()})
+      prints = []
+      collectProps(seg + 1)
       seg++
       if (navigator.vibrate) navigator.vibrate(40)
-      if (seg >= N) return finishAr()
+      if (seg >= N) return startOutro()
       saveProgress()
-      placeSide(anchor)
+      startStretch(anchor)
       lastPos = here
-      walkingCard()
     }
 
     const enterLost = () => {
       state = 'lost'
-      if (layer) scene.remove(layer)
-      layer = null
-      arrows = []
-      lostCard()
+      clearStretch()
+      setHere(false)
+      if (talk && talk.kind === 'note') hideBubble()
+      lostPanel()
     }
 
     const continueAfterLost = () => {
-      for (const c of crumbs) scene.remove(c.mesh)  // they belong to the old, slipped frame
-      crumbs = []
+      // Everything placed so far belongs to the old, slipped frame.
+      dropAllFading()
+      collectProps(seg + 1)
+      clearProps()
       aimAxes()
       seg++
       limitedSince = 0
       const here = groundPos()
       lastPos = here
-      if (seg >= N) return finishAr()
+      if (mitzi) mitzi.group.position.copy(here).addScaledVector(right, 0.5 * actScale)
+      if (seg >= N) return startOutro()
       saveProgress()
-      placeSide(here)
       state = 'walking'
-      walkingCard()
+      hidePanel()
+      startStretch(here)
+    }
+
+    // At the last crossing Udi is back, reading his diary: "so... what did I write?"
+    const startOutro = () => {
+      state = 'outro'
+      clearStretch()
+      clearProps()
+      setHere(false)
+      hideBubble()
+      clearProgress()
+      updateCount()
+      const f = facing()
+      const pos = groundPos().addScaledVector(f, udiDistance())
+      showUdi(pos, 'read')
+      if (mitzi) mitziRunTo(pos.clone().addScaledVector(sideOf(f), 0.6 * actScale))
+      say(get(riddle, `ar.outro.${lang}`), udiHeadPos, finishAr)
     }
 
     const finishAr = () => {
@@ -1311,39 +1796,30 @@
         camera.position.set(0, CAMERA_HEIGHT, 0)
         XR8.XrController.updateCameraProjectionMatrix({origin: camera.position, facing: camera.quaternion})
         canvas.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false})
-        setStatus(t('stMove'), 'warn')
         state = 'ready'
-        arReadyCard()
+        lastFrame = performance.now()
+        setStatus(t('stMove'), false)
+        readyPanel()
         // Safety net: if no tracking event arrives, still let the player start after a few seconds.
         setTimeout(() => {
           if (trackingSeen) return
           trackingSeen = true
-          if (state === 'ready') arReadyCard()
+          if (state === 'ready') readyPanel()
         }, 5000)
       },
 
       onUpdate: () => {
         if (!scene) return
         const now = performance.now()
+        const dt = Math.min(0.05, (now - lastFrame) / 1000)
+        lastFrame = now
         const tt = now / 1000
-
-        // Light runs along the arrows in the walking direction.
-        const S = arrowSize()
-        for (const a of arrows) {
-          const wave = Math.max(0, Math.sin(tt * 4 - a.userData.index * 0.8))
-          a.scale.setScalar(S * (1 + 0.25 * wave))
-          a.material.opacity = a.userData.base + (1 - a.userData.base) * wave
-        }
-
-        // Drawn stretches fade away, so the picture only exists in the player's head.
-        if (!KEEP_TRAIL) {
-          crumbs = crumbs.filter((c) => {
-            const k = (now - c.born) / FADE_MS
-            if (k >= 1) { scene.remove(c.mesh); return false }
-            c.mesh.material.opacity = 0.85 * (1 - k)
-            return true
-          })
-        }
+        animatePrints(tt, now)
+        updateMitzi(now, dt)
+        updateUdi(now)
+        updateProps(tt)
+        if (talk && now > talk.until) nextLine()
+        placeBubble()
 
         if (state !== 'walking') return
         const here = groundPos()
@@ -1353,17 +1829,11 @@
         if (limitedSince && now - limitedSince > LOST_AFTER_MS) return enterLost()
         lastPos = here
 
-        if (!AUTO) return
-        // Arrived = near the crossing and well along the stretch (so turning straight back can't skip a page).
+        // Arrived = near the crossing and well along the stretch (so turning straight back can't skip a stretch).
+        if (!auto || calibrating) return
         const arrive = Math.min(0.9, Math.max(0.25, 0.35 * segLen))
-        const dist = here.distanceTo(segEnd)
         const along = here.clone().sub(segStart).dot(segDir)
-        if (dist < arrive && along > 0.6 * segLen) return completeSide(true)
-        if (now - lastHud > 250) {
-          lastHud = now
-          const d = document.querySelector('#ar-page .dist')
-          if (d) d.textContent = t('toGo', {d: dist.toFixed(1)})
-        }
+        if (here.distanceTo(segEnd) < arrive && along > 0.6 * segLen) completeStretch(false)
       },
 
       listeners: [{
@@ -1372,25 +1842,25 @@
           const {status, reason} = detail || {}
           if (status === 'NORMAL') {
             limitedSince = 0
-            setStatus(t('stGood'), 'good')
+            setStatus('', true)
             if (!trackingSeen) {
               trackingSeen = true
-              if (state === 'ready') arReadyCard()
+              if (state === 'ready') readyPanel()
             }
             return
           }
           if (!limitedSince) limitedSince = performance.now()
-          if (reason === 'INITIALIZING') setStatus(t('stInit'), 'warn')
-          else if (reason === 'TOO_MUCH_MOTION') setStatus(t('stFast'), 'warn')
-          else if (reason === 'NOT_ENOUGH_TEXTURE') setStatus(t('stTexture'), 'warn')
-          else setStatus(t('stLimited'), 'warn')
+          if (reason === 'INITIALIZING') setStatus(t('stInit'), false)
+          else if (reason === 'TOO_MUCH_MOTION') setStatus(t('stFast'), false)
+          else if (reason === 'NOT_ENOUGH_TEXTURE') setStatus(t('stTexture'), false)
+          else setStatus(t('stLimited'), false)
         },
       }],
 
       onCameraStatusChange: ({status}) => {
         if (status === 'failed') {
           state = 'failed'
-          failedCard()
+          failedPanel()
         }
       },
 
@@ -1427,7 +1897,7 @@
       N = ROUTE.length
       const cell = parseFloat(params.get('cell'))
       CELL = Math.min(8, Math.max(0.5, cell || riddle.cell || 1))
-      AUTO = params.has('auto') ? params.get('auto') === '1' : (params.has('cell') ? true : !!riddle.autoAdvance)
+      cellKnown = !!cell || !get(riddle, 'ar.calibrate')
       lang = pickLang()
       $('#art-intro').innerHTML = introArt()
       $('#art-how').innerHTML = howArt()

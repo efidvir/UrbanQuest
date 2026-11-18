@@ -24,21 +24,26 @@
   },
   "rules": {
     "he": [
-      "גשו לנקודת ההתחלה של אודי ועמדו עם הפנים לקצה הרחוק של הדשא.",
-      "כל דף ביומן הוא קטע שביל אחד, מצומת לצומת. עם המצלמה יופיעו חיצים על הקרקע.",
-      "הצעדים של אודי זוהרים לרגע ונעלמים. שמרו את הצורה בראש.",
+      "בנקודת ההתחלה פותחים את המצלמה. אודי מחכה לכם שם.",
+      "מיצי והעקבות הזוהרות של אודי מובילות אתכם בשבילים, מצומת לצומת.",
+      "העקבות נעלמות מאחוריכם. שמרו את הצורה בראש.",
       "בסוף, גלו את הקוד והקלידו אותו בטרוול קווסט."
     ],
     "en": [
-      "Go to Udi's starting point and face the far end of the lawn.",
-      "Each diary page is one stretch of path, from one crossing to the next. With the camera on, arrows appear on the ground.",
-      "Udi's footsteps glow for a moment, then fade. Keep the shape in your head.",
+      "At the starting point, open the camera. Udi is waiting for you there.",
+      "Mitzi and Udi's glowing footprints lead you along the paths, from crossing to crossing.",
+      "The footprints fade behind you. Keep the shape in your head.",
       "At the end, work out the code and enter it in TravelQuest."
     ]
   },
   "start": {
     "placeholder": true,
-    "map": {"cols": 3, "rows": 4, "x": 1, "y": 4},
+    "map": {
+      "cols": 3,
+      "rows": 4,
+      "x": 1,
+      "y": 4
+    },
     "title": {
       "he": "נקודת ההתחלה",
       "en": "The starting point"
@@ -54,7 +59,44 @@
   },
   "route": "L,B,R,B,L,R,B,L,B,R3,F2,B,L,F,R,F,L,B,F2,R",
   "cell": 4,
-  "autoAdvance": false,
+  "ar": {
+    "calibrate": true,
+    "intro": {
+      "he": [
+        "היי! אני אודי, אב הבית.",
+        "אתמול בלילה כתבתי פה את הקוד ברגליים, על השבילים.",
+        "מיצי ראתה הכול. לכו אחריה ואחרי העקבות שלי.",
+        "העקבות נעלמות מהר. תזכרו את הצורה!"
+      ],
+      "en": [
+        "Hi! I'm Udi, the caretaker.",
+        "Last night I wrote the code here with my feet, on the paths.",
+        "Mitzi saw it all. Follow her and my footprints.",
+        "The footprints fade fast. Remember the shape!"
+      ]
+    },
+    "outro": {
+      "he": [
+        "פה עצרתי אתמול.",
+        "נו... מה כתבתי? אני תמיד כותב עם הפנים לקצה הרחוק, ותמיד מותח קו מתחת לקוד."
+      ],
+      "en": [
+        "This is where I stopped last night.",
+        "So... what did I write? I always write facing the far end, and I always underline my codes."
+      ]
+    },
+    "props": [
+      {
+        "page": 14,
+        "item": "cup"
+      },
+      {
+        "page": 15,
+        "item": "key",
+        "collect": true
+      }
+    ]
+  },
   "diary": {
     "he": [
       "קודם שמאלה. אמא תמיד אמרה: כשמתלבטים, הולכים שמאלה.",
@@ -125,6 +167,9 @@
   },
   "travelQuest": {
     "origin": "https://travelandquest.com",
-    "path": {"he": "/iw/", "en": "/en/"}
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
   }
 }
