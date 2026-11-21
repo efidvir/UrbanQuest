@@ -1,0 +1,66 @@
+{
+  "id": "parking",
+  "type": "clue",
+  "defaultLang": "he",
+  "draft": true,
+  "title": {
+    "he": "הוואן בחניון",
+    "en": "The van downstairs"
+  },
+  "kicker": {
+    "he": "הבימה · חניון התרבות",
+    "en": "Habima · The Tarbut car park"
+  },
+  "art": {
+    "intro": "art/start-intro.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "חצי שעה לפני שהמסך עולה, ואודי מגלה שארגז התלבושות של השחקנית הראשית לא הגיע. דליה, מנהלת ההצגה, השאירה אותו בוואן של ההפקה, בחניון התרבות שמתחת לכיכר.",
+      "היא השאירה לו הודעה קולית, כמובן בשפת התיאטרון שלה. אודי מקשיב לה שוב ושוב, ומבין רק דבר אחד: הוואן חונה איפשהו למטה.",
+      "עזרו לאודי לפענח את ההודעה, לרדת לחניון ולמצוא את הוואן, לפני שהשחקנית עולה לבמה בפיג'מה."
+    ],
+    "en": [
+      "Half an hour to curtain-up, and Udi finds out that the lead actress's costume trunk never arrived. Dalia, the stage manager, left it in the production van in the Tarbut car park under the square.",
+      "She left him a voice message, in her own theatre jargon of course. Udi plays it again and again and understands only one thing: the van is parked somewhere downstairs.",
+      "Help Udi decode the message, go down to the car park and find the van, before the lead goes on stage in her pyjamas."
+    ]
+  },
+  "clue": {
+    "title": {
+      "he": "ההודעה של דליה",
+      "en": "Dalia's message"
+    },
+    "udi": {
+      "he": "מערכה, כנף, שורה, מושב... היא מדברת על החניון כאילו הוא אולם תיאטרון!",
+      "en": "Act, wing, row, seat... she talks about the car park as if it were a theatre!"
+    },
+    "message": {
+      "from": {
+        "he": "דליה · מנהלת ההצגה",
+        "en": "Dalia · stage manager"
+      },
+      "length": "0:21",
+      "text": {
+        "he": "אודי, זאת דליה. הארגז בוואן, חניתי למטה. תרשום: מערכה {?}, הכנף ה{?}, שורה {?}, ובמושב של המחליף. אל תאחר, ההצגה מתחילה!",
+        "en": "Udi, it's Dalia. The trunk's in the van, I parked downstairs. Write this down: Act {?}, the {?} wing, row {?}, and the understudy's seat. Don't be late, the show's starting!"
+      }
+    },
+    "note": {
+      "he": "טיוטה: הפרטים יושלמו אחרי ביקור בחניון.",
+      "en": "Draft: the details will be filled in after a visit to the car park."
+    },
+    "task": {
+      "he": "פענחו את ההודעה, מצאו את הוואן, וחזרו לכאן להקליד את מה שמצאתם.",
+      "en": "Decode the message, find the van, and come back here to enter what you found."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}

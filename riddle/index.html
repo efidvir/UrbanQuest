@@ -400,6 +400,17 @@
     /* A clue picture from the original mission, kept exactly as it was */
     .clue-card { display: block; position: relative; width: 100%; padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #fff; cursor: zoom-in; box-shadow: 0 12px 30px rgba(0, 0, 0, .35); }
     .clue-card img { display: block; width: 100%; height: auto; }
+    /* A voice message as the clue: the transcript under a phone's voicemail bar */
+    .vm { border-radius: 18px; background: #f4f6fb; color: #1d2550; padding: 14px 16px 16px; box-shadow: 0 12px 30px rgba(0, 0, 0, .35); }
+    .vm-head { display: flex; align-items: center; gap: 10px; }
+    .vm-head b { display: block; font-size: 16px; }
+    .vm-head small { display: block; font-size: 12.5px; color: #5d6585; }
+    .vm-play { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #2f6fed; color: #fff; display: grid; place-items: center; }
+    .vm-play svg { width: 20px; height: 20px; }
+    .vm-time { margin-inline-start: auto; font: 600 13px Rubik, sans-serif; color: #5d6585; }
+    .vm-wave { height: 28px; margin: 10px 0 8px; background: repeating-linear-gradient(90deg, #9fb3e8 0 3px, transparent 3px 6px); -webkit-mask: radial-gradient(ellipse 70% 100% at 40% 50%, #000 45%, rgba(0, 0, 0, .35) 75%, transparent); mask: radial-gradient(ellipse 70% 100% at 40% 50%, #000 45%, rgba(0, 0, 0, .35) 75%, transparent); }
+    .vm-text { font-size: 17.5px; line-height: 1.7; margin: 0; }
+    .vm-text .gap { display: inline-block; min-width: 2.2em; border-bottom: 2px dashed #c08a1e; color: #c08a1e; text-align: center; }
     .clue-zoom { display: block; font-size: 13px; font-weight: 500; color: #1d2550; background: #e9ecf8; padding: 7px 11px; text-align: center; }
     #viewer { position: fixed; inset: 0; z-index: 2147482000; background: rgba(8, 10, 24, .96); display: flex; flex-direction: column; }
     #viewer .pill { align-self: flex-end; margin: calc(12px + env(safe-area-inset-top)) 14px 8px; }
@@ -526,6 +537,63 @@
     @keyframes smoke { 0% { opacity: 0; transform: translateY(0) scale(.6); } 25% { opacity: .9; } 100% { opacity: 0; transform: translateY(-46px) scale(1.8); } }
     @keyframes mitzihop { 0%, 100% { transform: none; } 40% { transform: translateY(-14px) rotate(-6deg); } }
 
+    /* The skyline: the playwright's seating plan of the rooftops, and the programme's missing title */
+    #skyview { position: fixed; inset: 0; z-index: 20; display: none; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: calc(8px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); background: radial-gradient(120% 70% at 50% 0%, #2a3a6e, var(--night)); }
+    body.skymode #skyview { display: flex; }
+    body.skymode #app { display: none; }
+    #skycam { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+    body.skycam #skycam { display: block; }
+    .sv-top { position: relative; z-index: 3; display: flex; justify-content: flex-end; gap: 8px; width: 100%; max-width: 520px; margin: 0 auto; }
+    .sv-top .pill { padding: 7px 14px; }
+    body.skycam .sv-top .pill { background: rgba(20, 26, 54, .78); }
+    #sv-say { position: absolute; z-index: 6; pointer-events: none; top: calc(50px + env(safe-area-inset-top)); inset-inline-start: max(12px, calc(50% - 248px)); max-width: min(86vw, 440px); font-size: 15px; padding-inline-start: 58px; min-height: 56px; }
+    #sv-say::before { content: ""; position: absolute; inset-inline-start: 9px; top: 8px; width: 40px; height: 40px; border-radius: 50%; background: #dfe4f5 url(art/udi-read.webp) no-repeat -11px 1px / 135% auto; box-shadow: inset 0 0 0 2px #1d2550; }
+    .sv-plan { position: relative; z-index: 2; width: 100%; max-width: 520px; margin: auto auto 0; border-radius: 18px; overflow: hidden; background: #f8f0da; color: var(--paper-ink); box-shadow: 0 12px 30px rgba(0, 0, 0, .4); }
+    .sv-plan-title { padding: 9px 14px 2px; font: 400 19px/1.2 "Secular One", Rubik, sans-serif; color: #7a2b1d; text-align: center; }
+    .sv-plan-sub { padding: 0 14px 6px; font-size: 13px; color: #6b5a48; text-align: center; }
+    .sv-draw { position: relative; height: clamp(170px, 34dvh, 260px); margin: 0 8px; border-radius: 12px; overflow: hidden; background: linear-gradient(#1d2550, #3c3f7a 45%, #b9654b 86%, #e9995a); touch-action: none; cursor: grab; direction: ltr; }
+    .sv-draw svg { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    .sv-draw .towers path { fill: #2a3360; stroke: #171d44; stroke-width: 1.2; }
+    .sv-draw .near path { fill: #39447e; stroke: #171d44; stroke-width: 1.2; }
+    .sv-draw .wall { fill: #ddd6c6; stroke: #8f8a7e; stroke-width: 1; }
+    .sv-draw .windows path { fill: #3e4a7f; }
+    .sv-draw .trace path { fill: none; stroke: none; stroke-linejoin: round; }
+    .sv-box { cursor: pointer; }
+    .sv-box circle { fill: var(--gold); stroke: #141a36; stroke-width: 2; }
+    .sv-box text { font: 700 11px Rubik, sans-serif; fill: #141a36; text-anchor: middle; }
+    .sv-box .seat rect { fill: #fff; stroke: #141a36; stroke-width: 1.2; }
+    .sv-box .seat text { font-size: 9.5px; }
+    .sv-box.on circle { fill: #fff; stroke: var(--gold); stroke-width: 3; }
+    .sv-chips { display: flex; justify-content: center; gap: 6px; padding: 8px 10px 10px; flex-wrap: wrap; direction: ltr; }
+    .sv-chips button { min-width: 40px; height: 32px; border-radius: 999px; border: 1.5px solid #c9b48a; background: #fff8e6; color: #5a3d1c; font: 700 14px Rubik, sans-serif; cursor: pointer; padding: 0 10px; }
+    .sv-chips button.on { background: var(--gold); border-color: #8a6a1a; color: var(--gold-ink); }
+    .sv-chips button.done { border-color: #3aa564; }
+    body.skycam .sv-plan { background: transparent; box-shadow: none; }
+    body.skycam .sv-plan-title, body.skycam .sv-plan-sub { color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, .8); }
+    body.skycam .sv-draw { height: clamp(260px, 52dvh, 480px); background: transparent; box-shadow: inset 0 0 0 2px rgba(255, 201, 74, .5); }
+    body.skycam .sv-draw .towers path, body.skycam .sv-draw .near path, body.skycam .sv-draw .wall, body.skycam .sv-draw .windows path { fill: none; stroke: none; }
+    body.skycam .sv-draw .trace path { stroke: var(--gold); stroke-width: 2.6; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .9)); }
+    body.skycam .sv-chips button { background: rgba(20, 26, 54, .78); color: #fff; border-color: rgba(255, 255, 255, .4); }
+    body.skycam .sv-chips button.on { background: var(--gold); color: var(--gold-ink); }
+    .sv-prog { position: relative; z-index: 2; width: 100%; max-width: 520px; margin: 0 auto auto; padding: 12px 12px 14px; border-radius: 18px; background: #fffaf0; color: #2a2a3a; box-shadow: 0 12px 30px rgba(0, 0, 0, .4); border-top: 6px solid #7a2b1d; }
+    .sv-prog-head { text-align: center; font: 600 13px/1.3 Rubik, sans-serif; letter-spacing: .06em; color: #7a2b1d; }
+    .sv-prog-sub { text-align: center; font-size: 13px; color: #6b5a48; margin-top: 2px; }
+    .sv-slots { display: flex; justify-content: center; gap: 10px; margin-top: 10px; direction: ltr; flex-wrap: wrap; }
+    .sv-group { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .sv-group .cells { display: flex; gap: 3px; }
+    .sv-group input { width: 34px; height: 42px; padding: 0; border-radius: 7px; border: 2px solid #c9b48a; background: #fff; color: #141a36; text-align: center; font: 400 24px/1 "Secular One", Rubik, sans-serif; text-transform: uppercase; caret-color: #7a2b1d; }
+    .sv-group input:focus { outline: none; border-color: #7a2b1d; box-shadow: 0 0 0 3px rgba(122, 43, 29, .2); }
+    .sv-group.on input { border-color: var(--gold); background: #fffbea; }
+    .sv-group small { font: 700 11px Rubik, sans-serif; color: #8a6a1a; }
+    .sv-printed { margin-top: 10px; text-align: center; font: 400 38px/1.1 "Secular One", Rubik, sans-serif; color: #7a2b1d; letter-spacing: .06em; }
+    .sv-printed::after { content: attr(data-stamp); display: block; width: max-content; margin: 6px auto 0; padding: 2px 12px; border: 3px solid #b03a2e; border-radius: 6px; color: #b03a2e; font: 700 14px/1.3 Rubik, sans-serif; letter-spacing: .12em; transform: rotate(-6deg); }
+    @media (prefers-reduced-motion: no-preference) {
+      .sv-prog.shake { animation: jiggle .5s ease; }
+      .sv-printed { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1) both; }
+      .sv-box.on circle { animation: boxpulse 1.2s ease-in-out infinite; }
+    }
+    @keyframes boxpulse { 50% { stroke-width: 6; } }
+
     @keyframes jiggle { 0%, 100% { transform: none; } 20% { transform: translateX(-6px) rotate(-1deg); } 40% { transform: translateX(5px) rotate(1deg); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
     @keyframes turnkey { 0% { transform: none; } 45% { transform: translateX(8%); } 100% { transform: translateX(8%) rotate(-12deg); } }
     @keyframes hop { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-7px) rotate(2deg); } }
@@ -633,6 +701,12 @@
       <h2 data-l="clue.title"></h2>
       <div class="paper"><p class="hand quote" data-l="clue.udi"></p></div>
       <button class="clue-card" type="button" id="clue-open"><img id="clue-img" alt=""><span class="clue-zoom" data-t="zoomClue"></span></button>
+      <div class="vm" id="clue-vm" hidden>
+        <div class="vm-head"><span class="vm-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><div><b id="vm-from"></b><small data-t="voiceMessage"></small></div><span class="vm-time" id="vm-time"></span></div>
+        <div class="vm-wave" aria-hidden="true"></div>
+        <p class="vm-text hand" id="vm-text"></p>
+      </div>
+      <span class="badge" id="clue-note" data-l="clue.note" hidden></span>
       <p data-l="clue.task"></p>
       <div class="stack">
         <a class="btn to-tq" href="https://travelandquest.com/"><span data-t="backToTQ"></span><small data-t="backToTQanswer"></small></a>
@@ -708,6 +782,27 @@
     <button class="btn" type="button" id="cv-sheet-close" data-t="close"></button>
   </div>
 
+  <div id="skyview">
+    <video id="skycam" playsinline muted autoplay></video>
+    <div class="sv-top">
+      <button class="pill" type="button" id="sv-cam" data-t="svCamera"></button>
+      <button class="pill" type="button" id="sv-exit" data-t="exit"></button>
+    </div>
+    <div class="kv-say" id="sv-say" role="status"></div>
+    <div class="sv-plan">
+      <div class="sv-plan-title" data-l="skyline.plan.title"></div>
+      <div class="sv-plan-sub" id="sv-plan-sub"></div>
+      <div class="sv-draw" id="sv-draw"></div>
+      <div class="sv-chips" id="sv-chips"></div>
+    </div>
+    <div class="sv-prog" id="sv-prog">
+      <div class="sv-prog-head" data-l="skyline.programme.head"></div>
+      <div class="sv-prog-sub" data-l="skyline.programme.sub"></div>
+      <div class="sv-slots" id="sv-slots"></div>
+      <div class="sv-printed" id="sv-printed" hidden></div>
+    </div>
+  </div>
+
   <div id="viewer" hidden>
     <button class="pill" type="button" id="viewer-close" data-t="close"></button>
     <div class="scroll"><img id="viewer-img" alt=""></div>
@@ -742,13 +837,14 @@
     // ?cell=0.5      square size in metres, for testing at home (skips measuring it on the first stretch)
     // ?auto=0|1      advance automatically when the player reaches the next crossing
     // ?trail=1       keep the walked footprints visible
-    // ?screen=s-end  open a screen directly (for checking the page); "compass", "key" or "console" starts that mode
+    // ?screen=s-end  open a screen directly (for checking the page); "compass", "key", "console" or "skyline" starts that mode
     //
     // A riddle file's "type" picks what the player does after the story:
     //   walk (default)  the AR garden walk, with a compass mode and the written diary as fallbacks
     //   key             set a key's teeth to match a row of trees, over the camera view
     //   clue            look at a clue picture from the original mission and solve it
     //   console         set a lighting console, laid out like the square, to match the real square
+    //   skyline         read letters off the rooftop signs on a seating plan of the skyline
     const params = new URLSearchParams(location.search)
     const RIDDLE_ID = (params.get('r') || 'garden').replace(/[^\w-]/g, '')
     const SCALE = params.get('scale') === 'absolute' ? 'absolute' : 'responsive'
@@ -863,6 +959,16 @@
         cvGlassN: 'זכוכית בקבוצה {n}',
         less: 'פחות',
         more: 'יותר',
+        openPlan: 'למפת ההושבה',
+        voiceMessage: 'הודעה קולית',
+        svCamera: 'מצלמה',
+        svPaper: 'בלי מצלמה',
+        svPaperSub: 'גררו הצידה כדי לראות את כל קו הרקיע, והקישו על תא',
+        svCamSub: 'גררו את הקו אל הגגות האמיתיים. שתי אצבעות משנות את הגודל.',
+        svNoCam: 'המצלמה לא נפתחה. אפשר פשוט להשוות את המפה לגגות.',
+        svBox: 'תא {n}',
+        svSlot: 'תא {n}, מושב {s}',
+        svPrinted: 'נשלח לדפוס',
       },
       en: {
         langName: 'עברית',
@@ -962,6 +1068,16 @@
         cvGlassN: 'Glass, group {n}',
         less: 'Fewer',
         more: 'More',
+        openPlan: 'Open the seating plan',
+        voiceMessage: 'Voice message',
+        svCamera: 'Camera',
+        svPaper: 'No camera',
+        svPaperSub: 'Drag sideways to see the whole skyline, and tap a box',
+        svCamSub: 'Drag the line onto the real rooftops. Two fingers change its size.',
+        svNoCam: "The camera didn't start. You can just compare the plan with the rooftops.",
+        svBox: 'Box {n}',
+        svSlot: 'Box {n}, seat {s}',
+        svPrinted: 'SENT TO PRINT',
       },
     }
 
@@ -1400,22 +1516,30 @@
       $('#diary-list').innerHTML = TURNS.map((turn, i) => `
         <li><span class="n">${i + 1}</span>${turnIcon(turn)}<span class="hand">${esc(get(riddle, `diary.${lang}`)?.[i] || t(`turn.${turn}`))}</span></li>`).join('')
       document.querySelectorAll('.to-tq').forEach((a) => { a.href = tqUrl() })
-      $('#to-tq-sub').textContent = TYPE === 'key' || TYPE === 'console' ? t('backToTQword') : t('backToTQsub')
+      $('#to-tq-sub').textContent = ['key', 'console', 'skyline'].includes(TYPE) ? t('backToTQword') : t('backToTQsub')
       document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t) })
       document.querySelectorAll('[data-l]').forEach((el) => { el.textContent = L(get(riddle, el.dataset.l)) })
       if (TYPE === 'key') $('#btn-play').textContent = t('startAR')
       if (TYPE === 'console') $('#btn-play').textContent = t('openConsole')
+      if (TYPE === 'skyline') $('#btn-play').textContent = t('openPlan')
       storyLabel()
       if (riddle.film) storyCaption()
       document.querySelectorAll('.replay').forEach((b) => b.setAttribute('aria-label', t('playAgain')))
       $('#kv-prev').setAttribute('aria-label', t('prevTree'))
       $('#kv-next').setAttribute('aria-label', t('nextTree'))
       if (TYPE === 'clue') $('#clue-img').alt = L(get(riddle, 'clue.title'))
+      if (get(riddle, 'clue.message')) {
+        // {?} in the message is a detail still to be filled in, shown as a blank
+        $('#vm-from').textContent = L(get(riddle, 'clue.message.from'))
+        $('#vm-time').textContent = get(riddle, 'clue.message.length') || ''
+        $('#vm-text').innerHTML = esc(L(get(riddle, 'clue.message.text'))).replace(/\{\?\}/g, '<span class="gap">?</span>')
+      }
       if ($('#s-start').classList.contains('on')) prepareStart()
       if ($('#s-walk').classList.contains('on')) renderDiaryPage(false)
       if ($('#s-compass').classList.contains('on')) renderCompass()
       if (document.body.classList.contains('keymode')) renderKey()
       if (document.body.classList.contains('consolemode')) renderConsole()
+      if (document.body.classList.contains('skymode')) renderSky()
       if (!$('#cv-sheet').hidden) $('#cv-paper').innerHTML = sheetHtml()
     }
     $('#lang').addEventListener('click', () => {
@@ -3131,6 +3255,362 @@
       return `<svg class="art" viewBox="0 0 360 210" role="img" aria-label=""><rect width="360" height="210" fill="#1d2550"/>${sq}${desk}${links}</svg>`
     }
 
+    // ---------- The skyline: the playwright's seating plan of the rooftops ----------
+    // The plan is the skyline seen from the raised walkway in Gan Yaakov (traced from a photo of the view).
+    // Each box is a building with a sign on its roof, and each seat is a letter's place in that sign,
+    // counting letters only. Box by box, the letters spell the play's title. The title is locked with
+    // itself (tools/lock.mjs --answer), so it isn't in the page: only the right letters reveal it.
+    const SVSTORE = `urbanquest-skyline-${RIDDLE_ID}`
+    const HE_LATIN = {'א': 'A', 'ב': 'B', 'ג': 'G', 'ד': 'D', 'ה': 'H', 'ו': 'V', 'ז': 'Z', 'ח': 'H', 'ט': 'T', 'י': 'Y', 'כ': 'K', 'ך': 'K', 'ל': 'L', 'מ': 'M', 'ם': 'M',
+      'נ': 'N', 'ן': 'N', 'ס': 'S', 'ע': 'A', 'פ': 'P', 'ף': 'P', 'צ': 'T', 'ץ': 'T', 'ק': 'K', 'ר': 'R', 'ש': 'S', 'ת': 'T'}
+    const normLetters = (s) => [...s].map((c) => HE_LATIN[c] || c.toUpperCase()).filter((c) => /[A-Z0-9]/.test(c)).join('')
+    let svLetters = []
+    let svBusy = false
+    let svDone = false
+    let svWrong = 0
+    let svPick = 0
+    let svStream = null
+    let svCheckTimer = 0
+    let svVB = {x: -16, y: 160, w: 980, h: 250}
+    let svBase = {w: 0, h: 0}            // the drawing's size before zooming, in screen pixels
+    let svView = {s: 1, x: 0, y: 0}      // zoom and pan
+    const svBoxes = () => [...(get(riddle, 'skyline.boxes') || [])].sort((a, b) => a.n - b.n)
+    const svSeatCount = () => svBoxes().reduce((n, b) => n + b.seats.length, 0)
+
+    let svSayTimer = 0
+    let svSaidAt = 0
+    const svSay = (text, ms = 11000) => {
+      clearTimeout(svSayTimer)
+      svSaidAt = performance.now()
+      $('#sv-say').textContent = text || ''
+      if (text && ms) svSayTimer = setTimeout(() => { $('#sv-say').textContent = '' }, ms)
+    }
+
+    for (const sel of ['.sv-plan', '#sv-prog']) $(sel).addEventListener('pointerdown', () => { if (performance.now() - svSaidAt > 1500) svSay('') })
+
+    // The plan: the traced skyline, with each box's number and its seats above it.
+    const svBoxesSvg = () => svBoxes().map((b, i) => {
+      const w = 15
+      const x0 = b.x - (b.seats.length * w + (b.seats.length - 1) * 2) / 2
+      const top = b.seatsBelow ? b.y + 18 : b.y - 33   // under the box where two boxes stand close together
+      const seats = b.seats.map((s, k) => `<g class="seat"><rect x="${(x0 + k * (w + 2)).toFixed(1)}" y="${top}" width="${w}" height="15" rx="3"/><text x="${(x0 + k * (w + 2) + w / 2).toFixed(1)}" y="${top + 10.5}">${s}</text></g>`).join('')
+      const stem = b.seatsBelow ? `M${b.x} ${b.y + 10}V${b.y + 18}` : `M${b.x} ${b.y - 18}V${b.y - 10}`
+      return `<g class="sv-box${i === svPick ? ' on' : ''}" data-i="${i}"><path d="${stem}" stroke="#141a36" stroke-width="1.5"/>${seats}<circle cx="${b.x}" cy="${b.y}" r="10"/><text x="${b.x}" y="${b.y + 4}">${b.n}</text></g>`
+    }).join('')
+    const svFit = () => {
+      const box = $('#sv-draw')
+      const ch = box.clientHeight || 190
+      svBase = {w: ch * svVB.w / svVB.h, h: ch}
+      const svg = box.querySelector('svg')
+      if (svg) {
+        svg.setAttribute('width', svBase.w)
+        svg.setAttribute('height', svBase.h)
+      }
+      svView = {s: 1, x: 0, y: 0}
+      svCenterOn(svPick, false)
+    }
+    const svApply = () => {
+      const svg = $('#sv-draw svg')
+      if (svg) svg.style.transform = `translate(${svView.x}px, ${svView.y}px) scale(${svView.s})`
+    }
+    const svClamp = () => {
+      const box = $('#sv-draw')
+      const cw = box.clientWidth
+      const chh = box.clientHeight
+      const w = svBase.w * svView.s
+      const h = svBase.h * svView.s
+      svView.x = Math.min(cw * 0.6, Math.max(cw * 0.4 - w, svView.x))
+      svView.y = Math.min(chh * 0.6, Math.max(chh * 0.4 - h, svView.y))
+    }
+    const svCenterOn = (i, smooth = true) => {
+      const b = svBoxes()[i]
+      if (!b) return
+      const box = $('#sv-draw')
+      const k = (svBase.w / svVB.w) * svView.s
+      svView.x = box.clientWidth / 2 - (b.x - svVB.x) * k
+      svClamp()
+      const svg = $('#sv-draw svg')
+      if (svg) svg.style.transition = smooth ? 'transform .35s ease' : 'none'
+      svApply()
+    }
+    const svPickBox = (i, center = true) => {
+      svPick = i
+      document.querySelectorAll('#sv-draw .sv-box').forEach((g) => g.classList.toggle('on', +g.dataset.i === i))
+      document.querySelectorAll('#sv-chips button').forEach((c) => c.classList.toggle('on', +c.dataset.i === i))
+      document.querySelectorAll('#sv-slots .sv-group').forEach((g) => g.classList.toggle('on', +g.dataset.i === i))
+      if (center) svCenterOn(i)
+    }
+
+    const svLoadDrawing = async () => {
+      const box = $('#sv-draw')
+      if (!box.querySelector('svg')) {
+        try {
+          const res = await fetch(get(riddle, 'skyline.drawing'), {cache: 'no-cache'})
+          box.innerHTML = await res.text()
+        } catch {
+          box.innerHTML = '<svg viewBox="-16 160 980 250"></svg>'
+        }
+        const svg = box.querySelector('svg')
+        const vb = (svg.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number)
+        if (vb.length === 4) svVB = {x: vb[0], y: vb[1], w: vb[2], h: vb[3]}
+        svg.setAttribute('aria-hidden', 'true')
+      }
+      const svg = box.querySelector('svg')
+      svg.querySelectorAll('.sv-box').forEach((g) => g.remove())
+      svg.insertAdjacentHTML('beforeend', svBoxesSvg())
+      svFit()
+    }
+
+    // The programme: one slot per seat, box by box, left to right like the title.
+    const svBuildSlots = () => {
+      let k = 0
+      $('#sv-slots').innerHTML = svBoxes().map((b, i) => `<div class="sv-group" data-i="${i}"><div class="cells">${b.seats.map((s) => {
+        const html = `<input type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="2" data-k="${k}" data-box="${i}" data-seat="${s}">`
+        k++
+        return html
+      }).join('')}</div><small>${b.n}</small></div>`).join('')
+      $('#sv-chips').innerHTML = svBoxes().map((b, i) => `<button type="button" data-i="${i}">${b.n}</button>`).join('')
+      document.querySelectorAll('#sv-slots input').forEach((inp) => { inp.value = svLetters[+inp.dataset.k] || '' })
+      svMarkChips()
+    }
+    const svMarkChips = () => {
+      document.querySelectorAll('#sv-chips button').forEach((c) => {
+        const ins = [...document.querySelectorAll(`#sv-slots input[data-box="${c.dataset.i}"]`)]
+        c.classList.toggle('done', ins.length > 0 && ins.every((x) => x.value))
+      })
+    }
+    const renderSky = () => {
+      $('#sv-cam').textContent = document.body.classList.contains('skycam') ? t('svPaper') : t('svCamera')
+      $('#sv-plan-sub').textContent = document.body.classList.contains('skycam') ? t('svCamSub') : t('svPaperSub')
+      document.querySelectorAll('#sv-slots input').forEach((inp) => inp.setAttribute('aria-label', t('svSlot', {n: svBoxes()[+inp.dataset.box].n, s: inp.dataset.seat})))
+      document.querySelectorAll('#sv-chips button').forEach((c) => c.setAttribute('aria-label', t('svBox', {n: c.textContent})))
+      $('#sv-printed').dataset.stamp = t('svPrinted')
+    }
+
+    $('#sv-slots').addEventListener('input', (e) => {
+      const inp = e.target.closest('input')
+      if (!inp || svDone) return
+      const ch = [...inp.value.replace(/\s/g, '')].pop() || ''
+      inp.value = /[a-z]/.test(ch) ? ch.toUpperCase() : ch
+      svLetters[+inp.dataset.k] = inp.value
+      store.set(SVSTORE, JSON.stringify(svLetters))
+      svMarkChips()
+      if (inp.value) {
+        const next = $(`#sv-slots input[data-k="${+inp.dataset.k + 1}"]`)
+        if (next) next.focus()
+      }
+      clearTimeout(svCheckTimer)
+      if (document.querySelectorAll('#sv-slots input').length && [...document.querySelectorAll('#sv-slots input')].every((x) => x.value)) svCheckTimer = setTimeout(svCheck, 450)
+    })
+    $('#sv-slots').addEventListener('keydown', (e) => {
+      const inp = e.target.closest('input')
+      if (!inp || e.key !== 'Backspace' || inp.value) return
+      const prev = $(`#sv-slots input[data-k="${+inp.dataset.k - 1}"]`)
+      if (prev) {
+        e.preventDefault()
+        prev.focus()
+        prev.value = ''
+        svLetters[+prev.dataset.k] = ''
+        store.set(SVSTORE, JSON.stringify(svLetters))
+        svMarkChips()
+      }
+    })
+    $('#sv-slots').addEventListener('focusin', (e) => {
+      const inp = e.target.closest('input')
+      if (inp && +inp.dataset.box !== svPick) svPickBox(+inp.dataset.box)
+    })
+    $('#sv-chips').addEventListener('click', (e) => {
+      const c = e.target.closest('button')
+      if (c) svPickBox(+c.dataset.i)
+    })
+
+    // The plan moves with a finger and zooms with two (or the mouse wheel); a tap on a box picks it.
+    const svPointers = new Map()
+    let svGesture = null
+    $('#sv-draw').addEventListener('pointerdown', (e) => {
+      e.preventDefault()
+      try { $('#sv-draw').setPointerCapture(e.pointerId) } catch {}
+      svPointers.set(e.pointerId, {x: e.clientX, y: e.clientY})
+      const svg = $('#sv-draw svg')
+      if (svg) svg.style.transition = 'none'
+      const pts = [...svPointers.values()]
+      svGesture = {view: {...svView}, pts: pts.map((p) => ({...p})), moved: false, target: e.target.closest('.sv-box')}
+    })
+    $('#sv-draw').addEventListener('pointermove', (e) => {
+      if (!svPointers.has(e.pointerId) || !svGesture) return
+      svPointers.set(e.pointerId, {x: e.clientX, y: e.clientY})
+      const pts = [...svPointers.values()]
+      const g = svGesture
+      if (pts.length === 1 && g.pts.length === 1) {
+        const dx = pts[0].x - g.pts[0].x
+        const dy = pts[0].y - g.pts[0].y
+        if (Math.hypot(dx, dy) > 6) g.moved = true
+        svView.x = g.view.x + dx
+        svView.y = g.view.y + dy
+      } else if (pts.length >= 2) {
+        if (g.pts.length < 2) {   // a second finger came down: start the pinch from here
+          svGesture = {view: {...svView}, pts: pts.slice(0, 2).map((p) => ({...p})), moved: true}
+          return
+        }
+        const r = $('#sv-draw').getBoundingClientRect()
+        const d0 = Math.hypot(g.pts[1].x - g.pts[0].x, g.pts[1].y - g.pts[0].y) || 1
+        const d1 = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y) || 1
+        const m0 = {x: (g.pts[0].x + g.pts[1].x) / 2 - r.left, y: (g.pts[0].y + g.pts[1].y) / 2 - r.top}
+        const m1 = {x: (pts[0].x + pts[1].x) / 2 - r.left, y: (pts[0].y + pts[1].y) / 2 - r.top}
+        const s = Math.min(5, Math.max(0.35, g.view.s * d1 / d0))
+        svView.x = m1.x - (m0.x - g.view.x) * (s / g.view.s)
+        svView.y = m1.y - (m0.y - g.view.y) * (s / g.view.s)
+        svView.s = s
+      }
+      svClamp()
+      svApply()
+    })
+    const svUp = (e) => {
+      if (!svPointers.has(e.pointerId)) return
+      svPointers.delete(e.pointerId)
+      const g = svGesture
+      if (g && !g.moved && g.target && e.type === 'pointerup') svPickBox(+g.target.dataset.i)
+      svGesture = svPointers.size ? {view: {...svView}, pts: [...svPointers.values()].map((p) => ({...p})), moved: true} : null
+    }
+    $('#sv-draw').addEventListener('pointerup', svUp)
+    $('#sv-draw').addEventListener('pointercancel', svUp)
+    $('#sv-draw').addEventListener('wheel', (e) => {
+      e.preventDefault()
+      const r = $('#sv-draw').getBoundingClientRect()
+      const m = {x: e.clientX - r.left, y: e.clientY - r.top}
+      const s = Math.min(5, Math.max(0.35, svView.s * Math.exp(-e.deltaY / 400)))
+      svView.x = m.x - (m.x - svView.x) * (s / svView.s)
+      svView.y = m.y - (m.y - svView.y) * (s / svView.s)
+      svView.s = s
+      svClamp()
+      svApply()
+    }, {passive: false})
+
+    // The camera: the plan's line over the real skyline.
+    const svCamera = async (on) => {
+      if (on) {
+        try {
+          svStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: {ideal: 'environment'}}, audio: false})
+          if (!document.body.classList.contains('skymode')) return svCamera(false)
+          $('#skycam').srcObject = svStream
+          await $('#skycam').play().catch(() => {})
+          document.body.classList.add('skycam')
+        } catch {
+          svSay(t('svNoCam'))
+        }
+      } else {
+        if (svStream) svStream.getTracks().forEach((tr) => tr.stop())
+        svStream = null
+        $('#skycam').srcObject = null
+        document.body.classList.remove('skycam')
+      }
+      renderSky()
+      requestAnimationFrame(svFit)
+    }
+    $('#sv-cam').addEventListener('click', () => svCamera(!document.body.classList.contains('skycam')))
+
+    const svCheck = async () => {
+      if (svBusy || svDone) return
+      const typed = [...document.querySelectorAll('#sv-slots input')].map((x) => x.value).join('')
+      if (typed.length < svSeatCount()) return
+      svBusy = true
+      const title = await openLock(get(riddle, 'skyline.lock'), 'answer|' + normLetters(typed))
+      svBusy = false
+      if (title) return svPrinted(title)
+      const prog = $('#sv-prog')
+      prog.classList.remove('shake')
+      void prog.offsetWidth
+      prog.classList.add('shake')
+      buzz()
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40])
+      const lines = get(riddle, `skyline.udi.wrong.${lang}`) || []
+      if (lines.length) svSay(lines[svWrong++ % lines.length])
+    }
+    const svPrinted = (title) => {
+      svDone = true
+      document.activeElement && document.activeElement.blur()
+      $('#sv-slots').hidden = true
+      const p = $('#sv-printed')
+      p.textContent = title
+      p.hidden = false
+      svSay(get(riddle, `skyline.udi.right.${lang}`), 0)
+      fanfare()
+      if (navigator.vibrate) navigator.vibrate([60, 40, 120])
+      setTimeout(() => {
+        stopSky()
+        $('#end-word').hidden = false
+        $('#end-word').textContent = title
+        show('s-end')
+      }, 3400)
+    }
+
+    const startSky = async () => {
+      svLetters = safe(() => JSON.parse(store.get(SVSTORE)), null) || []
+      if (!Array.isArray(svLetters)) svLetters = []
+      svDone = false
+      svBusy = false
+      $('#sv-slots').hidden = false
+      $('#sv-printed').hidden = true
+      document.body.classList.add('skymode')
+      svBuildSlots()
+      renderSky()
+      $('#skyview').scrollTop = 0
+      await svLoadDrawing()
+      svPickBox(0, false)
+      svCenterOn(0, false)
+      svSay(get(riddle, `skyline.udi.start.${lang}`), 14000)
+      keepAwake()
+    }
+    const stopSky = () => {
+      svCamera(false)
+      document.body.classList.remove('skymode')
+      clearTimeout(svCheckTimer)
+      letSleep()
+    }
+    $('#sv-exit').addEventListener('click', () => {
+      stopSky()
+      show(riddle.rules ? 's-rules' : 's-intro')
+    })
+    window.addEventListener('resize', () => { if (document.body.classList.contains('skymode')) svFit() })
+
+    // How the plan works: a made-up sign, a made-up box and its seats, and the letters they give.
+    const skylineHowArt = () => {
+      const sign = 'CAFE NOGA'
+      const seats = [2, 5]
+      const x0 = 50
+      const cw = 17
+      let n = 0
+      let letters = ''
+      ;[...sign].forEach((c, i) => {
+        if (c === ' ') return
+        n++
+        const on = seats.includes(n)
+        const x = x0 + i * cw
+        if (on) letters += `<rect x="${x - 1}" y="50" width="${cw}" height="24" rx="3" fill="${C.gold}"/>`
+        letters += `<text x="${x + cw / 2 - 1}" y="68" text-anchor="middle" font-size="19" font-weight="700" font-family="Courier New, monospace" fill="${on ? '#141a36' : '#fff'}">${c}</text>`
+        letters += `<text x="${x + cw / 2 - 1}" y="44" text-anchor="middle" font-size="9" font-family="Rubik, sans-serif" fill="${on ? C.gold : 'rgba(255,255,255,.5)'}">${n}</text>`
+      })
+      return `
+      <svg class="art" viewBox="0 0 360 200" role="img" aria-label="">
+        <rect width="360" height="200" fill="#1d2550"/>
+        <rect x="40" y="34" width="${sign.length * cw + 20}" height="46" rx="6" fill="#2c3768" stroke="#ffc94a" stroke-width="1.5"/>
+        ${letters}
+        <rect x="71" y="80" width="110" height="120" fill="#2a3360" stroke="#171d44" stroke-width="2"/>
+        ${[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${81 + c * 25}" y="${92 + r * 26}" width="14" height="16" rx="2" fill="${(r + c) % 3 ? '#3e4a7f' : '#ffd46b'}"/>`).join('')).join('')}
+        <g transform="translate(276 86)">
+          <rect x="-24" y="-38" width="15" height="15" rx="3" fill="#fff" stroke="#141a36"/><text x="-16.5" y="-27" text-anchor="middle" font-size="10" font-weight="700" font-family="Rubik, sans-serif" fill="#141a36">2</text>
+          <rect x="-6" y="-38" width="15" height="15" rx="3" fill="#fff" stroke="#141a36"/><text x="1.5" y="-27" text-anchor="middle" font-size="10" font-weight="700" font-family="Rubik, sans-serif" fill="#141a36">5</text>
+          <circle cx="-7" cy="-6" r="13" fill="${C.gold}" stroke="#141a36" stroke-width="2"/><text x="-7" y="-1" text-anchor="middle" font-size="13" font-weight="700" font-family="Rubik, sans-serif" fill="#141a36">7</text>
+        </g>
+        <path d="M248 56H218" fill="none" stroke="${C.gold}" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <g transform="translate(226 132)">
+          <rect x="0" y="0" width="112" height="52" rx="8" fill="#fffaf0"/><rect x="0" y="0" width="112" height="6" rx="3" fill="#7a2b1d"/>
+          <rect x="30" y="14" width="24" height="30" rx="5" fill="#fff" stroke="#c9b48a" stroke-width="2"/><text x="42" y="37" text-anchor="middle" font-size="20" font-family="Secular One, Rubik, sans-serif" fill="#141a36">A</text>
+          <rect x="58" y="14" width="24" height="30" rx="5" fill="#fff" stroke="#c9b48a" stroke-width="2"/><text x="70" y="37" text-anchor="middle" font-size="20" font-family="Secular One, Rubik, sans-serif" fill="#141a36">N</text>
+        </g>
+      </svg>`
+    }
+
     // ---------- A clue page from the original mission, kept exactly as it was ----------
     $('#clue-open').addEventListener('click', () => {
       $('#viewer-img').src = $('#clue-img').src
@@ -3172,6 +3652,7 @@
     const play = () => {
       if (TYPE === 'key') return startKey()
       if (TYPE === 'console') return startConsole()
+      if (TYPE === 'skyline') return startSky()
       if (TYPE === 'clue') return show('s-clue')
       show('s-start')
     }
@@ -3269,7 +3750,7 @@
         const res = await fetch(`riddles/${RIDDLE_ID}.json`, {cache: 'no-cache'})
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         riddle = await res.json()
-        TYPE = ['key', 'clue', 'console'].includes(riddle.type) ? riddle.type : 'walk'
+        TYPE = ['key', 'clue', 'console', 'skyline'].includes(riddle.type) ? riddle.type : 'walk'
         if (TYPE === 'walk') ROUTE = parseRoute(riddle.route)
       } catch (err) {
         $('#s-loading').innerHTML = `<p>${esc(UI.he.loadFail)}</p><p>${esc(UI.en.loadFail)}</p><p class="muted">${esc(err.message)}</p>`
@@ -3282,7 +3763,7 @@
       cellKnown = !!cell || !get(riddle, 'ar.calibrate')
       lang = pickLang()
       showArt('#art-intro', get(riddle, 'art.intro'), introArt(), get(riddle, 'art.introVideo'))
-      showArt('#art-how', get(riddle, 'art.how'), TYPE === 'key' ? keyHowArt() : TYPE === 'console' ? consoleHowArt() : howArt())
+      showArt('#art-how', get(riddle, 'art.how'), TYPE === 'key' ? keyHowArt() : TYPE === 'console' ? consoleHowArt() : TYPE === 'skyline' ? skylineHowArt() : howArt())
       if (TYPE === 'walk') $('#art-map').innerHTML = mapArt()
       showArt('#art-end', get(riddle, 'art.end'), endArt(), get(riddle, 'art.endVideo'))
       if (riddle.film && riddle.film.src) {
@@ -3290,12 +3771,16 @@
         storyVideo.src = riddle.film.src
       }
       if (TYPE === 'clue') $('#clue-img').src = get(riddle, 'clue.image') || ''
+      if (TYPE === 'clue' && !get(riddle, 'clue.image')) $('#clue-open').hidden = true
+      $('#clue-vm').hidden = !get(riddle, 'clue.message')
+      $('#clue-note').hidden = !get(riddle, 'clue.note')
       if (TYPE !== 'walk') $('#btn-again').hidden = true
       render()
-      // ?screen= opens a screen directly, for checking the page; "key", "console" and "compass" start those modes.
+      // ?screen= opens a screen directly, for checking the page; "key", "console", "skyline" and "compass" start those modes.
       const first = params.get('screen')
       if (first === 'key' && TYPE === 'key') return startKey()
       if (first === 'console' && TYPE === 'console') return startConsole()
+      if (first === 'skyline' && TYPE === 'skyline') return startSky()
       if (first === 'compass' && TYPE === 'walk') return startCompass(0)
       show(first && document.getElementById(first) ? first : (riddle.film ? 's-story' : 's-intro'))
     }

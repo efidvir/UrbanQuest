@@ -42,8 +42,10 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 | Lock | `key` | Set the teeth of Udi's key to match the row of trees, over the camera view |
 | Stop the water | `water` | Work out Udi's drawing (the original clue picture) |
 | Lighting console | `console` | Set Udi's coffee-soaked lighting console until its drawing matches the real square |
+| The play's title | `skyline` | Read letters off the rooftop signs on the playwright's seating plan of the skyline |
+| The van downstairs (draft) | `parking` | Decode the stage manager's voice message and find the van in the car park |
 
-Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`, `console`)
+Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`, `console`, `skyline`, `parking`)
 
 ### Story film and animated pictures
 
@@ -75,6 +77,14 @@ Mitzi has knocked Udi's coffee over the square's lighting console, and every set
 - **The light stripes:** how many stripes of light are set into the ground between the garden and Habima.
 
 Players walk around the square and adjust the console until its drawing matches what they see. Then GO brings up the lights and the screen shows the word for TravelQuest. Like the key, the word is encrypted with all the settings together, so neither is in the page or the repository. To change the word, or if a count turns out different on site, run `node riddle/tools/lock.mjs --console --pillars <per group> --glass <1 or 0 per group> --stages <left,middle,right> --benches <shape>,<count> --stripes <count> "<word>"` and paste the result into `console.lock` in the riddle file.
+
+### The play's title
+
+The programmes come back from the printer without the play's title, and the playwright left Udi only a seating plan for his guests of honour. The plan is the skyline seen from the raised walkway in Gan Yaakov, traced from a photo of the view ([`riddle/art/skyline.svg`](riddle/art/skyline.svg)): each numbered box is a building with a sign on its roof, and the numbers above it are seats, the places of letters in that sign. Players drag and zoom the plan, or lay its line over the real skyline with the camera, and type the letters into the programme box by box. The title is locked with itself (`node riddle/tools/lock.mjs --answer "<title>"`, pasted into `skyline.lock`), so it isn't in the page or the repository.
+
+### The van downstairs (draft)
+
+A voice message from the stage manager, in theatre jargon, points to the production van in the car park under the square. The page shows the message with blanks for the details that still have to be collected on site, and a draft note; the clue picture can also be a voice message like this one (`clue.message` in the riddle file).
 
 ### Making a new mission
 

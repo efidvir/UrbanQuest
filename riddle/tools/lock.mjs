@@ -14,6 +14,11 @@
 //   benches  the benches' shape (sine, square, triangle or saw) and how many there are
 //   stripes  how many light stripes
 //
+// A word the player spells out letter by letter (riddles/*.json, skyline.lock): the word opens the lock,
+// and the page then shows the text locked with it (the word itself if none is given).
+//   node lock.mjs --answer "WORD" ["text to show"]
+// Letters are compared without spaces, in capitals, with Hebrew letters read as their Latin sound.
+//
 // Paste the printed JSON into the riddle file. Needs Node 20 or newer.
 const args = process.argv.slice(2)
 const fail = (msg) => {
@@ -22,8 +27,18 @@ const fail = (msg) => {
 }
 
 // The text the lock is made from. The page builds exactly the same text from the player's settings.
+// The same letter rules as the page (riddle/index.html, normLetters).
+const HE = {'א': 'A', 'ב': 'B', 'ג': 'G', 'ד': 'D', 'ה': 'H', 'ו': 'V', 'ז': 'Z', 'ח': 'H', 'ט': 'T', 'י': 'Y', 'כ': 'K', 'ך': 'K', 'ל': 'L', 'מ': 'M', 'ם': 'M',
+  'נ': 'N', 'ן': 'N', 'ס': 'S', 'ע': 'A', 'פ': 'P', 'ף': 'P', 'צ': 'T', 'ץ': 'T', 'ק': 'K', 'ר': 'R', 'ש': 'S', 'ת': 'T'}
+const normLetters = (s) => [...s].map((c) => HE[c] || c.toUpperCase()).filter((c) => /[A-Z0-9]/.test(c)).join('')
+
 let secret, word, extra = {}
-if (args[0] === '--console') {
+if (args[0] === '--answer') {
+  const [, answer, shown] = args
+  if (!answer || !normLetters(answer)) fail('Usage: node lock.mjs --answer "WORD" ["text to show"]')
+  word = shown || answer
+  secret = 'answer|' + normLetters(answer)
+} else if (args[0] === '--console') {
   const opt = {}
   for (let i = 1; i < args.length; i++) {
     if (args[i].startsWith('--')) opt[args[i].slice(2)] = args[++i]

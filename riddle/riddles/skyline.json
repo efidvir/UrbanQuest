@@ -1,0 +1,161 @@
+{
+  "id": "skyline",
+  "type": "skyline",
+  "defaultLang": "he",
+  "title": {
+    "he": "שם ההצגה",
+    "en": "The play's title"
+  },
+  "kicker": {
+    "he": "הבימה · גן יעקב",
+    "en": "Habima · Gan Yaakov"
+  },
+  "art": {
+    "intro": "art/skyline-intro.webp",
+    "introVideo": "art/skyline-intro.mp4",
+    "end": "art/skyline-end.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "רגע לפני שהקהל נכנס, מגיעות מהדפוס התוכניות של הערב, ובמקום שם ההצגה יש רווח ריק. אודי שכח לשלוח את השם, ועכשיו הוא גם לא זוכר אותו.",
+      "המחזאי, ליצן ידוע, השאיר לו רק מפת הושבה של אורחי הכבוד, ועליה פתק: \"האורחים שלי יושבים ביציע הכי גבוה בעיר, וכל אחד מהם שומר לי אות.\"",
+      "מהשביל העליון בגן יעקב אודי מבין: היציע הוא קו הרקיע, והתאים הם הבניינים עם השלטים על הגג. עזרו לו להושיב את האורחים ולגלות איך קוראים להצגה."
+    ],
+    "en": [
+      "Just before the audience comes in, the evening's programmes arrive from the printer, and where the play's title should be there's a blank. Udi forgot to send the title, and now he can't remember it either.",
+      "The playwright, a famous joker, left him only a seating plan for the guests of honour, with a note: \"My guests sit in the highest balcony in town, and each of them is keeping a letter for me.\"",
+      "From the raised walkway in Gan Yaakov, Udi gets it: the balcony is the skyline, and the boxes are the buildings with signs on their roofs. Help him seat the guests and find out what the play is called."
+    ]
+  },
+  "rules": {
+    "he": [
+      "עלו לשביל העליון בגן יעקב והסתכלו על קו הרקיע שמעבר לכיכר. מפת ההושבה מצוירת בדיוק מהנקודה הזאת.",
+      "כל מספר בעיגול הוא תא: בניין עם שלט על הגג. אפשר לפתוח את המצלמה ולהעמיד את הקו של המפה על הגגות האמיתיים.",
+      "המספרים מעל כל תא הם המושבים: המקום של האות בשלט. סופרים רק אותיות, בלי רווחים, לפי כיוון הקריאה.",
+      "הושיבו את האותיות בתוכנייה, תא אחרי תא. כשהשם נכון, התוכנייה יוצאת לדפוס. הקלידו את השם בטרוול קווסט."
+    ],
+    "en": [
+      "Go up to the raised walkway in Gan Yaakov and look at the skyline beyond the square. The seating plan is drawn from exactly this spot.",
+      "Each circled number is a box: a building with a sign on its roof. You can open the camera and lay the plan's line over the real rooftops.",
+      "The numbers above each box are the seats: a letter's place in the sign. Count letters only, without spaces, in reading order.",
+      "Seat the letters in the programme, box by box. When the title is right, the programme goes to print. Enter the title in TravelQuest."
+    ]
+  },
+  "skyline": {
+    "drawing": "art/skyline.svg",
+    "boxes": [
+      {
+        "n": 1,
+        "x": 595.9,
+        "y": 281.5,
+        "seats": [
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "n": 2,
+        "x": 259.7,
+        "y": 260.0,
+        "seats": [
+          5
+        ]
+      },
+      {
+        "n": 3,
+        "x": 949.4,
+        "y": 322.2,
+        "seats": [
+          5
+        ]
+      },
+      {
+        "n": 4,
+        "x": 221.2,
+        "y": 234.1,
+        "seats": [
+          3,
+          9
+        ]
+      },
+      {
+        "n": 5,
+        "x": 565.3,
+        "y": 289.4,
+        "seats": [
+          2
+        ],
+        "seatsBelow": true
+      }
+    ],
+    "lock": {
+      "iterations": 150000,
+      "salt": "AzV4q9uXVlPXGt9O/Lhp1w==",
+      "iv": "G8c+vzlSMZmzRM4t",
+      "data": "EsYjpd2MpQLxtO98Q1psrHcvq/OI5VIR"
+    },
+    "plan": {
+      "title": {
+        "he": "מפת ההושבה של אורחי הכבוד",
+        "en": "Seating plan for the guests of honour"
+      }
+    },
+    "programme": {
+      "head": {
+        "he": "התוכנייה · הערב בהבימה",
+        "en": "PROGRAMME · TONIGHT AT HABIMA"
+      },
+      "sub": {
+        "he": "שם ההצגה:",
+        "en": "The play:"
+      }
+    },
+    "udi": {
+      "start": {
+        "he": "כל עיגול הוא תא, וכל מספר מעליו הוא מושב. מצאו את השלט על הגג וספרו בו אותיות.",
+        "en": "Each circle is a box, and each number above it is a seat. Find the sign on the roof and count its letters."
+      },
+      "wrong": {
+        "he": [
+          "אחד האורחים יושב במקום הלא נכון. ספרו שוב את האותיות בשלט, בלי רווחים.",
+          "אם השלט בעברית, סופרים מימין לשמאל.",
+          "עמדו על השביל העליון בגן יעקב ומצאו כל תא לפי צורת הבניינים סביבו. המצלמה עוזרת.",
+          "השם הוא מילה שכל מי שהיה פעם בתיאטרון מכיר."
+        ],
+        "en": [
+          "One of the guests is in the wrong seat. Count the letters in the sign again, without spaces.",
+          "If a sign is in Hebrew, count from right to left.",
+          "Stand on the raised walkway in Gan Yaakov and find each box by the shape of the buildings around it. The camera helps.",
+          "The title is a word anyone who has been to the theatre knows."
+        ]
+      },
+      "right": {
+        "he": "התוכנייה יוצאת לדפוס!",
+        "en": "The programmes are going to print!"
+      }
+    }
+  },
+  "end": {
+    "title": {
+      "he": "ההצגה קיבלה שם!",
+      "en": "The play has a title!"
+    },
+    "udi": {
+      "he": "המחזאי צחק עליי כל הערב, אבל השם באמת מתאים לו. זה מה שיודפס בתוכנייה:",
+      "en": "The playwright has been laughing at me all evening, but the title really suits him. Here's what goes on the programme:"
+    },
+    "task": {
+      "he": "הקלידו את שם ההצגה בטרוול קווסט.",
+      "en": "Enter the play's title in TravelQuest."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}
