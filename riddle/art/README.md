@@ -1,57 +1,49 @@
-# Pictures for Udi's garden walk
+# Pictures and animations for the riddle pages
 
-The pictures in this folder were made with Gemini from the prompts below, then turned into WebP files
-with [`cutout.py`](cutout.py). The `art` block of the riddle file (`riddle/riddles/garden.json`) lists
-them. Any picture that's missing from that list falls back to the built-in drawing.
+Everything here follows Efi's original story pictures (`pics/Story pics` in the AR project, made in ChatGPT):
+the same Udi, the same black cat, the same flat TV-cartoon look, warm dusk colours, and the real places
+around Habima Square, drawn from photos of the site.
 
-## Style (paste this first, with every picture)
+- **Pictures:** made in ChatGPT, with the original story pictures and a photo of the place attached as references.
+- **Animations:** made in Gemini (Videos), starting from the picture. Each page plays its clip once and then
+  settles on the clip's last frame, so the fixed picture is exactly where the animation stops.
 
-Flat 2D TV-cartoon style: thick, clean dark-brown outlines; bright flat colours with at most one soft
-shadow tone; simple rounded shapes; big expressive eyes; friendly, slightly goofy expressions.
-No text, no letters, no logos.
+Udi: the theatre caretaker. Tan skin, black hair, big expressive eyes, navy cap, navy short-sleeved shirt,
+brown trousers, a belt with a wrench hanging from it, a small brown notebook. The cat: black, yellow eyes.
 
-Udi: a clumsy, kind theatre caretaker in his late 50s. Round face, big bushy brown moustache, grey
-sideburns, teal flat cap, cream shirt with rolled-up sleeves, blue work overalls with brass buttons,
-a big ring of keys on his belt, a yellow pencil behind his ear, a small brown notebook diary.
+## Scenes and their animations
 
-Mitzi: a chubby ginger tabby cat with darker orange stripes, amber eyes and a mischievous look.
+| Files | Mission | Made from |
+| --- | --- | --- |
+| `start-intro` | Starting point | Original INTRO picture: Udi panics at the plaza; the cat runs off with a page and the pages blow away |
+| `sycamore-intro` | Sycamore | Original TREE picture: the cat walks out along a branch, Udi takes the page caught there and reads it |
+| `intro` | Garden walk | New picture of the sunken garden at sunset (from the photo of its lawns and walkways): Udi leafs through his notebook, then his glowing footprints appear along the walkway and fade |
+| `end` | Garden walk, end | Same garden at night: Udi puzzles over his notebook, the cat asleep on the lawn |
+| `key-intro` | Lock | Original LOCK picture: the door won't open and the key won't turn |
+| `key-end` | Lock, solved | Original LOCK OPEN picture: the door opens, Udi raises the new key, the lights come on |
+| `water-intro` | Stop the water | Original WATER picture: the pool by Heichal HaTarbut overflows |
+| `story` | The story film (starting point) | Cut from the start, garden, lock and water clips, with captions in `../riddles/start.json` |
 
-Make `udi-wave` first, then give it to the image tool as the reference for every other picture,
-so Udi and Mitzi look the same everywhere.
+Each scene has three files: `<name>.mp4` (the clip), `<name>-first.webp` (shown until it plays) and
+`<name>.webp` (its last frame, the fixed picture). Make them from a downloaded clip with
+[`../tools/clip.py`](../tools/clip.py):
+
+    python3 ../tools/clip.py ~/Downloads/clip.mp4 water-intro
+
+The story film is a few seconds of each clip, crossfaded, made with [`../tools/film.py`](../tools/film.py).
+It prints the second each piece starts at, which is where its caption goes in `start.json`'s `film.captions`.
+It skips the sycamore clip on purpose, since the film plays before the first riddle.
+
+    python3 ../tools/film.py story start-intro.mp4:0:9 intro.mp4:3.5:5.5 key-intro.mp4:1:5.5 water-intro.mp4:2.5:7.5
 
 ## Cut-outs that stand on the ground in the camera view
 
-Full body, centred, the whole figure in the frame with the feet touching the bottom edge, on a plain
-flat bright-green background, no ground shadow. Nothing in the picture itself may be green, because
-the green background is what gets cut away (that's why Mitzi's eyes are amber).
+`udi-wave`, `udi-read`, `mitzi-sit`, `mitzi-walk` (side view facing right), `key`, `cup`. Ask ChatGPT for two
+at a time on a plain flat bright-green background (#00FF00) with plenty of space between them, full body, no
+shadow, no ground; split the sheet down the middle and cut each out with [`cutout.py`](cutout.py):
 
-| File | Picture |
-| --- | --- |
-| `udi-wave.webp` | Udi standing, facing the viewer, waving hello with one hand, the diary in the other, cheerful |
-| `udi-read.webp` | Udi standing, holding his open diary with both hands and reading it, puzzled frown |
-| `mitzi-sit.webp` | Mitzi sitting, facing the viewer, tail curled round her paws |
-| `mitzi-walk.webp` | Mitzi trotting, side view facing right, tail up |
-| `key.webp` | An old brass stage-door key on a small ring (just the object) |
-| `cup.webp` | An empty takeaway coffee cup with a lid (just the object) |
+    python3 cutout.py --tan udi-wave.png udi-wave.webp
 
-Cut the background away and trim to the figure:
-
-    python3 cutout.py udi-wave.png udi-wave.webp
-
-## Scenes for the story screens
-
-Landscape, full background. The script crops them to 3:2.
-
-| File | Picture |
-| --- | --- |
-| `intro.webp` | Night outside a modern theatre's stage door with a keypad blinking red. Udi scratches his head, worried. Mitzi sits nearby with a torn diary page in her mouth; paper scraps on the ground; stars above |
-| `end.webp` | Night in a sunken garden with a lawn and paths. Udi reads his diary, puzzled, a question mark above his head. Mitzi sleeps curled up on the grass |
-| `start-intro.webp` | Starting point. Early evening on a wide city plaza in front of a theatre. Udi holds a crumpled page covered in coloured dots, scratching his head; Mitzi has a paw on a small ball. No statues |
-| `sycamore-intro.webp` | Sycamore. A low grassy hill with one huge old sycamore fig. Udi counts on his fingers holding a diary page; Mitzi sits on a low branch |
-| `key-intro.webp` | Lock. A tiny key-cutting shop at night. Udi holds up a bent brass key, hand on his forehead; a row of street trees of different heights shows through the window; Mitzi bats a key ring on the counter |
-| `key-end.webp` | Lock, solved. A heavy backstage door swings open with golden light; Udi holds up a shiny new key, fist raised; Mitzi dashes in |
-| `water-intro.webp` | Stop the water. A backstage corridor with a burst pipe spraying water; Udi, soaked, on a ladder turning a red valve wheel; Mitzi dry and annoyed on a stack of crates |
-
-Start every scene prompt with "a wide landscape scene (16:9) in exactly the same cartoon style, with the same Udi and Mitzi", in the same Gemini chat as the cut-outs.
-
-    python3 cutout.py --scene intro.png intro.webp
+Use `--tan` for Udi: on a green background ChatGPT draws his skin a brighter orange than in the story
+pictures, and `--tan` brings it back. Nothing in a cut-out may be green, because the green background is
+what gets cut away.

@@ -12,7 +12,38 @@
   },
   "art": {
     "intro": "art/start-intro.webp",
+    "introVideo": "art/start-intro.mp4",
     "mitziSit": "art/mitzi-sit.webp"
+  },
+  "film": {
+    "src": "art/story.mp4",
+    "captions": [
+      {
+        "t": 0,
+        "he": "שעתיים לפני הבכורה בהבימה, ולאודי, אב הבית, הכול מתפרק.",
+        "en": "Two hours to opening night at Habima, and everything is falling apart for Udi, the caretaker."
+      },
+      {
+        "t": 4.2,
+        "he": "מיצי החתולה פיזרה את דפי הפנקס שלו, ועל כל דף רמז לאן להמשיך.",
+        "en": "Mitzi the cat has scattered the pages of his notebook, and each page holds a clue to where to go next."
+      },
+      {
+        "t": 8.7,
+        "he": "את הקוד לדלת הבמה הוא כתב ברגליים על שבילי הגינה, ושכח.",
+        "en": "He wrote the stage-door code with his feet on the garden paths, and forgot it."
+      },
+      {
+        "t": 13.7,
+        "he": "המפתח שלו התעקם, והדלת לא נפתחת.",
+        "en": "His key is bent, and the door won't open."
+      },
+      {
+        "t": 18.7,
+        "he": "ועכשיו גם הבריכה עולה על גדותיה. אודי צריך את העזרה שלכם!",
+        "en": "And now the pool is overflowing. Udi needs your help!"
+      }
+    ]
   },
   "story": {
     "he": [

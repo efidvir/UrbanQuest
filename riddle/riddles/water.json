@@ -12,17 +12,18 @@
   },
   "art": {
     "intro": "art/water-intro.webp",
+    "introVideo": "art/water-intro.mp4",
     "mitziSit": "art/mitzi-sit.webp"
   },
   "story": {
     "he": [
-      "אודי נכנס סוף סוף פנימה, ונעצר: מאחורי הקלעים התפוצץ צינור, והמים זורמים לכיוון הבמה.",
-      "פעם הוא שרטט לעצמו איך סוגרים את המים, ליתר ביטחון. עכשיו, כשזה באמת קרה, הוא לא מבין את השרטוט של עצמו.",
-      "עזרו לאודי לעצור את המים לפני שהקהל מגיע."
+      "אודי מגיע אל הבריכה הארוכה שליד היכל התרבות, ונעצר: המים עולים על גדותיה ושוטפים את הרחבה.",
+      "פעם הוא שרטט לעצמו איך סוגרים את הברז הראשי, ליתר ביטחון. עכשיו, כשזה באמת קרה, הוא לא מבין את השרטוט של עצמו.",
+      "עזרו לאודי לסגור את המים לפני שהקהל מגיע."
     ],
     "en": [
-      "Udi finally gets inside, and stops dead: a pipe has burst backstage, and the water is heading for the stage.",
-      "Once, just in case, he drew himself a note on how to shut the water off. Now that it has really happened, he can't make sense of his own drawing.",
+      "Udi reaches the long reflecting pool next to the concert hall, and stops dead: the water is spilling over the edge and flooding the plaza.",
+      "Once, just in case, he drew himself a note on how to shut off the main tap. Now that it has really happened, he can't make sense of his own drawing.",
       "Help Udi stop the water before the audience arrives."
     ]
   },

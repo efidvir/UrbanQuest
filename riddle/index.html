@@ -70,9 +70,20 @@
     .lead { display: flex; flex-direction: column; gap: 10px; }
     .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
     .art { display: block; width: 100%; height: auto; border-radius: 22px; background: var(--sky); direction: ltr; }
-    /* A picture file for a story screen drifts slowly, like a camera moving over the scene. */
-    .scene { overflow: hidden; border-radius: 22px; isolation: isolate; }
+    /* A picture file for a story screen drifts slowly, like a camera moving over the scene.
+       With an animation, the clip plays first and the scene settles on its last frame. */
+    .scene { position: relative; overflow: hidden; border-radius: 22px; isolation: isolate; }
     .scene .art { border-radius: 0; transform-origin: 55% 45%; }
+    .scene video.art { background: #000; }
+    .scene.has-video { cursor: pointer; }
+    .replay { position: absolute; inset-inline-end: 10px; bottom: 10px; width: 38px; height: 38px; border-radius: 50%; border: 0; padding: 0; background: rgba(20, 24, 48, .72); color: #fff; display: grid; place-items: center; cursor: pointer; }
+    .replay svg { width: 18px; height: 18px; }
+    .story-box { position: relative; border-radius: 22px; overflow: hidden; background: #000; }
+    .story-box video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
+    .story-play { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 0; background: rgba(10, 12, 30, .35); color: #fff; font: 700 18px Rubik, sans-serif; text-shadow: 0 1px 3px rgba(0, 0, 0, .6); cursor: pointer; }
+    .story-play svg { width: 68px; height: 68px; padding: 16px; border-radius: 50%; background: var(--gold); color: var(--gold-ink); box-shadow: 0 6px 18px rgba(0, 0, 0, .4); }
+    .story-play span { padding: 4px 14px; border-radius: 999px; background: rgba(10, 12, 30, .62); }
+    .story-caption { min-height: 3.3em; font-size: 19px; line-height: 1.55; text-align: center; color: var(--ink); }
 
     .btn {
       display: block;
@@ -93,6 +104,7 @@
     .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255, 255, 255, .32); font-weight: 500; }
     .btn:active { transform: scale(.985); }
     .btn[disabled] { opacity: .5; pointer-events: none; }
+    @media (prefers-reduced-motion: no-preference) { .btn.pulse { animation: here 1.6s ease-in-out infinite; } }
     .stack { display: flex; flex-direction: column; gap: 10px; }
 
     .rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: r; }
@@ -198,10 +210,12 @@
       .a-jingle { animation: jingle 2.6s ease-in-out infinite; }
       .a-read { animation: read 4s ease-in-out infinite; }
       .a-step { animation: step 1.6s ease-in-out infinite; }
-      .scene .art { animation: drift 18s ease-in-out infinite alternate; }
+      .scene img.art { animation: drift 18s ease-in-out infinite alternate; }
+      .scene img.art.settled { animation: settle .5s ease both, drift 18s ease-in-out .5s infinite alternate; }
       .a-peek { animation: peek 5s ease-in-out infinite; }
     }
     @keyframes drift { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, 1%); } }
+    @keyframes settle { from { opacity: .55; transform: scale(1.02); } to { opacity: 1; transform: scale(1.02); } }
     @keyframes peek { 0%, 100% { transform: translateY(9px); } 40%, 75% { transform: translateY(0); } }
     @keyframes scratch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
@@ -440,6 +454,15 @@
 
     <section class="screen on" id="s-loading">
       <p class="muted">…</p>
+    </section>
+
+    <section class="screen" id="s-story">
+      <div class="story-box">
+        <video id="story-video" playsinline preload="metadata"></video>
+        <button class="story-play" type="button" id="story-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><span id="story-play-label"></span></button>
+      </div>
+      <p class="story-caption hand" id="story-caption" aria-live="polite"></p>
+      <button class="btn" type="button" id="story-next" data-t="next"></button>
     </section>
 
     <section class="screen" id="s-intro">
@@ -682,6 +705,9 @@
         nextTree: 'העץ הבא',
         levels: ['נמוך', 'בינוני', 'גבוה', 'הכי גבוה'],
         noCam: 'אין מצלמה? פשוט הסתכלו על העצים.',
+        watchStory: 'צפו בסיפור של אודי',
+        watchAgain: 'לצפות שוב',
+        playAgain: 'לנגן שוב',
       },
       en: {
         langName: 'עברית',
@@ -759,6 +785,9 @@
         nextTree: 'Next tree',
         levels: ['Short', 'Medium', 'Tall', 'Tallest'],
         noCam: 'No camera? Just look at the trees.',
+        watchStory: "Watch Udi's story",
+        watchAgain: 'Watch again',
+        playAgain: 'Play again',
       },
     }
 
@@ -1115,6 +1144,8 @@
       document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.id === id))
       window.scrollTo(0, 0)
       if (id === 's-start') prepareStart()
+      if (id !== 's-story') stopStory()
+      playScenesIn(id)
     }
     document.addEventListener('click', (e) => {
       const go = e.target.closest('[data-go]')
@@ -1199,6 +1230,9 @@
       document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t) })
       document.querySelectorAll('[data-l]').forEach((el) => { el.textContent = L(get(riddle, el.dataset.l)) })
       if (TYPE === 'key') $('#btn-play').textContent = t('startAR')
+      storyLabel()
+      if (riddle.film) storyCaption()
+      document.querySelectorAll('.replay').forEach((b) => b.setAttribute('aria-label', t('playAgain')))
       $('#kv-prev').setAttribute('aria-label', t('prevTree'))
       $('#kv-next').setAttribute('aria-label', t('nextTree'))
       if (TYPE === 'clue') $('#clue-img').alt = L(get(riddle, 'clue.title'))
@@ -2479,6 +2513,33 @@
     $('#viewer-img').addEventListener('dblclick', () => $('#viewer-img').classList.toggle('big'))
     $('#viewer-close').addEventListener('click', () => { $('#viewer').hidden = true })
 
+    // ---------- The story so far: a short film before the first mission ----------
+    // Plays with sound after a tap; the captions come from the riddle file, in both languages.
+    const storyVideo = $('#story-video')
+    let storyWatched = false
+    const storyCaption = () => {
+      let line = ''
+      for (const c of get(riddle, 'film.captions') || []) if (storyVideo.currentTime >= c.t) line = L(c)
+      $('#story-caption').textContent = line
+    }
+    const storyLabel = () => { $('#story-play-label').textContent = storyWatched ? t('watchAgain') : t('watchStory') }
+    const stopStory = () => { if (storyVideo.src && !storyVideo.paused) storyVideo.pause() }
+    $('#story-play').addEventListener('click', () => {
+      storyVideo.muted = false
+      storyVideo.currentTime = 0
+      $('#story-play').hidden = true
+      const p = storyVideo.play()
+      if (p && p.catch) p.catch(() => { $('#story-play').hidden = false })
+    })
+    storyVideo.addEventListener('timeupdate', storyCaption)
+    storyVideo.addEventListener('ended', () => {
+      storyWatched = true
+      storyLabel()
+      $('#story-play').hidden = false
+      $('#story-next').classList.add('pulse')
+    })
+    $('#story-next').addEventListener('click', () => show('s-intro'))
+
     // ---------- Which screen comes after the story, for each kind of riddle ----------
     let TYPE = 'walk'
     const play = () => {
@@ -2502,16 +2563,78 @@
     }
 
     // The drawing shows at once; a picture file, if the riddle names one, replaces it when it has loaded.
-    const showArt = (sel, file, drawing) => {
+    // With a video too, the scene plays its animation once when its screen opens, then settles on the
+    // picture (the clip's last frame). Tapping a settled scene plays it again, with sound.
+    const showArt = (sel, file, drawing, video = null) => {
       const el = $(sel)
       el.innerHTML = drawing
       if (!file) return
       const img = new Image()
       img.className = 'art'
       img.alt = ''
-      img.onload = () => { el.classList.add('scene'); el.replaceChildren(img) }
+      img.onload = () => {
+        el.classList.add('scene')
+        if (video) {
+          el.dataset.video = video
+          el.dataset.still = file
+          el.classList.add('has-video')
+          settleScene(el, false)
+          if (el.closest('.screen.on') && !el.dataset.played) {   // its screen is already open
+            el.dataset.played = '1'
+            playScene(el)
+          }
+        } else {
+          el.replaceChildren(img)
+        }
+      }
       img.src = file
     }
+    const settleScene = (el, fade = true) => {
+      const img = new Image()
+      img.className = fade ? 'art settled' : 'art'
+      img.alt = ''
+      img.src = el.dataset.still
+      const again = document.createElement('button')
+      again.type = 'button'
+      again.className = 'replay'
+      again.setAttribute('aria-label', t('playAgain'))
+      again.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>'
+      el.replaceChildren(img, again)
+      el.dataset.state = 'still'
+    }
+    const playScene = (el, sound = false) => {
+      if (!el || !el.dataset.video || el.dataset.state === 'playing') return
+      const v = document.createElement('video')
+      v.className = 'art'
+      v.muted = !sound
+      v.playsInline = true
+      v.setAttribute('playsinline', '')
+      v.preload = 'auto'
+      v.poster = el.dataset.video.replace(/\.mp4$/, '-first.webp')
+      v.src = el.dataset.video
+      v.addEventListener('ended', () => settleScene(el))
+      v.addEventListener('error', () => settleScene(el, false))
+      el.replaceChildren(v)
+      el.dataset.state = 'playing'
+      const p = v.play()
+      if (p && p.catch) p.catch(() => settleScene(el, false))   // autoplay blocked: just show the picture
+    }
+    // Scenes animate the first time their screen opens; leaving a screen stops its clip.
+    const playScenesIn = (screenId) => {
+      document.querySelectorAll('.scene.has-video').forEach((el) => {
+        const here = el.closest('.screen') && el.closest('.screen').id === screenId
+        if (here && !el.dataset.played) {
+          el.dataset.played = '1'
+          playScene(el)
+        } else if (!here && el.dataset.state === 'playing') {
+          settleScene(el, false)
+        }
+      })
+    }
+    document.addEventListener('click', (e) => {
+      const sc = e.target.closest('.scene.has-video')
+      if (sc && sc.dataset.state === 'still') playScene(sc, true)
+    })
 
     const boot = async () => {
       try {
@@ -2530,10 +2653,14 @@
       CELL = Math.min(8, Math.max(0.5, cell || riddle.cell || 1))
       cellKnown = !!cell || !get(riddle, 'ar.calibrate')
       lang = pickLang()
-      showArt('#art-intro', get(riddle, 'art.intro'), introArt())
+      showArt('#art-intro', get(riddle, 'art.intro'), introArt(), get(riddle, 'art.introVideo'))
       showArt('#art-how', get(riddle, 'art.how'), TYPE === 'key' ? keyHowArt() : howArt())
       if (TYPE === 'walk') $('#art-map').innerHTML = mapArt()
-      showArt('#art-end', get(riddle, 'art.end'), endArt())
+      showArt('#art-end', get(riddle, 'art.end'), endArt(), get(riddle, 'art.endVideo'))
+      if (riddle.film && riddle.film.src) {
+        storyVideo.poster = riddle.film.src.replace(/\.mp4$/, '-first.webp')
+        storyVideo.src = riddle.film.src
+      }
       if (TYPE === 'clue') $('#clue-img').src = get(riddle, 'clue.image') || ''
       if (TYPE !== 'walk') $('#btn-again').hidden = true
       render()
@@ -2541,7 +2668,7 @@
       const first = params.get('screen')
       if (first === 'key' && TYPE === 'key') return startKey()
       if (first === 'compass' && TYPE === 'walk') return startCompass(0)
-      show(first && document.getElementById(first) ? first : 's-intro')
+      show(first && document.getElementById(first) ? first : (riddle.film ? 's-story' : 's-intro'))
     }
     boot()
   </script>

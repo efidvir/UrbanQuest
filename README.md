@@ -44,6 +44,10 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 
 Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`)
 
+### Story film and animated pictures
+
+The starting page opens with a short film of Udi's story (about 25 seconds, with Hebrew and English captions), and players tap "next" to start the first mission. Each mission's picture is animated: it plays once, silently, when the screen opens and then settles on its last frame, so the still picture is exactly where the animation stops. Tapping it plays it again with sound.
+
 ### The garden walk
 
 The walk is guided only by what players see in AR, with no written directions:
@@ -64,7 +68,7 @@ Udi's key has one tooth per tree in the real row of trees, from left to right, i
 
 Copy the riddle file closest to what you need and change it: `garden.json` for a walk (story, start point, route in the same notation as the mystery walk, diary lines, Udi's opening and closing lines, story props), `key.json` for a key, `start.json` for a clue picture (put the picture in [`riddle/clues/`](riddle/clues/)). Every file has its story, ending and return address in both languages. The garden's starting point is a placeholder until it's marked on site.
 
-The cartoon pictures live in [`riddle/art/`](riddle/art/), with the prompts used to make them and a script that cuts the figures out of their green background. A riddle file lists its pictures in its `art` block; anything missing falls back to the page's own drawings.
+The cartoon pictures and animations live in [`riddle/art/`](riddle/art/), with notes on how they were made and the scripts that cut figures out of their green background, turn a generated clip into a page's animation, and cut the story film. A riddle file lists its pictures and animations in its `art` block, and the starting page lists its film and the timing of its captions in `film`; anything missing falls back to the page's own drawings.
 
 Options for testing: `?lang=en`, `?cell=0.5` (half-metre squares at home, no measuring; the start screen says how much room you need), `?auto=0` or `?auto=1`, `?trail=1` (keep walked footprints visible), `?screen=s-end` (open a screen directly; `compass` or `key` starts that mode).
 

@@ -12,7 +12,9 @@
   },
   "art": {
     "intro": "art/key-intro.webp",
+    "introVideo": "art/key-intro.mp4",
     "end": "art/key-end.webp",
+    "endVideo": "art/key-end.mp4",
     "mitziSit": "art/mitzi-sit.webp"
   },
   "story": {

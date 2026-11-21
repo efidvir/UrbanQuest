@@ -12,7 +12,9 @@
   },
   "art": {
     "intro": "art/intro.webp",
+    "introVideo": "art/intro.mp4",
     "end": "art/end.webp",
+    "endVideo": "art/end.mp4",
     "udiWave": "art/udi-wave.webp",
     "udiRead": "art/udi-read.webp",
     "mitziSit": "art/mitzi-sit.webp",

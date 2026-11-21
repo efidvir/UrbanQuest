@@ -12,16 +12,17 @@
   },
   "art": {
     "intro": "art/sycamore-intro.webp",
+    "introVideo": "art/sycamore-intro.mp4",
     "mitziSit": "art/mitzi-sit.webp"
   },
   "story": {
     "he": [
-      "הצבעים הובילו את אודי אל עץ השקמה הזקן. מיצי כבר מחכה לו על הענף, ומתחת לעץ שוכב עוד דף מהיומן.",
+      "הצבעים הובילו את אודי אל עץ השקמה הזקן. מיצי כבר מחכה לו על הענף, ולידה נתקע בענפים עוד דף מהיומן.",
       "בראש הדף כתוב זיכרון על הגינה שהייתה כאן פעם. אבל את המקום הבא אודי החביא בצופן ספירה, ואודי אף פעם לא היה חזק בחשבון.",
       "עזרו לו לספור ולפענח. התשובה תוביל אתכם הלאה."
     ],
     "en": [
-      "The colours have led Udi to the old sycamore. Mitzi is already waiting on a branch, and under the tree lies another page from his diary.",
+      "The colours have led Udi to the old sycamore. Mitzi is already waiting on a branch, and next to her another page from his diary is caught in the leaves.",
       "At the top is a memory of the garden that used to be here. But Udi hid the next place in a counting cipher, and he was never much good at sums.",
       "Help him count and crack it. The answer takes you on to the next stop."
     ]
