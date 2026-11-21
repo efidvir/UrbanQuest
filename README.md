@@ -30,23 +30,42 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 - The start screen says how much room the route needs around you, so you can pick a direction at home
 - Udi's four-digit code is one unbroken walk over the whole grass grid, in two lines of two digits joined by an underline. It's 24 sides, three of them walked straight back. Its route lives in [`riddle/riddles/garden.json`](riddle/riddles/garden.json).
 
-## Riddle page (the playable version)
+## Riddle pages (the playable version)
 
-[`riddle/`](riddle/) is the page players open from the TravelQuest mission. It tells the story in Hebrew and English with cartoon pictures of Udi and Mitzi the cat, then opens the camera. The walk happens in AR:
+[`riddle/`](riddle/) is the page players open from each TravelQuest mission. Every mission uses the same page: Udi's story in Hebrew and English with cartoon pictures of him and Mitzi the cat, then the mission itself, then back to TravelQuest to enter the answer. Each mission is one file in [`riddle/riddles/`](riddle/riddles/), opened with `riddle/?r=<file name>`:
+
+| Mission | File | What players do |
+| --- | --- | --- |
+| Starting point | `start` | Crack Udi's colourful page (the original clue picture) |
+| Sycamore tree | `sycamore` | Crack the counting cipher under the old sycamore (the original clue picture) |
+| Walk in the garden | `garden` | Walk Udi's route in AR and work out the code it draws |
+| Lock | `key` | Set the teeth of Udi's key to match the row of trees, over the camera view |
+| Stop the water | `water` | Work out Udi's drawing (the original clue picture) |
+
+Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`)
+
+### The garden walk
+
+The walk is guided only by what players see in AR, with no written directions:
 
 - **At the start:** Udi stands on the ground in front of you, waves, and explains in speech bubbles. Mitzi sits next to him.
-- **Along the way:** Mitzi runs ahead to the next crossing and waits on a glowing ring. Udi's footprints light up the stretch to walk, gold where he was "writing". Walked footprints fade after a few seconds, so the shape only lives in the player's head. Each stretch shows a short note from Udi's diary above the crossing.
+- **Along the way:** Mitzi runs ahead to the next crossing and waits on a glowing ring. Udi's footprints light up the stretch to walk, gold where he was "writing". Walked footprints fade after a few seconds, so the shape only lives in the player's head.
 - **Story moments:** his empty coffee cup stands where it ran out, and his dropped keys float at the crossing where he lost them; walking there picks them up.
-- **The square size measures itself:** on the first stretch Mitzi just leads the way, and the player taps "I'm at the first crossing". That distance becomes the square size, and from then on the page advances by itself at each crossing. Tapping is always possible, and it also re-aims the arrows at your feet.
-- **At the end:** Udi reappears reading his diary and asks what he wrote. Then the page sends players back to TravelQuest to enter the code, and offers the full diary for retracing the walk.
-- **Fallback:** if the camera can't start, the page offers the same walk as diary pages without the camera.
+- **The square size measures itself:** on the first stretch Mitzi just leads the way, and the player taps "I'm at the first crossing". That distance becomes the square size, and from then on the page advances by itself at each crossing. Tapping is always possible, and it also re-aims the footprints at your feet.
+- **At the end:** Udi reappears reading his diary and asks what he wrote. Then the page sends players back to TravelQuest to enter the code.
 
-Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden
+If AR can't start, the page switches to a **compass mode**: a big arrow turns with the phone and points along the next stretch, Mitzi trots when you face the right way, the phone buzzes, and players tap at each crossing. It checks GPS once at the start to see whether they're in the garden (phone GPS is too rough to tell crossings apart). Only if the phone has no compass does the page fall back to the **written diary**, one page per stretch.
 
-It's a template: each riddle is one file in [`riddle/riddles/`](riddle/riddles/), with its story, start point, route (same notation as the mystery walk), diary lines, Udi's opening and closing lines, story props, ending and return address, in both languages. Copy `garden.json`, change it, and link to `riddle/?r=<file name>`. The starting point is a placeholder until it's marked on site.
+### The key
+
+Udi's key has one tooth per tree in the real row of trees, from left to right, in four heights. Players hold up the camera, look at the trees, and pick a height for each tooth. When every tooth is right, the key turns and Udi shows the word to enter in TravelQuest. The word is encrypted with the tooth sequence, so neither is in the page or the repository: to change the lock, run `node riddle/tools/lock.mjs <levels, e.g. 4,4,3> "<word>"` and paste the result into the riddle file's `key.lock`.
+
+### Making a new mission
+
+Copy the riddle file closest to what you need and change it: `garden.json` for a walk (story, start point, route in the same notation as the mystery walk, diary lines, Udi's opening and closing lines, story props), `key.json` for a key, `start.json` for a clue picture (put the picture in [`riddle/clues/`](riddle/clues/)). Every file has its story, ending and return address in both languages. The garden's starting point is a placeholder until it's marked on site.
 
 The cartoon pictures live in [`riddle/art/`](riddle/art/), with the prompts used to make them and a script that cuts the figures out of their green background. A riddle file lists its pictures in its `art` block; anything missing falls back to the page's own drawings.
 
-Options for testing: `?lang=en`, `?cell=0.5` (half-metre squares at home, no measuring; the start screen says how much room you need), `?auto=0` or `?auto=1`, `?trail=1` (keep walked footprints visible), `?screen=s-end` (open a screen directly).
+Options for testing: `?lang=en`, `?cell=0.5` (half-metre squares at home, no measuring; the start screen says how much room you need), `?auto=0` or `?auto=1`, `?trail=1` (keep walked footprints visible), `?screen=s-end` (open a screen directly; `compass` or `key` starts that mode).
 
 Built with three.js and the 8th Wall engine binary. The engine is © Niantic Spatial, Inc., used under the [XR Engine License Agreement](https://github.com/8thwall/engine/blob/main/LICENSE) and provided as is, without warranty.

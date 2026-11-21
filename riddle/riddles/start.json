@@ -1,0 +1,51 @@
+{
+  "id": "start",
+  "type": "clue",
+  "defaultLang": "he",
+  "title": {
+    "he": "הדף הצבעוני",
+    "en": "The colourful page"
+  },
+  "kicker": {
+    "he": "הבימה · נקודת התחלה",
+    "en": "Habima · The starting point"
+  },
+  "art": {
+    "intro": "art/start-intro.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "שעתיים לפני הבכורה בהבימה. אודי, אב הבית של התיאטרון, חוצה את הרחבה ומגלה אסון: מיצי, החתולה של התיאטרון, שוב נכנסה לו לפנקס, והדפים התפזרו לכל עבר.",
+      "הדף הראשון שמצא מלא בעיגולים צבעוניים. אודי תמיד מצפין את הרשימות שלו, כדי שאף אחד אחר לא יוכל לקרוא אותן. הבעיה היא שעכשיו גם הוא לא מצליח.",
+      "עמדו בנקודת ההתחלה ועזרו לו לפענח את הדף. התשובה היא היעד הבא שלכם."
+    ],
+    "en": [
+      "Two hours to opening night at Habima. Udi, the theatre's caretaker, is crossing the plaza when disaster strikes: Mitzi, the theatre cat, has got into his notebook again, and the pages are scattered everywhere.",
+      "The first page he finds is covered in coloured circles. Udi always writes his notes in code, so nobody else can read them. The trouble is, now he can't either.",
+      "Stand at the starting point and help him crack the page. The answer is your next destination."
+    ]
+  },
+  "clue": {
+    "image": "clues/start.png",
+    "title": {
+      "he": "הדף הראשון",
+      "en": "The first page"
+    },
+    "udi": {
+      "he": "המפתח לצבעים? הוא איפשהו כאן, ממש מול העיניים. הכול תלוי מאיפה מסתכלים.",
+      "en": "The key to the colours? It's somewhere right here, in plain sight. It all depends on where you look from."
+    },
+    "task": {
+      "he": "פענחו את הדף, חזרו לטרוול קווסט והקלידו את התשובה.",
+      "en": "Crack the page, then go back to TravelQuest and enter the answer."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}

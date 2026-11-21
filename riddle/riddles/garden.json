@@ -22,14 +22,14 @@
   },
   "story": {
     "he": [
-      "עוד שעתיים עולה הבכורה בהבימה. הדלת לבמה נעולה, ואודי, אב הבית של התיאטרון, לא זוכר את הקוד החדש.",
-      "בחודש שעבר מיצי, החתולה של התיאטרון, לעסה לו את הפנקס. אז אתמול בלילה הוא החביא את הקוד איפה שאף חתול לא יגיע: הוא כתב אותו ברגליים על שבילי הגינה, ספרה אחרי ספרה, ורשם ביומן לאן הלך.",
-      "עכשיו נשאר לו רק היומן. לכו בעקבותיו וגלו מה הוא כתב."
+      "הערוגה הובילה אתכם אל הגינה השקועה. הדלת לבמה נעולה, ואודי לא זוכר את הקוד החדש.",
+      "מיצי לא מפסיקה ללעוס לו את הפנקסים, אז אתמול בלילה הוא החביא את הקוד איפה שאף חתול לא יגיע: הוא כתב אותו ברגליים על שבילי הגינה, ספרה אחרי ספרה.",
+      "לכו בעקבותיו וגלו מה הוא כתב."
     ],
     "en": [
-      "Two hours to opening night at Habima. The stage door is locked, and Udi, the theatre's caretaker, can't remember the new code.",
-      "Last month Mitzi, the theatre cat, chewed up his notebook. So last night he hid the code where no cat could reach it: he wrote it with his feet on the garden paths, number by number, and noted in his diary where he walked.",
-      "Now the diary is all he has. Follow in his footsteps and work out what he wrote."
+      "The flower bed has brought you to the sunken garden. The stage door is locked, and Udi can't remember the new code.",
+      "Mitzi keeps chewing his notebooks, so last night he hid the code where no cat could reach it: he wrote it with his feet on the garden paths, digit after digit.",
+      "Follow in his footsteps and work out what he wrote."
     ]
   },
   "rules": {
@@ -65,6 +65,11 @@
     "note": {
       "he": "זמני: הנקודה המדויקת תסומן כאן בהמשך.",
       "en": "Placeholder: the exact spot will be marked here later."
+    },
+    "gps": {
+      "lat": 32.07244,
+      "lng": 34.77963,
+      "radius": 60
     }
   },
   "route": "L,B,R,B,L,R,B,L,B,R3,F2,B,L,F,R,F,L,B,F2,R",

@@ -46,5 +46,12 @@ Landscape, full background. The script crops them to 3:2.
 | --- | --- |
 | `intro.webp` | Night outside a modern theatre's stage door with a keypad blinking red. Udi scratches his head, worried. Mitzi sits nearby with a torn diary page in her mouth; paper scraps on the ground; stars above |
 | `end.webp` | Night in a sunken garden with a lawn and paths. Udi reads his diary, puzzled, a question mark above his head. Mitzi sleeps curled up on the grass |
+| `start-intro.webp` | Starting point. Early evening on a wide city plaza in front of a theatre. Udi holds a crumpled page covered in coloured dots, scratching his head; Mitzi has a paw on a small ball. No statues |
+| `sycamore-intro.webp` | Sycamore. A low grassy hill with one huge old sycamore fig. Udi counts on his fingers holding a diary page; Mitzi sits on a low branch |
+| `key-intro.webp` | Lock. A tiny key-cutting shop at night. Udi holds up a bent brass key, hand on his forehead; a row of street trees of different heights shows through the window; Mitzi bats a key ring on the counter |
+| `key-end.webp` | Lock, solved. A heavy backstage door swings open with golden light; Udi holds up a shiny new key, fist raised; Mitzi dashes in |
+| `water-intro.webp` | Stop the water. A backstage corridor with a burst pipe spraying water; Udi, soaked, on a ladder turning a red valve wheel; Mitzi dry and annoyed on a stack of crates |
+
+Start every scene prompt with "a wide landscape scene (16:9) in exactly the same cartoon style, with the same Udi and Mitzi", in the same Gemini chat as the cut-outs.
 
     python3 cutout.py --scene intro.png intro.webp

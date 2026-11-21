@@ -1,0 +1,89 @@
+{
+  "id": "key",
+  "type": "key",
+  "defaultLang": "he",
+  "title": {
+    "he": "המפתח של אודי",
+    "en": "Udi's key"
+  },
+  "kicker": {
+    "he": "הבימה · מנעול",
+    "en": "Habima · The lock"
+  },
+  "art": {
+    "intro": "art/key-intro.webp",
+    "end": "art/key-end.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "הדלת לבמה נפתחה, אבל מאחוריה מחכה עוד דלת, והמפתח של אודי לא מסתובב. הוא התעקם כשהמפתחות נפלו לו בגינה.",
+      "למזלו, אודי זוכר שהוא עיצב את המפתח לפי קוד שנמצא כאן בסביבה: שורת העצים. לכל עץ יש שן במפתח, בגובה של העץ.",
+      "הוא רץ לשכפל מפתח בחנות הסמוכה, אבל איך נראו השיניים? עזרו לו להיזכר."
+    ],
+    "en": [
+      "The stage door is open, but behind it waits another door, and Udi's key won't turn. It got bent when he dropped his keys in the garden.",
+      "Luckily, Udi remembers that he made the key from a code right here: the row of trees. Every tree has a tooth on the key, as tall as the tree.",
+      "He's rushing to get a copy cut at the shop next door, but what did the teeth look like? Help him remember."
+    ]
+  },
+  "rules": {
+    "he": [
+      "עמדו מול שורת העצים ופתחו את המצלמה.",
+      "כל שן במפתח היא עץ אחד בשורה, משמאל לימין.",
+      "לכל שן בחרו את הגובה של העץ שלה, מנמוך ועד הכי גבוה.",
+      "כשכל השיניים נכונות, המפתח מסתובב ואודי מגלה לכם מילה. הקלידו אותה בטרוול קווסט."
+    ],
+    "en": [
+      "Stand facing the row of trees and open the camera.",
+      "Each tooth on the key is one tree in the row, from left to right.",
+      "Give each tooth its tree's height, from short to tallest.",
+      "When every tooth is right, the key turns and Udi tells you a word. Enter it in TravelQuest."
+    ]
+  },
+  "key": {
+    "levels": 4,
+    "lock": {
+      "teeth": 23,
+      "iterations": 150000,
+      "salt": "V4mHkftrw7FrgAmIL6E52A==",
+      "iv": "a2ytc2VWnYGD/bqn",
+      "data": "X/dbVYR37r3S7wmU9ZQYxv3HvQjGfJyTeJ3vKg=="
+    },
+    "udi": {
+      "start": {
+        "he": "כל שן היא עץ. מתחילים מהעץ השמאלי בשורה.",
+        "en": "Each tooth is a tree. Start with the tree on the far left."
+      },
+      "wrong": {
+        "he": "הוא לא מסתובב... משהו לא מתאים. בדקו שוב את העצים, אחד אחד.",
+        "en": "It won't turn... something doesn't fit. Check the trees again, one by one."
+      },
+      "right": {
+        "he": "זה המפתח!",
+        "en": "That's the key!"
+      }
+    }
+  },
+  "end": {
+    "title": {
+      "he": "הדלת נפתחה!",
+      "en": "The door opens!"
+    },
+    "udi": {
+      "he": "ידעתי שהעצים ישמרו לי על הסוד. וזאת המילה שחרטתי על המפתח:",
+      "en": "I knew the trees would keep my secret. And here's the word I engraved on the key:"
+    },
+    "task": {
+      "he": "הקלידו את המילה בטרוול קווסט.",
+      "en": "Enter the word in TravelQuest."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}

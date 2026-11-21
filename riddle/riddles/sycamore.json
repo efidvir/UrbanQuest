@@ -1,0 +1,51 @@
+{
+  "id": "sycamore",
+  "type": "clue",
+  "defaultLang": "he",
+  "title": {
+    "he": "השקמה הזקנה",
+    "en": "The old sycamore"
+  },
+  "kicker": {
+    "he": "הבימה · עץ השקמה",
+    "en": "Habima · The sycamore"
+  },
+  "art": {
+    "intro": "art/sycamore-intro.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "הצבעים הובילו את אודי אל עץ השקמה הזקן. מיצי כבר מחכה לו על הענף, ומתחת לעץ שוכב עוד דף מהיומן.",
+      "בראש הדף כתוב זיכרון על הגינה שהייתה כאן פעם. אבל את המקום הבא אודי החביא בצופן ספירה, ואודי אף פעם לא היה חזק בחשבון.",
+      "עזרו לו לספור ולפענח. התשובה תוביל אתכם הלאה."
+    ],
+    "en": [
+      "The colours have led Udi to the old sycamore. Mitzi is already waiting on a branch, and under the tree lies another page from his diary.",
+      "At the top is a memory of the garden that used to be here. But Udi hid the next place in a counting cipher, and he was never much good at sums.",
+      "Help him count and crack it. The answer takes you on to the next stop."
+    ]
+  },
+  "clue": {
+    "image": "clues/sycamore.png",
+    "title": {
+      "he": "דף מתחת לעץ",
+      "en": "A page under the tree"
+    },
+    "udi": {
+      "he": "תספרו לאט. אני תמיד מתבלבל באמצע.",
+      "en": "Count slowly. I always lose track halfway."
+    },
+    "task": {
+      "he": "פענחו את הצופן, חזרו לטרוול קווסט והקלידו את התשובה.",
+      "en": "Crack the cipher, then go back to TravelQuest and enter the answer."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "id": "water",
+  "type": "clue",
+  "defaultLang": "he",
+  "title": {
+    "he": "לעצור את המים",
+    "en": "Stop the water"
+  },
+  "kicker": {
+    "he": "הבימה · לעצור את המים",
+    "en": "Habima · Stop the water"
+  },
+  "art": {
+    "intro": "art/water-intro.webp",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "אודי נכנס סוף סוף פנימה, ונעצר: מאחורי הקלעים התפוצץ צינור, והמים זורמים לכיוון הבמה.",
+      "פעם הוא שרטט לעצמו איך סוגרים את המים, ליתר ביטחון. עכשיו, כשזה באמת קרה, הוא לא מבין את השרטוט של עצמו.",
+      "עזרו לאודי לעצור את המים לפני שהקהל מגיע."
+    ],
+    "en": [
+      "Udi finally gets inside, and stops dead: a pipe has burst backstage, and the water is heading for the stage.",
+      "Once, just in case, he drew himself a note on how to shut the water off. Now that it has really happened, he can't make sense of his own drawing.",
+      "Help Udi stop the water before the audience arrives."
+    ]
+  },
+  "clue": {
+    "image": "clues/water.png",
+    "title": {
+      "he": "השרטוט של אודי",
+      "en": "Udi's drawing"
+    },
+    "udi": {
+      "he": "ציירתי את זה בעצמי, אז למה זה נראה לי כמו סינית?",
+      "en": "I drew this myself, so why does it look like Greek to me?"
+    },
+    "task": {
+      "he": "פענחו את השרטוט, חזרו לטרוול קווסט והקלידו את התשובה.",
+      "en": "Work out the drawing, then go back to TravelQuest and enter the answer."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}

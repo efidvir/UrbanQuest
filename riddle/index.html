@@ -362,6 +362,71 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
+
+    /* Compass mode: an arrow that turns with the phone, for phones where AR can't start */
+    .c-count { display: flex; align-items: center; gap: 6px; direction: ltr; unicode-bidi: isolate; font-weight: 700; color: var(--ink); }
+    .c-count svg { width: 20px; height: 20px; }
+    .dial { position: relative; width: min(78vw, 300px); aspect-ratio: 1; margin: 6px auto 0; }
+    .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .dial .needle { transition: transform .18s linear; }
+    .dial .needle .arrow { fill: #fff; transition: fill .3s; }
+    .dial.on .needle .arrow { fill: var(--gold); }
+    .dial .glow { opacity: 0; transition: opacity .3s; }
+    .dial.on .glow { opacity: 1; }
+    .dial.idle .needle { opacity: .25; }
+    .trot { position: relative; height: 92px; display: flex; justify-content: center; align-items: flex-end; }
+    .trot img { height: 84px; width: auto; display: none; }
+    .trot .sit { display: block; }
+    .trot.go .sit { display: none; }
+    .trot.go .run { display: block; }
+    .c-tip { text-align: center; min-height: 1.5em; }
+    .c-gps { align-self: center; font-size: 14px; border-radius: 999px; padding: 5px 13px; background: rgba(60, 207, 122, .16); color: #9ff0c0; }
+    .c-gps.far { background: rgba(255, 201, 74, .14); color: var(--gold); }
+
+    /* A clue picture from the original mission, kept exactly as it was */
+    .clue-card { display: block; position: relative; width: 100%; padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #fff; cursor: zoom-in; box-shadow: 0 12px 30px rgba(0, 0, 0, .35); }
+    .clue-card img { display: block; width: 100%; height: auto; }
+    .clue-zoom { display: block; font-size: 13px; font-weight: 500; color: #1d2550; background: #e9ecf8; padding: 7px 11px; text-align: center; }
+    #viewer { position: fixed; inset: 0; z-index: 2147482000; background: rgba(8, 10, 24, .96); display: flex; flex-direction: column; }
+    #viewer .pill { align-self: flex-end; margin: calc(12px + env(safe-area-inset-top)) 14px 8px; }
+    #viewer .scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y pinch-zoom; }
+    #viewer img { display: block; width: 100%; height: auto; margin: 0 auto; background: #fff; }
+    #viewer img.big { width: 200%; max-width: none; }
+    .word { align-self: center; font: 400 44px/1.1 "Secular One", Rubik, sans-serif; color: var(--gold); letter-spacing: .04em; border: 2px dashed rgba(255, 201, 74, .6); border-radius: 18px; padding: 12px 26px; background: rgba(255, 201, 74, .08); }
+
+    /* The key: one tooth per tree, over the camera view */
+    #keyview { position: fixed; inset: 0; z-index: 20; display: none; flex-direction: column; justify-content: space-between; background: radial-gradient(120% 80% at 50% 0%, #2a3a6e, var(--night)); }
+    body.keymode #keyview { display: flex; }
+    body.keymode #app { display: none; }
+    #keycam { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    body.nocam #keycam { display: none; }
+    .kv-top { position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: calc(12px + env(safe-area-inset-top)) 14px 0; }
+    .kv-say { position: relative; max-width: min(78vw, 360px); background: #fff; color: #1d2550; border-radius: 18px; padding: 10px 14px; font: 600 16px/1.45 "Playpen Sans Hebrew", Rubik, sans-serif; box-shadow: 0 8px 22px rgba(0, 0, 0, .35); cursor: pointer; }
+    .kv-say:empty { display: none; }
+    .kv-nocam { position: relative; margin: 0 14px; font-size: 14px; color: var(--muted); display: none; }
+    body.nocam .kv-nocam { display: block; }
+    .kv-panel { position: relative; margin: 0 auto; width: 100%; max-width: 520px; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); background: linear-gradient(to top, rgba(14, 18, 40, .97) 70%, rgba(14, 18, 40, .82)); border-radius: 22px 22px 0 0; display: flex; flex-direction: column; gap: 10px; }
+    #kv-key { display: block; width: 100%; height: auto; direction: ltr; touch-action: manipulation; cursor: pointer; }
+    #kv-key .tooth.sel .mark { opacity: 1; }
+    #kv-key .mark { opacity: 0; }
+    .kv-pick { display: flex; align-items: center; justify-content: space-between; gap: 8px; direction: ltr; }
+    .kv-pick strong { unicode-bidi: plaintext; text-align: center; }
+    .kv-pick .pill { min-width: 52px; font-size: 20px; line-height: 1; padding: 8px 14px; }
+    .kv-pick strong { font-size: 17px; }
+    .kv-levels { display: grid; grid-template-columns: repeat(var(--levels, 4), 1fr); gap: 8px; direction: ltr; }
+    .kv-levels button { display: flex; align-items: flex-end; justify-content: center; height: 74px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .07); cursor: pointer; padding: 6px 0; }
+    .kv-levels button.on { border-color: var(--gold); background: rgba(255, 201, 74, .16); }
+    .kv-levels button:active { transform: scale(.96); }
+    .kv-levels svg { height: 100%; width: auto; }
+    .kv-panel.turning #kv-key { opacity: .7; }
+    @media (prefers-reduced-motion: no-preference) {
+      .kv-panel.jiggle #kv-key { animation: jiggle .5s ease; }
+      .kv-panel.open #kv-key { animation: turnkey 1.1s ease forwards; }
+      .trot.go .run { animation: hop .36s ease-in-out infinite alternate; }
+    }
+    @keyframes jiggle { 0%, 100% { transform: none; } 20% { transform: translateX(-6px) rotate(-1deg); } 40% { transform: translateX(5px) rotate(1deg); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+    @keyframes turnkey { 0% { transform: none; } 45% { transform: translateX(8%); } 100% { transform: translateX(8%) rotate(-12deg); } }
+    @keyframes hop { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-7px) rotate(2deg); } }
   </style>
 </head>
 <body>
@@ -381,14 +446,14 @@
       <div id="art-intro"></div>
       <h1 data-l="title"></h1>
       <div class="lead" id="story"></div>
-      <button class="btn" type="button" data-go="s-rules" data-t="helpUdi"></button>
+      <button class="btn" type="button" id="btn-help" data-t="helpUdi"></button>
     </section>
 
     <section class="screen" id="s-rules">
       <div id="art-how"></div>
       <h2 data-t="howTitle"></h2>
       <ol class="rules" id="rules"></ol>
-      <button class="btn" type="button" data-go="s-start" data-t="next"></button>
+      <button class="btn" type="button" id="btn-play" data-t="next"></button>
     </section>
 
     <section class="screen" id="s-start">
@@ -420,11 +485,12 @@
       <div id="art-end"></div>
       <h2 data-l="end.title"></h2>
       <div class="paper"><p class="hand quote" data-l="end.udi"></p></div>
+      <div class="word" id="end-word" hidden></div>
       <p data-l="end.task"></p>
       <div class="stack">
-        <a class="btn" id="to-tq" href="https://travelandquest.com/"><span data-t="backToTQ"></span><small data-t="backToTQsub"></small></a>
+        <a class="btn to-tq" id="to-tq" href="https://travelandquest.com/"><span data-t="backToTQ"></span><small id="to-tq-sub"></small></a>
         <p class="muted" data-t="backHint"></p>
-        <button class="btn ghost" type="button" data-go="s-diary" data-t="readDiary"></button>
+        <button class="btn ghost" type="button" id="btn-read" data-go="s-diary" data-t="readDiary" hidden></button>
         <button class="btn ghost" type="button" id="btn-again" data-t="walkAgain"></button>
       </div>
     </section>
@@ -434,6 +500,59 @@
       <ol class="paper diary-list" id="diary-list"></ol>
       <button class="btn" type="button" data-go="s-end" data-t="back"></button>
     </section>
+
+    <section class="screen" id="s-compass">
+      <div class="walkhead">
+        <span class="c-count" id="c-count"></span>
+        <button class="pill" type="button" id="c-exit" data-t="exit"></button>
+      </div>
+      <div class="progress"><i id="c-bar"></i></div>
+      <span class="c-gps" id="c-gps" hidden></span>
+      <div class="dial idle" id="c-dial" aria-hidden="true"></div>
+      <div class="trot" id="c-trot" aria-hidden="true"></div>
+      <p class="c-tip" id="c-tip" aria-live="polite"></p>
+      <div class="stack">
+        <button class="btn" type="button" id="c-next"></button>
+        <button class="btn ghost" type="button" id="c-prev" data-t="prevCrossing"></button>
+        <button class="btn ghost" type="button" id="c-diary" data-t="useDiary" hidden></button>
+      </div>
+    </section>
+
+    <section class="screen" id="s-clue">
+      <h2 data-l="clue.title"></h2>
+      <div class="paper"><p class="hand quote" data-l="clue.udi"></p></div>
+      <button class="clue-card" type="button" id="clue-open"><img id="clue-img" alt=""><span class="clue-zoom" data-t="zoomClue"></span></button>
+      <p data-l="clue.task"></p>
+      <div class="stack">
+        <a class="btn to-tq" href="https://travelandquest.com/"><span data-t="backToTQ"></span><small data-t="backToTQanswer"></small></a>
+        <p class="muted" data-t="backHint"></p>
+      </div>
+    </section>
+  </div>
+
+  <div id="keyview">
+    <video id="keycam" playsinline muted autoplay></video>
+    <div>
+      <div class="kv-top">
+        <div class="kv-say" id="kv-say" role="status"></div>
+        <button class="pill" type="button" id="kv-exit" data-t="exit"></button>
+      </div>
+      <p class="kv-nocam" data-t="noCam"></p>
+    </div>
+    <div class="kv-panel" id="kv-panel">
+      <svg id="kv-key" aria-hidden="true"></svg>
+      <div class="kv-pick">
+        <button class="pill" type="button" id="kv-prev" aria-label="‹">‹</button>
+        <strong id="kv-which" aria-live="polite"></strong>
+        <button class="pill" type="button" id="kv-next" aria-label="›">›</button>
+      </div>
+      <div class="kv-levels" id="kv-levels"></div>
+    </div>
+  </div>
+
+  <div id="viewer" hidden>
+    <button class="pill" type="button" id="viewer-close" data-t="close"></button>
+    <div class="scroll"><img id="viewer-img" alt=""></div>
   </div>
 
   <div id="ar">
@@ -465,7 +584,12 @@
     // ?cell=0.5      square size in metres, for testing at home (skips measuring it on the first stretch)
     // ?auto=0|1      advance automatically when the player reaches the next crossing
     // ?trail=1       keep the walked footprints visible
-    // ?screen=s-end  open a screen directly (for checking the page)
+    // ?screen=s-end  open a screen directly (for checking the page); "compass" or "key" starts that mode
+    //
+    // A riddle file's "type" picks what the player does after the story:
+    //   walk (default)  the AR garden walk, with a compass mode and the written diary as fallbacks
+    //   key             set a key's teeth to match a row of trees, over the camera view
+    //   clue            look at a clue picture from the original mission and solve it
     const params = new URLSearchParams(location.search)
     const RIDDLE_ID = (params.get('r') || 'garden').replace(/[^\w-]/g, '')
     const SCALE = params.get('scale') === 'absolute' ? 'absolute' : 'responsive'
@@ -539,6 +663,25 @@
         arFail: 'המצלמה לא נפתחה בטלפון הזה.',
         playNoCamera: 'לשחק בלי מצלמה',
         loadFail: 'משהו לא נטען. בדקו את החיבור ונסו שוב.',
+        useCompass: 'לשחק עם מצפן',
+        compassReady: 'עמדו בנקודת ההתחלה עם הפנים לקצה הרחוק של הדשא. החץ יוביל אתכם מצומת לצומת.',
+        compassResume: 'עמדו בצומת שבו עצרתם, עם הפנים לקצה הרחוק של הדשא.',
+        facingFarEnd: 'אני בנקודה, עם הפנים לקצה הרחוק',
+        noCompass: 'המצפן של הטלפון הזה לא עונה.',
+        useDiary: 'להשתמש ביומן הכתוב',
+        calibrate: 'החץ מבולבל? נפנפו בטלפון בצורת 8 כדי לכייל את המצפן.',
+        prevCrossing: 'חזרה לצומת הקודם',
+        gpsFar: 'נראה שאתם {m} מ׳ מהגינה. גשו אליה קודם.',
+        gpsNear: 'אתם בגינה',
+        backToTQanswer: 'שם מקלידים את התשובה',
+        backToTQword: 'שם מקלידים את המילה',
+        zoomClue: 'הקישו להגדלה',
+        close: 'סגירה',
+        tree: 'עץ {n} מתוך {total}',
+        prevTree: 'העץ הקודם',
+        nextTree: 'העץ הבא',
+        levels: ['נמוך', 'בינוני', 'גבוה', 'הכי גבוה'],
+        noCam: 'אין מצלמה? פשוט הסתכלו על העצים.',
       },
       en: {
         langName: 'עברית',
@@ -597,6 +740,25 @@
         arFail: "The camera didn't start on this phone.",
         playNoCamera: 'Play without the camera',
         loadFail: "Something didn't load. Check your connection and try again.",
+        useCompass: 'Play with the compass',
+        compassReady: 'Stand at the starting point facing the far end of the lawn. The arrow leads you from crossing to crossing.',
+        compassResume: 'Stand at the crossing where you stopped, facing the far end of the lawn.',
+        facingFarEnd: "I'm here, facing the far end",
+        noCompass: "This phone's compass isn't answering.",
+        useDiary: 'Use the written diary',
+        calibrate: 'Arrow confused? Wave the phone in a figure of eight to calibrate the compass.',
+        prevCrossing: 'Back one crossing',
+        gpsFar: 'You seem to be {m} m from the garden. Head there first.',
+        gpsNear: "You're in the garden",
+        backToTQanswer: 'Enter the answer there',
+        backToTQword: 'Enter the word there',
+        zoomClue: 'Tap to zoom',
+        close: 'Close',
+        tree: 'Tree {n} of {total}',
+        prevTree: 'Previous tree',
+        nextTree: 'Next tree',
+        levels: ['Short', 'Medium', 'Tall', 'Tallest'],
+        noCam: 'No camera? Just look at the trees.',
       },
     }
 
@@ -1032,11 +1194,18 @@
       room.textContent = t('room', {room: roomText()})
       $('#diary-list').innerHTML = TURNS.map((turn, i) => `
         <li><span class="n">${i + 1}</span>${turnIcon(turn)}<span class="hand">${esc(get(riddle, `diary.${lang}`)?.[i] || t(`turn.${turn}`))}</span></li>`).join('')
-      $('#to-tq').href = tqUrl()
+      document.querySelectorAll('.to-tq').forEach((a) => { a.href = tqUrl() })
+      $('#to-tq-sub').textContent = TYPE === 'key' ? t('backToTQword') : t('backToTQsub')
       document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t) })
       document.querySelectorAll('[data-l]').forEach((el) => { el.textContent = L(get(riddle, el.dataset.l)) })
+      if (TYPE === 'key') $('#btn-play').textContent = t('startAR')
+      $('#kv-prev').setAttribute('aria-label', t('prevTree'))
+      $('#kv-next').setAttribute('aria-label', t('nextTree'))
+      if (TYPE === 'clue') $('#clue-img').alt = L(get(riddle, 'clue.title'))
       if ($('#s-start').classList.contains('on')) prepareStart()
       if ($('#s-walk').classList.contains('on')) renderDiaryPage(false)
+      if ($('#s-compass').classList.contains('on')) renderCompass()
+      if (document.body.classList.contains('keymode')) renderKey()
     }
     $('#lang').addEventListener('click', () => {
       lang = lang === 'he' ? 'en' : 'he'
@@ -1045,21 +1214,29 @@
     })
 
     // ---------- Shared walk state ----------
-    let mode = null      // 'ar' | 'diary'
+    let mode = null      // 'ar' | 'compass' | 'diary'
     let seg = 0          // the stretch being walked now (0-based)
     let gotKey = false
     let diaryState = 'ready'
-    const walkingNow = () => (mode === 'diary' && $('#s-walk').classList.contains('on')) || document.body.classList.contains('ar')
+    let usedDiary = false
+    const walkingNow = () => (mode === 'diary' && $('#s-walk').classList.contains('on'))
+      || (mode === 'compass' && $('#s-compass').classList.contains('on'))
+      || document.body.classList.contains('ar')
 
     const finish = () => {
       clearProgress()
       letSleep()
+      stopCompass()
       mode = null
+      // The full diary spells out the route, so it's only offered to players who already walked by it.
+      $('#btn-read').hidden = !usedDiary
       show('s-end')
     }
 
-    // ---------- Diary pages: the fallback when the camera can't start ----------
+    // ---------- Diary pages: the last resort, when neither AR nor the compass works ----------
     const startDiary = (from = 0) => {
+      stopCompass()
+      usedDiary = true
       mode = 'diary'
       seg = from
       diaryState = 'ready'
@@ -1110,6 +1287,7 @@
       const saved = loadProgress() || {}
       const from = Math.max(0, Math.min(N - 1, saved.seg || 0))
       if (saved.mode === 'diary') startDiary(from)
+      else if (saved.mode === 'compass') startCompass(from)
       else startAR(from)
     })
     $('#btn-again').addEventListener('click', () => {
@@ -1133,15 +1311,16 @@
       const origin = session.get('urbanquest-tq-origin') || tq.origin || 'https://travelandquest.com'
       return origin + ((tq.path && tq.path[lang]) || (lang === 'he' ? '/iw/' : '/en/'))
     }
-    $('#to-tq').addEventListener('click', (e) => {
+    document.querySelectorAll('.to-tq').forEach((a) => a.addEventListener('click', (e) => {
       e.preventDefault()
+      stopKey()
       if (fromTQ && history.length > 1) {
         history.back()   // opened from TravelQuest in this tab: step back to the mission
         return
       }
       window.close()     // opened in a new tab: closing it shows TravelQuest again
       setTimeout(() => { location.href = tqUrl() }, 350)
-    })
+    }))
 
     // ---------- AR: Udi, Mitzi and glowing footprints on the real ground (8th Wall SLAM) ----------
     let THREE = null
@@ -1592,9 +1771,10 @@
       panel(`<p>${esc(seg > 0 ? t('arResume') : t('arReady'))}</p>`, t('go'), () => (seg === 0 && hasIntro() ? startIntro() : beginWalk(true)))
     }
     const lostPanel = () => panel(`<p>${esc(t('lost'))}</p>`, t('cont'), continueAfterLost)
-    const failedPanel = () => panel(`<p>${esc(t('arFail'))}</p>`, t('playNoCamera'), () => {
+    // If AR can't start, the compass comes next; the written diary is only the last resort.
+    const failedPanel = () => panel(`<p>${esc(t('arFail'))}</p>`, t('useCompass'), () => {
       stopAR()
-      startDiary(seg)
+      startCompass(seg)
     })
 
     // ---------- The walk, step by step ----------
@@ -1729,11 +1909,7 @@
       placeProps()
       updateCount()
       setHere(true)
-      const line = get(riddle, `diary.${lang}`)?.[seg]
-      if (line && (!talk || talk.kind === 'note')) {
-        const end = segEnd.clone()
-        note(line, calibrating ? mitziHead : () => end.clone().add(new THREE.Vector3(0, 0.75 * actScale, 0)))
-      }
+      // No written directions in AR: Mitzi and the footprints are the only guide.
     }
 
     // byTap: the player says they're at the crossing, so the next stretch starts at their feet
@@ -1894,6 +2070,425 @@
       },
     })
 
+    // ---------- Compass mode: an arrow that turns with the phone, when AR can't start ----------
+    // The arrow points along the next stretch. "Forward" is the compass bearing the phone faced when
+    // the player said they were at the start facing the far end. No written directions, as in AR.
+    const RAD = Math.PI / 180
+    let heading = null          // where the back of the phone points, in degrees from north
+    let headingSmooth = null
+    let farEnd = null           // compass bearing of the far end of the lawn
+    let compassState = 'ready'  // ready | walking
+    let compassOn = false
+    let listening = false
+    let aligned = false
+    let needleAngle = 0
+    let unreliable = false
+
+    // From the phone's orientation angles (W3C DeviceOrientation) to the bearing its back camera faces.
+    const headingFromAngles = (a, b, g) => {
+      const cA = Math.cos(a * RAD), sA = Math.sin(a * RAD)
+      const cB = Math.cos(b * RAD), sB = Math.sin(b * RAD)
+      const cG = Math.cos(g * RAD), sG = Math.sin(g * RAD)
+      let east = -cA * sG - sA * sB * cG
+      let north = -sA * sG + cA * sB * cG
+      if (Math.hypot(east, north) < 0.35) {   // lying flat: use the top edge instead
+        east = -sA * cB
+        north = cA * cB
+      }
+      return (Math.atan2(east, north) / RAD + 360) % 360
+    }
+    const onOrientation = (e) => {
+      let h = null
+      if (typeof e.webkitCompassHeading === 'number' && !Number.isNaN(e.webkitCompassHeading)) {
+        h = e.webkitCompassHeading                                   // iPhone
+        unreliable = e.webkitCompassAccuracy < 0 || e.webkitCompassAccuracy > 30
+      } else if ((e.absolute || e.type === 'deviceorientationabsolute') && e.alpha != null) {
+        h = headingFromAngles(e.alpha, e.beta || 0, e.gamma || 0)    // Android
+      }
+      if (h == null) return
+      // Smooth on the circle, so 359° → 1° doesn't swing the long way round.
+      if (headingSmooth == null) headingSmooth = {x: Math.sin(h * RAD), y: Math.cos(h * RAD)}
+      headingSmooth.x = headingSmooth.x * 0.75 + Math.sin(h * RAD) * 0.25
+      headingSmooth.y = headingSmooth.y * 0.75 + Math.cos(h * RAD) * 0.25
+      heading = (Math.atan2(headingSmooth.x, headingSmooth.y) / RAD + 360) % 360
+    }
+    // Must run straight from a tap: iPhones only ask for motion access inside one.
+    // Whatever the answer, readings arriving is what counts (checked right after).
+    const listenCompass = () => {
+      const ask = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'
+        ? DeviceOrientationEvent.requestPermission().catch(() => 'denied')
+        : Promise.resolve('granted')
+      return ask.then(() => {
+        if (!listening) {
+          if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', onOrientation)
+          window.addEventListener('deviceorientation', onOrientation)
+          listening = true
+        }
+        return typeof DeviceOrientationEvent !== 'undefined'
+      })
+    }
+    const waitFor = (test, ms) => new Promise((resolve) => {
+      const t0 = performance.now()
+      const tick = () => (test() ? resolve(true) : performance.now() - t0 > ms ? resolve(false) : setTimeout(tick, 100))
+      tick()
+    })
+
+    // Checked once at the start: are they in the garden? Phone GPS is only good to a few metres,
+    // so it can't tell crossings apart, but it can tell the garden from the street.
+    const distanceM = (lat1, lng1, lat2, lng2) => {
+      const dLat = (lat2 - lat1) * RAD
+      const dLng = (lng2 - lng1) * RAD
+      const s = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * RAD) * Math.cos(lat2 * RAD) * Math.sin(dLng / 2) ** 2
+      return 6371000 * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s))
+    }
+    let gpsChecked = false
+    const checkGps = () => {
+      const g = get(riddle, 'start.gps')
+      if (gpsChecked || !g || !navigator.geolocation) return
+      gpsChecked = true
+      navigator.geolocation.getCurrentPosition((p) => {
+        const d = distanceM(p.coords.latitude, p.coords.longitude, g.lat, g.lng)
+        const far = d > (g.radius || 60) + Math.max(15, p.coords.accuracy || 0)
+        const el = $('#c-gps')
+        el.hidden = false
+        el.classList.toggle('far', far)
+        el.dataset.m = Math.round(d)
+        el.dataset.far = far ? '1' : ''
+        el.textContent = far ? t('gpsFar', {m: Math.round(d)}) : `✓ ${t('gpsNear')}`
+      }, () => {}, {enableHighAccuracy: true, timeout: 12000, maximumAge: 60000})
+    }
+
+    const dialSvg = () => `
+      <svg viewBox="-110 -110 220 220">
+        <circle r="100" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+        ${Array.from({length: 36}, (_, i) => `<line y1="-100" y2="${i % 3 ? -93 : -86}" stroke="rgba(255,255,255,${i % 3 ? .25 : .5})" stroke-width="2" transform="rotate(${i * 10})"/>`).join('')}
+        <circle class="glow" r="100" fill="none" stroke="${C.gold}" stroke-width="6"/>
+      </svg>
+      <svg viewBox="-110 -110 220 220" class="needle" id="c-needle">
+        <path class="arrow" d="M0 -86L36 -26H13V64H-13V-26H-36Z" stroke="#1d2550" stroke-width="4" stroke-linejoin="round"/>
+      </svg>`
+    const catPics = () => {
+      const sit = get(riddle, 'art.mitziSit')
+      const run = get(riddle, 'art.mitziWalk')
+      return (sit ? `<img class="sit" src="${esc(sit)}" alt="">` : `<svg class="sit" viewBox="-30 -58 76 62" style="height:84px;width:auto">${mitziSitting(false, false)}</svg>`)
+        + (run ? `<img class="run" src="${esc(run)}" alt="">` : `<svg class="run" viewBox="-36 -52 72 54" style="height:70px;width:auto">${mitziWalk(0)}</svg>`)
+    }
+
+    const startCompass = (from = 0) => {
+      stopAR()
+      mode = 'compass'
+      seg = from
+      compassState = 'ready'
+      aligned = false
+      saveProgress()
+      $('#c-dial').innerHTML = dialSvg()
+      $('#c-trot').innerHTML = catPics()
+      $('#c-diary').hidden = true
+      show('s-compass')
+      renderCompass()
+      checkGps()
+      compassOn = true
+      requestAnimationFrame(tickCompass)
+    }
+    const stopCompass = () => { compassOn = false }
+
+    const renderCompass = () => {
+      const ready = compassState === 'ready'
+      $('#c-count').innerHTML = `${PAW}${ready ? '' : `${Math.min(seg + 1, N)} / ${N}`}`
+      $('#c-bar').style.width = `${(seg / N) * 100}%`
+      $('#c-next').textContent = ready ? t('facingFarEnd') : t('atCrossing')
+      $('#c-prev').hidden = ready || seg === 0
+      $('#c-dial').classList.toggle('idle', ready)
+      if (ready) $('#c-tip').textContent = seg > 0 ? t('compassResume') : t('compassReady')
+      const gps = $('#c-gps')
+      if (!gps.hidden) gps.textContent = gps.dataset.far ? t('gpsFar', {m: gps.dataset.m}) : `✓ ${t('gpsNear')}`
+    }
+
+    const tickCompass = () => {
+      if (!compassOn) return
+      requestAnimationFrame(tickCompass)
+      if (compassState !== 'walking' || heading == null || farEnd == null) return
+      const m = ROUTE[seg]
+      const want = (farEnd + Math.atan2(m.dx, m.dy) / RAD + 360) % 360
+      const d = ((want - heading + 540) % 360) - 180          // + = the way to go is to your right
+      needleAngle += ((d - needleAngle) % 360 + 540) % 360 - 180
+      $('#c-needle').style.transform = `rotate(${needleAngle.toFixed(1)}deg)`
+      $('#c-needle .arrow').style.fill = m.ink ? '' : '#cfd6ff'
+      const now = Math.abs(d) < 22
+      if (now !== aligned) {
+        aligned = now
+        $('#c-dial').classList.toggle('on', aligned)
+        $('#c-trot').classList.toggle('go', aligned)
+        if (aligned && navigator.vibrate) navigator.vibrate(35)
+      }
+      $('#c-tip').textContent = unreliable ? t('calibrate') : ''
+    }
+
+    const noCompass = () => {
+      $('#c-tip').textContent = t('noCompass')
+      $('#c-diary').hidden = false
+    }
+
+    $('#c-next').addEventListener('click', () => {
+      if (compassState === 'ready') {
+        const asked = listenCompass()   // first thing in the tap, for iPhones
+        $('#c-next').disabled = true
+        asked.then((ok) => (ok ? waitFor(() => heading != null, 3000) : false)).then((got) => {
+          $('#c-next').disabled = false
+          if (!got) return noCompass()
+          farEnd = heading
+          compassState = 'walking'
+          aligned = false
+          keepAwake()
+          renderCompass()
+        })
+        return
+      }
+      seg++
+      if (navigator.vibrate) navigator.vibrate(40)
+      if (seg >= N) return finish()
+      saveProgress()
+      aligned = false
+      $('#c-dial').classList.remove('on')
+      $('#c-trot').classList.remove('go')
+      renderCompass()
+    })
+    $('#c-prev').addEventListener('click', () => {
+      if (seg > 0) seg--
+      saveProgress()
+      renderCompass()
+    })
+    $('#c-diary').addEventListener('click', () => startDiary(seg))
+    $('#c-exit').addEventListener('click', () => {
+      stopCompass()
+      letSleep()
+      mode = null
+      show('s-start')
+    })
+
+    // ---------- The key: one tooth per tree, set over the camera view ----------
+    // The word is encrypted with the tooth sequence (tools/lock.mjs), so it isn't in the page
+    // and only the right sequence can reveal it.
+    const KEYSTORE = `urbanquest-key-${RIDDLE_ID}`
+    const TREE_H = [0, 12, 22, 32, 42]   // height of a tooth for each level, in key units
+    let teeth = []
+    let sel = 0
+    let keyStream = null
+    let keyBusy = false
+    let keyTimer = 0
+    let wrongSaid = -1e9
+    const teethCount = () => get(riddle, 'key.lock.teeth') || get(riddle, 'key.teeth') || 23
+    const levelCount = () => Math.min(4, get(riddle, 'key.levels') || 4)
+    const levelName = (v) => (get(UI[lang], 'levels') || UI.en.levels)[v - 1] || String(v)
+
+    // A tooth is a brass post with a little tree on top; an empty tooth is a dashed stub.
+    const toothSvg = (x, base, level, w, on) => {
+      if (!level) return `<rect x="${x - w / 2 + 2}" y="${base - 7}" width="${w - 4}" height="7" rx="2" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.2" stroke-dasharray="2 2"/>`
+      const h = TREE_H[level]
+      const r = w * 0.5
+      return `<rect x="${x - w * 0.18}" y="${base - h + r}" width="${w * 0.36}" height="${h - r}" fill="#c9a24a"/>`
+        + `<circle cx="${x}" cy="${base - h + r}" r="${r}" fill="${on ? '#56c271' : '#3f9f5c'}" stroke="#1f5a33" stroke-width="1"/>`
+    }
+    const keySvg = () => {
+      const n = teethCount()
+      const tw = 14
+      const x0 = 60
+      const base = 62
+      const W = x0 + n * tw + 24
+      let s = `<svg viewBox="0 0 ${W} 104">`
+      // The bow and the blade
+      s += `<circle cx="30" cy="73" r="25" fill="#d8b55e" stroke="#8a6a24" stroke-width="3"/><circle cx="30" cy="73" r="10" fill="#141a36" stroke="#8a6a24" stroke-width="2"/>`
+      s += `<path d="M52 ${base}H${x0 + n * tw}L${W - 4} 73L${x0 + n * tw} 84H52Z" fill="#d8b55e" stroke="#8a6a24" stroke-width="2"/>`
+      s += `<path d="M58 75H${x0 + n * tw - 4}" stroke="#a88838" stroke-width="2"/>`
+      for (let i = 0; i < n; i++) {
+        const x = x0 + i * tw + tw / 2
+        const on = i === sel
+        s += `<g class="tooth${on ? ' sel' : ''}" data-i="${i}">`
+        s += `<rect class="mark" x="${x - tw / 2}" y="6" width="${tw}" height="${base - 6}" rx="4" fill="rgba(255,201,74,.22)" stroke="${C.gold}" stroke-width="1.5"/>`
+        s += toothSvg(x, base, teeth[i] || 0, tw - 2, on)
+        if ((i + 1) % 5 === 0 || on) s += `<text x="${x}" y="99" text-anchor="middle" font-size="${on ? 12 : 9}" font-weight="${on ? 700 : 400}" font-family="Rubik, sans-serif" fill="${on ? C.gold : 'rgba(255,255,255,.55)'}">${i + 1}</text>`
+        s += `</g>`
+      }
+      return s + '</svg>'
+    }
+    const levelIcon = (v) => {
+      const h = TREE_H[v] + 6
+      return `<svg viewBox="0 0 24 50" aria-hidden="true"><rect x="9.5" y="${50 - h + 7}" width="5" height="${h - 7}" fill="#c9a24a"/><circle cx="12" cy="${50 - h + 7}" r="8" fill="#56c271" stroke="#1f5a33"/></svg>`
+    }
+
+    const renderKey = () => {
+      const n = teethCount()
+      const svg = $('#kv-key')
+      svg.outerHTML = keySvg().replace('<svg ', '<svg id="kv-key" aria-hidden="true" ')
+      $('#kv-which').textContent = t('tree', {n: sel + 1, total: n})
+      const lv = levelCount()
+      $('#kv-levels').style.setProperty('--levels', lv)
+      $('#kv-levels').innerHTML = Array.from({length: lv}, (_, k) => k + 1).map((v) =>
+        `<button type="button" data-v="${v}" class="${teeth[sel] === v ? 'on' : ''}" aria-label="${esc(levelName(v))}">${levelIcon(v)}</button>`).join('')
+    }
+    const keySay = (lines) => {
+      const text = Array.isArray(lines) ? lines.join(' ') : (lines || '')
+      $('#kv-say').textContent = text
+    }
+
+    const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0))
+    const tryWord = async (levels) => {
+      const lock = get(riddle, 'key.lock')
+      if (!lock || !crypto.subtle) return null
+      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(levels.join('')), 'PBKDF2', false, ['deriveKey'])
+      const key = await crypto.subtle.deriveKey({name: 'PBKDF2', salt: fromB64(lock.salt), iterations: lock.iterations, hash: 'SHA-256'},
+        base, {name: 'AES-GCM', length: 256}, false, ['decrypt'])
+      try {
+        return new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: fromB64(lock.iv)}, key, fromB64(lock.data)))
+      } catch {
+        return null
+      }
+    }
+
+    const saveTeeth = () => store.set(KEYSTORE, JSON.stringify(teeth))
+    const queueCheck = () => {
+      clearTimeout(keyTimer)
+      if (teeth.every(Boolean)) keyTimer = setTimeout(checkKey, 450)
+    }
+    const checkKey = async () => {
+      if (keyBusy || !teeth.every(Boolean)) return
+      keyBusy = true
+      const panelEl = $('#kv-panel')
+      panelEl.classList.add('turning')
+      const word = await tryWord(teeth)
+      panelEl.classList.remove('turning')
+      keyBusy = false
+      if (word) return keyOpens(word)
+      panelEl.classList.remove('jiggle')
+      void panelEl.offsetWidth
+      panelEl.classList.add('jiggle')
+      if (navigator.vibrate) navigator.vibrate([30, 60, 30])
+      if (performance.now() - wrongSaid > 4000) {
+        wrongSaid = performance.now()
+        keySay(get(riddle, `key.udi.wrong.${lang}`))
+      }
+    }
+    const keyOpens = (word) => {
+      $('#kv-panel').classList.add('open')
+      if (navigator.vibrate) navigator.vibrate(80)
+      keySay(get(riddle, `key.udi.right.${lang}`))
+      setTimeout(() => {
+        stopKey()
+        $('#end-word').hidden = false
+        $('#end-word').textContent = word
+        show('s-end')
+      }, 1300)
+    }
+
+    const startKey = async () => {
+      const n = teethCount()
+      teeth = safe(() => JSON.parse(store.get(KEYSTORE)), null) || []
+      if (!Array.isArray(teeth) || teeth.length !== n) teeth = new Array(n).fill(0)
+      sel = teeth.findIndex((v) => !v)
+      if (sel < 0) sel = 0
+      $('#kv-panel').classList.remove('open', 'jiggle', 'turning')
+      document.body.classList.add('keymode')
+      document.body.classList.remove('nocam')
+      renderKey()
+      keySay(get(riddle, `key.udi.start.${lang}`))
+      keepAwake()
+      try {
+        keyStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: {ideal: 'environment'}}, audio: false})
+        if (!document.body.classList.contains('keymode')) return stopKey()
+        const v = $('#keycam')
+        v.srcObject = keyStream
+        await v.play().catch(() => {})
+      } catch {
+        document.body.classList.add('nocam')
+      }
+      queueCheck()
+    }
+    const stopKey = () => {
+      clearTimeout(keyTimer)
+      if (keyStream) keyStream.getTracks().forEach((tr) => tr.stop())
+      keyStream = null
+      $('#keycam').srcObject = null
+      document.body.classList.remove('keymode')
+      letSleep()
+    }
+
+    // Tap a tooth to pick it; pick a height to set it and move on to the next tree.
+    $('#keyview').addEventListener('click', (e) => {
+      const tooth = e.target.closest('.tooth')
+      if (tooth) {
+        sel = +tooth.dataset.i
+        return renderKey()
+      }
+      const lv = e.target.closest('#kv-levels button')
+      if (lv) {
+        teeth[sel] = +lv.dataset.v
+        if (sel < teeth.length - 1) sel++
+        saveTeeth()
+        renderKey()
+        return queueCheck()
+      }
+      if (e.target.closest('#kv-say')) $('#kv-say').textContent = ''
+    })
+    // The teeth are narrow, so a tap picks the nearest tooth even between them.
+    $('#keyview').addEventListener('pointerdown', (e) => {
+      const svg = e.target.closest('#kv-key')
+      if (!svg || e.target.closest('.tooth')) return
+      const pt = svg.createSVGPoint()
+      pt.x = e.clientX
+      pt.y = e.clientY
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse())
+      const i = Math.floor((p.x - 60) / 14)
+      if (i >= 0 && i < teethCount()) {
+        sel = i
+        renderKey()
+      }
+    })
+    $('#kv-prev').addEventListener('click', () => { if (sel > 0) sel--; renderKey() })
+    $('#kv-next').addEventListener('click', () => { if (sel < teethCount() - 1) sel++; renderKey() })
+    $('#kv-exit').addEventListener('click', () => {
+      stopKey()
+      show(riddle.rules ? 's-rules' : 's-intro')
+    })
+
+    // How the key works: each tooth copies one tree of the row, left to right.
+    // (Made-up heights for the picture, unrelated to the real ones.)
+    const keyHowArt = () => {
+      const hs = [2, 1, 3, 4, 2, 3, 1]
+      const xs = hs.map((_, i) => 60 + i * 40)
+      return `
+      <svg class="art" viewBox="0 0 360 200" role="img" aria-label="">
+        <rect width="360" height="200" fill="#1d2550"/>
+        <rect y="86" width="360" height="14" fill="#2c6a3c"/>
+        ${hs.map((h, i) => {
+          const H = 22 + h * 14
+          return `<rect x="${xs[i] - 3}" y="${96 - H + 12}" width="6" height="${H - 12}" fill="#7a5a32"/><circle cx="${xs[i]}" cy="${96 - H + 12}" r="13" fill="#3f9f5c" stroke="#1f5a33" stroke-width="1.5"/>
+            <path d="M${xs[i]} 104V${162 - TREE_H[h] * 0.9}" stroke="${C.gold}" stroke-width="1.5" stroke-dasharray="3 4" opacity=".7"/>`
+        }).join('')}
+        <circle cx="24" cy="168" r="17" fill="#d8b55e" stroke="#8a6a24" stroke-width="2.5"/><circle cx="24" cy="168" r="7" fill="#1d2550"/>
+        <path d="M40 162H${xs[6] + 20}L${xs[6] + 34} 168L${xs[6] + 20} 175H40Z" fill="#d8b55e" stroke="#8a6a24" stroke-width="2"/>
+        ${hs.map((h, i) => `<rect x="${xs[i] - 4}" y="${162 - TREE_H[h] * 0.9}" width="8" height="${TREE_H[h] * 0.9}" fill="#d8b55e" stroke="#8a6a24" stroke-width="1.5"/>`).join('')}
+      </svg>`
+    }
+
+    // ---------- A clue page from the original mission, kept exactly as it was ----------
+    $('#clue-open').addEventListener('click', () => {
+      $('#viewer-img').src = $('#clue-img').src
+      $('#viewer-img').classList.remove('big')
+      $('#viewer').hidden = false
+    })
+    $('#viewer-img').addEventListener('dblclick', () => $('#viewer-img').classList.toggle('big'))
+    $('#viewer-close').addEventListener('click', () => { $('#viewer').hidden = true })
+
+    // ---------- Which screen comes after the story, for each kind of riddle ----------
+    let TYPE = 'walk'
+    const play = () => {
+      if (TYPE === 'key') return startKey()
+      if (TYPE === 'clue') return show('s-clue')
+      show('s-start')
+    }
+    $('#btn-help').addEventListener('click', () => ((get(riddle, `rules.${lang}`) || []).length ? show('s-rules') : play()))
+    $('#btn-play').addEventListener('click', play)
+
     // ---------- Start ----------
     const pickLang = () => {
       const q = params.get('lang')
@@ -1923,7 +2518,8 @@
         const res = await fetch(`riddles/${RIDDLE_ID}.json`, {cache: 'no-cache'})
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         riddle = await res.json()
-        ROUTE = parseRoute(riddle.route)
+        TYPE = ['key', 'clue'].includes(riddle.type) ? riddle.type : 'walk'
+        if (TYPE === 'walk') ROUTE = parseRoute(riddle.route)
       } catch (err) {
         $('#s-loading').innerHTML = `<p>${esc(UI.he.loadFail)}</p><p>${esc(UI.en.loadFail)}</p><p class="muted">${esc(err.message)}</p>`
         return
@@ -1935,11 +2531,16 @@
       cellKnown = !!cell || !get(riddle, 'ar.calibrate')
       lang = pickLang()
       showArt('#art-intro', get(riddle, 'art.intro'), introArt())
-      showArt('#art-how', get(riddle, 'art.how'), howArt())
-      $('#art-map').innerHTML = mapArt()
+      showArt('#art-how', get(riddle, 'art.how'), TYPE === 'key' ? keyHowArt() : howArt())
+      if (TYPE === 'walk') $('#art-map').innerHTML = mapArt()
       showArt('#art-end', get(riddle, 'art.end'), endArt())
+      if (TYPE === 'clue') $('#clue-img').src = get(riddle, 'clue.image') || ''
+      if (TYPE !== 'walk') $('#btn-again').hidden = true
       render()
+      // ?screen= opens a screen directly, for checking the page; "key" and "compass" start those modes.
       const first = params.get('screen')
+      if (first === 'key' && TYPE === 'key') return startKey()
+      if (first === 'compass' && TYPE === 'walk') return startCompass(0)
       show(first && document.getElementById(first) ? first : 's-intro')
     }
     boot()
