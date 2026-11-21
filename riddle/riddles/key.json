@@ -34,12 +34,14 @@
       "עמדו מול שורת העצים ופתחו את המצלמה.",
       "כל שן במפתח היא עץ אחד בשורה, משמאל לימין.",
       "לכל שן בחרו את הגובה של העץ שלה, מנמוך ועד הכי גבוה.",
+      "אם המפתח לא מסתובב, אודי אומר לכם אילו שיניים כבר מתאימות ואילו נתקעות.",
       "כשכל השיניים נכונות, המפתח מסתובב ואודי מגלה לכם מילה. הקלידו אותה בטרוול קווסט."
     ],
     "en": [
       "Stand facing the row of trees and open the camera.",
       "Each tooth on the key is one tree in the row, from left to right.",
       "Give each tooth its tree's height, from short to tallest.",
+      "If the key won't turn, Udi tells you which teeth already fit and which ones catch.",
       "When every tooth is right, the key turns and Udi tells you a word. Enter it in TravelQuest."
     ]
   },
@@ -48,9 +50,32 @@
     "lock": {
       "teeth": 23,
       "iterations": 150000,
-      "salt": "V4mHkftrw7FrgAmIL6E52A==",
-      "iv": "a2ytc2VWnYGD/bqn",
-      "data": "X/dbVYR37r3S7wmU9ZQYxv3HvQjGfJyTeJ3vKg=="
+      "salt": "F3OM0bXJO51QSz9q+XjjWg==",
+      "iv": "2xK4bzygi/OAJnwb",
+      "data": "e0k8PrriuHLCffhldaqAjUtFDTfZbGYMRfEHEQ==",
+      "parts": [
+        {
+          "from": 1,
+          "to": 8,
+          "salt": "DbiDAy4H/RR0FzN2b3kIwQ==",
+          "iv": "Z++M7zq55jrYVj/Q",
+          "data": "Kec7KHhLDz1jpndIk2wPxuc1Wvg="
+        },
+        {
+          "from": 9,
+          "to": 16,
+          "salt": "X9r+0zsS/9oIGRowgIVKEw==",
+          "iv": "/JPZMsYUWY6Iz7lx",
+          "data": "mdq66gub7pSeHZ3d8dAXCbWkE5M="
+        },
+        {
+          "from": 17,
+          "to": 23,
+          "salt": "bPiitAjDwnhll3Ndvxk+MQ==",
+          "iv": "zUdI+rljVfQWU8uX",
+          "data": "nV7VYxlRftyuP7ZD0KZgkVEayjY="
+        }
+      ]
     },
     "udi": {
       "start": {

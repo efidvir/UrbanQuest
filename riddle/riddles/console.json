@@ -34,13 +34,13 @@
       "עמדו מתחת לעמודים של היכל התרבות, לאורך רחוב הוברמן, והסתכלו אל הכיכר. השולחן מסודר בדיוק כמו מה שאתם רואים: הבימה למעלה, העמודים למטה.",
       "כל חלק בשולחן מאיר משהו בכיכר: פסי האור באדמה, הבמות הקטנות, הספסלים והעמודים. השולחן מצייר אותם לפי ההגדרות שלכם.",
       "הסתובבו בכיכר ושנו את ההגדרות עד שהציור על השולחן נראה בדיוק כמו הכיכר האמיתית. דף ההגדרות של אודי יעזור, במקומות שעוד אפשר לקרוא.",
-      "לחצו GO. אם הכול נכון, האורות נדלקים והמסך מראה מילה. הקלידו אותה בטרוול קווסט."
+      "לחצו GO. החלקים שכבר נכונים נדלקים, וכשהכול נכון כל האורות נדלקים והמסך מראה מילה. הקלידו אותה בטרוול קווסט."
     ],
     "en": [
       "Stand under the pillars of Heichal HaTarbut, along Huberman Street, and look out over the square. The console is laid out exactly like what you see: Habima at the top, the pillars at the bottom.",
       "Each part of the console lights something on the square: the light stripes in the ground, the little stages, the benches and the pillars. The console draws them the way you set it.",
       "Walk around the square and change the settings until the console's drawing looks exactly like the real square. Udi's cue sheet helps, where it can still be read.",
-      "Press GO. If everything is right, the lights come on and the screen shows a word. Enter it in TravelQuest."
+      "Press GO. The parts that are already right light up, and when everything is right all the lights come on and the screen shows a word. Enter it in TravelQuest."
     ]
   },
   "console": {
@@ -50,10 +50,44 @@
     "benchMax": 20,
     "stripeMax": 24,
     "lock": {
-      "iterations": 150000,
-      "salt": "99QwmDvbw0M9DkO2fDtOdg==",
-      "iv": "QW+HgGapRh+bIxq8",
-      "data": "n8Zyeue3ZGPJO36WHkszFxX1BNeoFdcv1AY="
+      "iterations": 60000,
+      "sections": {
+        "pillars": [
+          {
+            "salt": "jRUqGHjpcIFI9PlyLVyf3Q==",
+            "iv": "FL+ielg1mebWdJJ3",
+            "data": "dxrHI7kapfFnEzpCRkHtb6SoYo0lO+4bemqDfhfh/KydZFJewKwKsA=="
+          }
+        ],
+        "stages": [
+          {
+            "salt": "+oyIUo9cPmjF+I/touTi4A==",
+            "iv": "9v5tmO5g0mae85DX",
+            "data": "+8TrqXR+Z2m3Ds8m5CuRlyiYvd16Vul7tPC36LSDnT9ZkCkXELsVnA=="
+          }
+        ],
+        "benches": [
+          {
+            "salt": "lgSUx4Wo0Dlu+n9aMAc4MA==",
+            "iv": "sltm5rki83FRAQmS",
+            "data": "H8oVbjmTElPTgW9FL97Kh+bbT6NP1H+7vVtqVQLJbpWkEiReStr6BA=="
+          },
+          {
+            "salt": "rEa+Bgkjf4mitCIZjexaYw==",
+            "iv": "wtCjeHBRZQIeT0N5",
+            "data": "FSWgIXTLfzV/acs/NMQguLCkha+Z6Cub1U8/vuLPXeMjfcYPEltExQ=="
+          }
+        ],
+        "stripes": [
+          {
+            "salt": "eS4grlBA9oMXSnpct9f7mQ==",
+            "iv": "TEXsqfwMvUIKBh4W",
+            "data": "efzv20V6VIHrZXnc1K5I/BW+odjPsWvWA+vUgxMlRQCoaWt6/z3cNw=="
+          }
+        ]
+      },
+      "iv": "BHAGpDsGsjhLXOkl",
+      "data": "2KKVsPp+pRNAWfhMMUiPDfdakbqp9Nj75d8="
     },
     "sheet": {
       "title": {
@@ -83,20 +117,26 @@
         "en": "The console is laid out like the square: Habima at the top, and us down here by the pillars. Make its drawing look exactly like the real square."
       },
       "wrong": {
-        "he": [
-          "פשש... זה לא נדלק. הציור על השולחן עוד לא נראה כמו הכיכר. השוו אותו חלק אחרי חלק.",
-          "ספרתם כל עמוד בשורה הארוכה שבאמצע?",
-          "תסתכלו שוב על הספסלים שמתחת לעמודים: איזו צורה יש להם, וכמה הם?",
-          "עמדו ליד העמודים עם הפנים לבימה: איזו במה קטנה משמאלכם?",
-          "ספרו את פסי האור באדמה, בין הגינה לבימה."
-        ],
-        "en": [
-          "Pfft... nothing. The console's drawing still isn't the real square. Compare it part by part.",
-          "Did you count every pillar in the long row in the middle?",
-          "Look at the benches under the pillars again: what shape are they, and how many?",
-          "Stand by the pillars facing Habima: which little stage is on your left?",
-          "Count the light stripes in the ground, between the garden and Habima."
-        ]
+        "none": {
+          "he": "פשש... שום דבר לא נדלק. הציור על השולחן עוד לא נראה כמו הכיכר. השוו אותו חלק אחרי חלק.",
+          "en": "Pfft... nothing lights up. The console's drawing still isn't the real square. Compare it part by part."
+        },
+        "pillars": {
+          "he": "העמודים עוד כבויים. ספרתם כל עמוד בשורה הארוכה שבאמצע? ואיפה יש זכוכית?",
+          "en": "The pillars are still dark. Did you count every pillar in the long row in the middle? And where is there glass?"
+        },
+        "benches": {
+          "he": "הספסלים עוד כבויים. תסתכלו שוב על הספסלים שמתחת לעמודים: איזו צורה יש להם, וכמה הם?",
+          "en": "The benches are still dark. Look at the benches under the pillars again: what shape are they, and how many?"
+        },
+        "stages": {
+          "he": "הבמות הקטנות עוד כבויות. עמדו ליד העמודים עם הפנים לבימה: איזו במה משמאלכם?",
+          "en": "The little stages are still dark. Stand by the pillars facing Habima: which stage is on your left?"
+        },
+        "stripes": {
+          "he": "פסי האור עוד כבויים. ספרו אותם באדמה, בין הגינה לבימה.",
+          "en": "The light stripes are still dark. Count them in the ground, between the garden and Habima."
+        }
       },
       "right": {
         "he": "אורות!!",

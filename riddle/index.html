@@ -465,6 +465,16 @@
     .cv-sec { position: relative; margin-top: 5px; padding: 11px 8px 7px; border-radius: 12px; background: rgba(0, 0, 0, .24); border: 1px solid rgba(255, 255, 255, .07); }
     .cv-label { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); max-width: 92%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 1px 9px; border-radius: 7px; background: #1d2132; border: 1px solid rgba(255, 255, 255, .1); font: 600 11px/1.3 Rubik, sans-serif; color: #cdd3ee; unicode-bidi: plaintext; }
     .cv-row { display: flex; align-items: center; gap: 7px; }
+    /* After GO, a lamp in each part's corner shows whether it's right, and the right parts light up */
+    .cv-sec::after { content: ""; position: absolute; top: -5px; right: 10px; width: 10px; height: 10px; border-radius: 50%; background: #2b2f45; border: 1px solid #0b0d17; }
+    .cv-sec.ok { border-color: rgba(91, 240, 143, .55); }
+    .cv-sec.ok::after { background: #5bf08f; box-shadow: 0 0 8px #5bf08f; }
+    .cv-sec.bad::after { background: #ff5a46; box-shadow: 0 0 8px rgba(255, 90, 70, .8); }
+    .cv-sec.ok .cv-leds i.on { background: #fff3c4; box-shadow: 0 0 9px #ffe08a; }
+    .cv-sec.ok .cv-pad.set { box-shadow: 0 0 14px rgba(255, 201, 74, .8); }
+    .cv-sec.ok .cv-shapes button.on { box-shadow: 0 0 10px rgba(255, 201, 74, .8); }
+    .cv-sec.ok #cv-colonnade .pillar { fill: #fff7d6; }
+    .cv-desk.ok-benches #cv-colonnade .bench { stroke: var(--gold); }
     .cv-leds { flex: 1; display: grid; grid-template-columns: repeat(var(--n, 24), 1fr); gap: 2px; height: 26px; min-width: 0; }
     .cv-leds i { border-radius: 2px; background: #2b2f45; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .55); transition: background .15s; }
     .cv-leds i.on { background: #ffd46b; box-shadow: 0 0 6px rgba(255, 201, 74, .75); }
@@ -476,6 +486,7 @@
     .cv-screen::before { content: ""; position: absolute; inset: 7px 16%; border: 2px solid rgba(120, 220, 170, .13); background-image: linear-gradient(90deg, transparent calc(33.3% - 1px), rgba(120, 220, 170, .13) calc(33.3% - 1px), rgba(120, 220, 170, .13) calc(33.3% + 1px), transparent calc(33.3% + 1px), transparent calc(66.6% - 1px), rgba(120, 220, 170, .13) calc(66.6% - 1px), rgba(120, 220, 170, .13) calc(66.6% + 1px), transparent calc(66.6% + 1px)), linear-gradient(transparent calc(25% - 1px), rgba(120, 220, 170, .13) calc(25% - 1px), rgba(120, 220, 170, .13) calc(25% + 1px), transparent calc(25% + 1px), transparent calc(50% - 1px), rgba(120, 220, 170, .13) calc(50% - 1px), rgba(120, 220, 170, .13) calc(50% + 1px), transparent calc(50% + 1px), transparent calc(75% - 1px), rgba(120, 220, 170, .13) calc(75% - 1px), rgba(120, 220, 170, .13) calc(75% + 1px), transparent calc(75% + 1px)); }
     .cv-screen span { position: relative; font: 700 16px/1.3 "Courier New", monospace; color: #7fe0a8; text-shadow: 0 0 6px rgba(127, 224, 168, .6); text-align: center; padding: 0 12px; unicode-bidi: plaintext; }
     .cv-screen.err span { color: #ff8070; text-shadow: 0 0 6px rgba(255, 90, 70, .7); }
+    .cv-screen.err.part span { color: #ffd46b; text-shadow: 0 0 6px rgba(255, 201, 74, .6); }
     .cv-screen.word { background: #10142a; }
     .cv-screen.word span { font: 400 40px/1 "Secular One", Rubik, sans-serif; color: var(--gold); letter-spacing: .05em; text-shadow: 0 0 16px rgba(255, 201, 74, .85); }
     .cv-pads { display: flex; justify-content: space-around; }
@@ -492,7 +503,7 @@
     .cv-ch { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
     .cv-glass { width: 100%; max-width: 42px; height: 24px; border-radius: 7px; border: 1px solid rgba(255, 255, 255, .17); background: #2c3148; cursor: pointer; padding: 0; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .35); touch-action: manipulation; }
     .cv-glass.on { background: #79d6ff; border-color: #d4f3ff; box-shadow: 0 0 10px rgba(121, 214, 255, .8), inset 0 -3px 0 rgba(0, 0, 0, .18); }
-    .cv-fader { position: relative; width: 100%; height: clamp(80px, calc(100dvh - 564px), 136px); touch-action: none; cursor: ns-resize; outline: none; --v: 0; }
+    .cv-fader { position: relative; width: 100%; height: 110px; height: clamp(80px, calc(100dvh - 564px), 136px); touch-action: none; cursor: ns-resize; outline: none; --v: 0; }
     .cv-fader::before { content: ""; position: absolute; left: 50%; top: 10px; bottom: 10px; width: 6px; margin-left: -3px; border-radius: 3px; background: #06070d; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .9); }
     .cv-fader::after { content: ""; position: absolute; left: 50%; top: 10px; bottom: 10px; width: 22px; margin-left: -11px; background: repeating-linear-gradient(to top, rgba(255, 255, 255, .16) 0 1px, transparent 1px calc((100% - 1px) / 4)); -webkit-mask: linear-gradient(90deg, #000 4px, transparent 4px calc(100% - 4px), #000 calc(100% - 4px)); mask: linear-gradient(90deg, #000 4px, transparent 4px calc(100% - 4px), #000 calc(100% - 4px)); }
     .cv-knob { position: absolute; z-index: 1; left: 50%; width: 32px; height: 20px; margin-left: -16px; bottom: calc(var(--v) * (100% - 20px)); border-radius: 5px; background: linear-gradient(#eef0f7, #a8aec4); border: 2px solid #10121e; box-shadow: 0 3px 6px rgba(0, 0, 0, .55); }
@@ -524,6 +535,7 @@
     @media (prefers-reduced-motion: no-preference) {
       .cv-desk.shake { animation: jiggle .5s ease; }
       .cv-screen.err span { animation: flicker .45s steps(2) 3; }
+      .cv-sec.bad::after { animation: flicker .45s steps(2) 3; }
       .cv-screen.word span { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1) both; }
       #consoleview.lit .cv-leds i.on { animation: chase 1.1s ease-in-out calc(var(--i) * 55ms) infinite; }
       #consoleview.lit .cv-pad.set { animation: padglow 1.6s ease calc(var(--i) * .3s) infinite; }
@@ -538,7 +550,7 @@
     @keyframes mitzihop { 0%, 100% { transform: none; } 40% { transform: translateY(-14px) rotate(-6deg); } }
 
     /* The skyline: the playwright's seating plan of the rooftops, and the programme's missing title */
-    #skyview { position: fixed; inset: 0; z-index: 20; display: none; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: calc(8px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); background: radial-gradient(120% 70% at 50% 0%, #2a3a6e, var(--night)); }
+    #skyview { position: fixed; inset: 0; top: var(--vvt, 0px); bottom: auto; height: var(--vvh, 100%); z-index: 20; display: none; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: calc(8px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); background: radial-gradient(120% 70% at 50% 0%, #2a3a6e, var(--night)); }
     body.skymode #skyview { display: flex; }
     body.skymode #app { display: none; }
     #skycam { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
@@ -551,7 +563,7 @@
     .sv-plan { position: relative; z-index: 2; width: 100%; max-width: 520px; margin: auto auto 0; border-radius: 18px; overflow: hidden; background: #f8f0da; color: var(--paper-ink); box-shadow: 0 12px 30px rgba(0, 0, 0, .4); }
     .sv-plan-title { padding: 9px 14px 2px; font: 400 19px/1.2 "Secular One", Rubik, sans-serif; color: #7a2b1d; text-align: center; }
     .sv-plan-sub { padding: 0 14px 6px; font-size: 13px; color: #6b5a48; text-align: center; }
-    .sv-draw { position: relative; height: clamp(170px, 34dvh, 260px); margin: 0 8px; border-radius: 12px; overflow: hidden; background: linear-gradient(#1d2550, #3c3f7a 45%, #b9654b 86%, #e9995a); touch-action: none; cursor: grab; direction: ltr; }
+    .sv-draw { position: relative; height: 210px; height: clamp(170px, 34dvh, 260px); margin: 0 8px; border-radius: 12px; overflow: hidden; background: linear-gradient(#1d2550, #3c3f7a 45%, #b9654b 86%, #e9995a); touch-action: none; cursor: grab; direction: ltr; }
     .sv-draw svg { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
     .sv-draw .towers path { fill: #2a3360; stroke: #171d44; stroke-width: 1.2; }
     .sv-draw .near path { fill: #39447e; stroke: #171d44; stroke-width: 1.2; }
@@ -570,7 +582,7 @@
     .sv-chips button.done { border-color: #3aa564; }
     body.skycam .sv-plan { background: transparent; box-shadow: none; }
     body.skycam .sv-plan-title, body.skycam .sv-plan-sub { color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, .8); }
-    body.skycam .sv-draw { height: clamp(260px, 52dvh, 480px); background: transparent; box-shadow: inset 0 0 0 2px rgba(255, 201, 74, .5); }
+    body.skycam .sv-draw { height: 340px; height: clamp(260px, 52dvh, 480px); background: transparent; box-shadow: inset 0 0 0 2px rgba(255, 201, 74, .5); }
     body.skycam .sv-draw .towers path, body.skycam .sv-draw .near path, body.skycam .sv-draw .wall, body.skycam .sv-draw .windows path { fill: none; stroke: none; }
     body.skycam .sv-draw .trace path { stroke: var(--gold); stroke-width: 2.6; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .9)); }
     body.skycam .sv-chips button { background: rgba(20, 26, 54, .78); color: #fff; border-color: rgba(255, 255, 255, .4); }
@@ -743,7 +755,7 @@
     <div class="kv-say" id="cv-say" role="status"></div>
     <div class="cv-desk" id="cv-desk">
       <div class="cv-edge" data-t="cvHabima"></div>
-      <div class="cv-sec">
+      <div class="cv-sec" data-part="stripes">
         <span class="cv-label" data-t="cvStripes"></span>
         <div class="cv-row">
           <div class="cv-leds" id="cv-leds" aria-hidden="true"></div>
@@ -751,18 +763,18 @@
         </div>
       </div>
       <div class="cv-screen" id="cv-screen" aria-live="polite"><span id="cv-screen-text"></span></div>
-      <div class="cv-sec">
+      <div class="cv-sec" data-part="stages">
         <span class="cv-label" data-t="cvStages"></span>
         <div class="cv-pads" id="cv-pads"></div>
       </div>
-      <div class="cv-sec">
+      <div class="cv-sec" data-part="benches">
         <span class="cv-label" data-t="cvBenches"></span>
         <div class="cv-row">
           <div class="cv-shapes" id="cv-shapes" role="group"></div>
           <div class="cv-step" data-k="benches"><button type="button" data-d="-1">−</button><output class="cv-num" id="cv-benches-n">0</output><button type="button" data-d="1">+</button></div>
         </div>
       </div>
-      <div class="cv-sec">
+      <div class="cv-sec" data-part="pillars">
         <span class="cv-label" data-t="cvPillars"></span>
         <svg id="cv-colonnade" viewBox="0 0 340 56" aria-hidden="true"></svg>
         <div class="cv-faders" id="cv-faders"></div>
@@ -859,6 +871,10 @@
       landing: 'https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js',
     }
 
+    if (!Element.prototype.replaceChildren) {
+      Element.prototype.replaceChildren = function (...nodes) { this.textContent = ''; this.append(...nodes) }
+    }
+
     // ---------- Words on the page ----------
     const UI = {
       he: {
@@ -936,6 +952,8 @@
         prevTree: 'העץ הקודם',
         nextTree: 'העץ הבא',
         levels: ['נמוך', 'בינוני', 'גבוה', 'הכי גבוה'],
+        keyParts: 'השיניים {ok} נכנסות חלק, אבל השיניים {bad} נתקעות. בדקו שוב את העצים שלהן.',
+        and: ' ו־',
         noCam: 'אין מצלמה? פשוט הסתכלו על העצים.',
         watchStory: 'צפו בסיפור של אודי',
         watchAgain: 'לצפות שוב',
@@ -952,6 +970,7 @@
         cvReady: 'מוכן? לחצו GO',
         cvLoading: 'טוען…',
         cvError: 'זה לא נראה כמו הכיכר',
+        cvPartial: '{n} מתוך {total} נדלקו',
         cvWave: {sine: 'גל', square: 'ריבועים', triangle: 'זיגזג', saw: 'שן מסור'},
         cvPad: {none: 'ריקה', circle: 'עיגול', square: 'ריבוע', triangle: 'משולש'},
         cvStage: 'במה {n}: {shape}',
@@ -1045,6 +1064,8 @@
         prevTree: 'Previous tree',
         nextTree: 'Next tree',
         levels: ['Short', 'Medium', 'Tall', 'Tallest'],
+        keyParts: 'Teeth {ok} slide in, but teeth {bad} catch. Check their trees again.',
+        and: ' and ',
         noCam: 'No camera? Just look at the trees.',
         watchStory: "Watch Udi's story",
         watchAgain: 'Watch again',
@@ -1061,6 +1082,7 @@
         cvReady: 'Ready? Press GO',
         cvLoading: 'Loading…',
         cvError: "That's not the square",
+        cvPartial: '{n} of {total} lit',
         cvWave: {sine: 'Wave', square: 'Squares', triangle: 'Zigzag', saw: 'Sawtooth'},
         cvPad: {none: 'empty', circle: 'circle', square: 'square', triangle: 'triangle'},
         cvStage: 'Stage {n}: {shape}',
@@ -2612,17 +2634,27 @@
     let keyBusy = false
     let keyTimer = 0
     let wrongSaid = -1e9
+    let keyAgain = false         // the teeth changed while the key was turning: try again with the new ones
+    let keyTried = null          // the last wrong try: {levels, fits}, one fits per part of the key
     const teethCount = () => get(riddle, 'key.lock.teeth') || get(riddle, 'key.teeth') || 23
     const levelCount = () => Math.min(4, get(riddle, 'key.levels') || 4)
     const levelName = (v) => (get(UI[lang], 'levels') || UI.en.levels)[v - 1] || String(v)
 
     // A tooth is a brass post with a little tree on top; an empty tooth is a dashed stub.
-    const toothSvg = (x, base, level, w, on) => {
+    const toothSvg = (x, base, level, w, on, fit = false) => {
       if (!level) return `<rect x="${x - w / 2 + 2}" y="${base - 7}" width="${w - 4}" height="7" rx="2" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.2" stroke-dasharray="2 2"/>`
       const h = TREE_H[level]
       const r = w * 0.5
       return `<rect x="${x - w * 0.18}" y="${base - h + r}" width="${w * 0.36}" height="${h - r}" fill="#c9a24a"/>`
-        + `<circle cx="${x}" cy="${base - h + r}" r="${r}" fill="${on ? '#56c271' : '#3f9f5c'}" stroke="#1f5a33" stroke-width="1"/>`
+        + `<circle cx="${x}" cy="${base - h + r}" r="${r}" fill="${on ? '#56c271' : fit ? '#7fe39a' : '#3f9f5c'}" stroke="${fit ? '#e9fff0' : '#1f5a33'}" stroke-width="1"/>`
+    }
+    // After a wrong try, the parts of the key that fit (green) and the ones that catch (red), as long as
+    // their teeth are still the ones tried.
+    const keyPartSecret = (p, levels) => `part|${p.from}-${p.to}|${levels.slice(p.from - 1, p.to).join('')}`
+    const keyPartMarks = () => {
+      if (!keyTried) return []
+      return (get(riddle, 'key.lock.parts') || []).map((p, i) => ({...p, fits: !!keyTried.fits[i]}))
+        .filter((p) => teeth.slice(p.from - 1, p.to).join() === keyTried.levels.slice(p.from - 1, p.to).join())
     }
     const keySvg = () => {
       const n = teethCount()
@@ -2635,12 +2667,19 @@
       s += `<circle cx="30" cy="73" r="25" fill="#d8b55e" stroke="#8a6a24" stroke-width="3"/><circle cx="30" cy="73" r="10" fill="#141a36" stroke="#8a6a24" stroke-width="2"/>`
       s += `<path d="M52 ${base}H${x0 + n * tw}L${W - 4} 73L${x0 + n * tw} 84H52Z" fill="#d8b55e" stroke="#8a6a24" stroke-width="2"/>`
       s += `<path d="M58 75H${x0 + n * tw - 4}" stroke="#a88838" stroke-width="2"/>`
+      const marks = keyPartMarks()
+      for (const p of marks) {
+        const xa = x0 + (p.from - 1) * tw + 2
+        const xb = x0 + p.to * tw - 2
+        s += `<path class="part ${p.fits ? 'fits' : 'catches'}" d="M${xa} 85V89H${xb}V85" fill="none" stroke="${p.fits ? '#5bf08f' : '#ff6b5a'}" stroke-width="2" stroke-linejoin="round"/>`
+      }
       for (let i = 0; i < n; i++) {
         const x = x0 + i * tw + tw / 2
         const on = i === sel
+        const fit = marks.some((p) => p.fits && i + 1 >= p.from && i + 1 <= p.to)
         s += `<g class="tooth${on ? ' sel' : ''}" data-i="${i}">`
         s += `<rect class="mark" x="${x - tw / 2}" y="6" width="${tw}" height="${base - 6}" rx="4" fill="rgba(255,201,74,.22)" stroke="${C.gold}" stroke-width="1.5"/>`
-        s += toothSvg(x, base, teeth[i] || 0, tw - 2, on)
+        s += toothSvg(x, base, teeth[i] || 0, tw - 2, on, fit)
         if ((i + 1) % 5 === 0 || on) s += `<text x="${x}" y="99" text-anchor="middle" font-size="${on ? 12 : 9}" font-weight="${on ? 700 : 400}" font-family="Rubik, sans-serif" fill="${on ? C.gold : 'rgba(255,255,255,.55)'}">${i + 1}</text>`
         s += `</g>`
       }
@@ -2669,12 +2708,13 @@
     const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0))
     const tryWord = (levels) => openLock(get(riddle, 'key.lock'), levels.join(''))
     // The word only decrypts with exactly the settings it was locked with (tools/lock.mjs).
+    // Anything that goes wrong on the way counts as a lock that didn't open, so a control never stays stuck.
     const openLock = async (lock, secret) => {
-      if (!lock || !crypto.subtle) return null
-      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), 'PBKDF2', false, ['deriveKey'])
-      const key = await crypto.subtle.deriveKey({name: 'PBKDF2', salt: fromB64(lock.salt), iterations: lock.iterations, hash: 'SHA-256'},
-        base, {name: 'AES-GCM', length: 256}, false, ['decrypt'])
+      if (!lock || !window.crypto || !crypto.subtle) return null
       try {
+        const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), 'PBKDF2', false, ['deriveKey'])
+        const key = await crypto.subtle.deriveKey({name: 'PBKDF2', salt: fromB64(lock.salt), iterations: lock.iterations || 150000, hash: 'SHA-256'},
+          base, {name: 'AES-GCM', length: 256}, false, ['decrypt'])
         return new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: fromB64(lock.iv)}, key, fromB64(lock.data)))
       } catch {
         return null
@@ -2686,20 +2726,38 @@
       clearTimeout(keyTimer)
       if (teeth.every(Boolean)) keyTimer = setTimeout(checkKey, 450)
     }
+    // Ranges of teeth, kept left to right inside Hebrew text.
+    const teethRange = (p) => `\u2066${p.from}–${p.to}\u2069`
+    const listOf = (items) => (items.length < 2 ? items.join('') : items.slice(0, -1).join(', ') + t('and') + items[items.length - 1])
     const checkKey = async () => {
-      if (keyBusy || !teeth.every(Boolean)) return
+      if (!teeth.every(Boolean)) return
+      if (keyBusy) {   // it's still turning with the last teeth: try these once it's done
+        keyAgain = true
+        return
+      }
       keyBusy = true
+      keyAgain = false
+      const tried = teeth.slice()
+      const parts = get(riddle, 'key.lock.parts') || []
       const panelEl = $('#kv-panel')
       panelEl.classList.add('turning')
-      const word = await tryWord(teeth)
+      const [word, fits] = await Promise.all([
+        tryWord(tried),
+        Promise.all(parts.map((p) => openLock({iterations: get(riddle, 'key.lock.iterations'), ...p}, keyPartSecret(p, tried)).then(Boolean))),
+      ])
       panelEl.classList.remove('turning')
       keyBusy = false
+      if (keyAgain || tried.join() !== teeth.join()) return queueCheck()   // the teeth changed meanwhile
       if (word) return keyOpens(word)
+      keyTried = parts.length ? {levels: tried, fits} : null
+      renderKey()
       panelEl.classList.remove('jiggle')
       void panelEl.offsetWidth
       panelEl.classList.add('jiggle')
       if (navigator.vibrate) navigator.vibrate([30, 60, 30])
-      if (performance.now() - wrongSaid > 4000) {
+      if (fits.some(Boolean)) {
+        keySay(t('keyParts', {ok: listOf(parts.filter((_, i) => fits[i]).map(teethRange)), bad: listOf(parts.filter((_, i) => !fits[i]).map(teethRange))}))
+      } else if (performance.now() - wrongSaid > 4000) {
         wrongSaid = performance.now()
         keySay(get(riddle, `key.udi.wrong.${lang}`))
       }
@@ -2720,6 +2778,10 @@
       const n = teethCount()
       teeth = safe(() => JSON.parse(store.get(KEYSTORE)), null) || []
       if (!Array.isArray(teeth) || teeth.length !== n) teeth = new Array(n).fill(0)
+      teeth = teeth.map((v) => (Number.isInteger(v) && v >= 1 && v <= levelCount() ? v : 0))
+      keyTried = null
+      keyBusy = false
+      keyAgain = false
       sel = teeth.findIndex((v) => !v)
       if (sel < 0) sel = 0
       $('#kv-panel').classList.remove('open', 'jiggle', 'turning')
@@ -2818,6 +2880,7 @@
     let cv = null
     let cvBusy = false
     let cvWrong = 0
+    let cvLast = null            // the last GO: each part's setting then, and whether it was right
     const cvCfg = (k, fallback) => get(riddle, `console.${k}`) ?? fallback
     const cvFresh = () => ({
       faders: new Array(cvCfg('faders', 7)).fill(0),
@@ -2836,6 +2899,44 @@
     const cvSave = () => store.set(CVSTORE, JSON.stringify(cv))
     const cvSecret = () => ['console', cv.faders.join(','), cv.glass.map((g) => (g ? 1 : 0)).join(','),
       cv.stages.map((s) => s || 'none').join(','), `${cv.wave || 'none'},${cv.benches}`, cv.stripes].join('|')
+    // Each part of the console is locked on its own (tools/lock.mjs --console), so GO can light up the
+    // parts that are right. Each part opens a share, and all the shares together open the word.
+    const CV_PARTS = ['stripes', 'stages', 'benches', 'pillars']   // top to bottom on the desk
+    const cvPartSecret = (k) => (k === 'pillars' ? `console|pillars|${cv.faders.join(',')}|${cv.glass.map((g) => (g ? 1 : 0)).join(',')}`
+      : k === 'stages' ? `console|stages|${cv.stages.map((s) => s || 'none').join(',')}`
+      : k === 'benches' ? `console|benches|${cv.wave || 'none'},${cv.benches}`
+      : `console|stripes|${cv.stripes}`)
+    const tryConsole = async () => {
+      const lock = get(riddle, 'console.lock')
+      if (!lock || !lock.sections) return {word: await openLock(lock, cvSecret()), ok: null}   // an older lock, all in one
+      const shares = {}
+      await Promise.all(Object.entries(lock.sections).map(async ([k, ways]) => {
+        const secret = cvPartSecret(k)
+        const found = await Promise.all(ways.map((w) => openLock({iterations: lock.iterations, ...w}, secret)))
+        shares[k] = found.find(Boolean) || null
+      }))
+      const ok = Object.fromEntries(Object.keys(lock.sections).map((k) => [k, !!shares[k]]))
+      if (Object.values(ok).some((v) => !v)) return {word: null, ok}
+      try {
+        const order = ['pillars', 'stages', 'benches', 'stripes'].filter((k) => k in lock.sections)
+        const raw = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('console|' + order.map((k) => shares[k]).join('|')))
+        const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt'])
+        const word = new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: fromB64(lock.iv)}, key, fromB64(lock.data)))
+        return {word, ok}
+      } catch {
+        return {word: null, ok}
+      }
+    }
+    // A part's lamp shows what the last GO found, for as long as that part is still set the same way.
+    const cvMarkParts = () => {
+      const known = (k) => !!(cvLast && k in cvLast.ok && cvLast.secrets[k] === cvPartSecret(k))
+      document.querySelectorAll('#cv-desk .cv-sec[data-part]').forEach((sec) => {
+        const k = sec.dataset.part
+        sec.classList.toggle('ok', known(k) && cvLast.ok[k])
+        sec.classList.toggle('bad', known(k) && !cvLast.ok[k])
+      })
+      $('#cv-desk').classList.toggle('ok-benches', known('benches') && cvLast.ok.benches)
+    }
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
     // Little sounds: a click for each fader step, a buzz when it fails, a chord when the lights come on.
@@ -2954,10 +3055,11 @@
       const el = $('#cv-screen')
       el.dataset.mode = mode
       el.classList.toggle('err', mode === 'err')
+      el.classList.toggle('part', mode === 'err' && !!text)
       el.classList.toggle('word', mode === 'word')
       const wiped = cv && JSON.stringify(cv) === JSON.stringify(cvFresh())
       $('#cv-screen-text').textContent = mode === 'word' ? text
-        : mode === 'err' ? t('cvError')
+        : mode === 'err' ? text || t('cvError')
         : mode === 'loading' ? t('cvLoading')
         : wiped ? t('cvWiped') : t('cvReady')
     }
@@ -3022,6 +3124,7 @@
       document.querySelectorAll('#cv-leds i').forEach((led, i) => led.classList.toggle('on', i < cv.stripes))
       $('#cv-stripes-n').textContent = cv.stripes
       $('#cv-benches-n').textContent = cv.benches
+      cvMarkParts()
       if (!['word', 'loading'].includes($('#cv-screen').dataset.mode)) cvScreen()
     }
     const cvChanged = () => {
@@ -3042,6 +3145,7 @@
       ch.querySelector('.cv-fader').setAttribute('aria-valuenow', v)
       ch.querySelector('.cv-val').textContent = v
       $('#cv-colonnade').innerHTML = colonnadeSvg()
+      cvMarkParts()
       if (!['word', 'loading'].includes($('#cv-screen').dataset.mode)) cvScreen()
     }
     let drag = null
@@ -3170,21 +3274,36 @@
       $('#cv-go').disabled = true
       cvScreen('loading')
       tone(660, 0, 0.08, 'square', 0.03)
-      const [word] = await Promise.all([openLock(get(riddle, 'console.lock'), cvSecret()), wait(700)])
+      const secrets = Object.fromEntries(CV_PARTS.map((k) => [k, cvPartSecret(k)]))
+      const [{word, ok}] = await Promise.all([tryConsole(), wait(700)])
       if (word) return consoleLights(word)
       cvBusy = false
       $('#cv-go').disabled = false
-      cvScreen('err')
+      cvLast = ok ? {secrets, ok} : null
+      const right = ok ? CV_PARTS.filter((k) => ok[k]) : []
+      const wrong = ok ? CV_PARTS.filter((k) => k in ok && !ok[k]) : []
+      cvScreen('err', right.length ? t('cvPartial', {n: right.length, total: right.length + wrong.length}) : '')
+      cvMarkParts()
+      right.forEach((_, i) => tone(523.25 * (1 + i * 0.26), i * 0.09, 0.16, 'triangle', 0.05))
       const desk = $('#cv-desk')
       desk.classList.remove('shake')
       void desk.offsetWidth
       desk.classList.add('shake')
-      buzz()
+      setTimeout(buzz, right.length * 90)
       if (navigator.vibrate) navigator.vibrate([40, 60, 40])
-      const lines = get(riddle, `console.udi.wrong.${lang}`) || []
-      if (lines.length) cvSay(lines[cvWrong++ % lines.length])
+      // Udi's hint is about a part that's still dark, a different one each time.
+      const lines = get(riddle, 'console.udi.wrong')
+      if (Array.isArray(get(riddle, `console.udi.wrong.${lang}`))) {
+        const list = get(riddle, `console.udi.wrong.${lang}`)
+        if (list.length) cvSay(list[cvWrong++ % list.length])
+      } else if (lines) {
+        const pick = (right.length ? wrong : ['none', ...wrong]).filter((k) => lines[k])
+        if (pick.length) cvSay(L(lines[pick[cvWrong++ % pick.length]]))
+      }
     })
     const consoleLights = (word) => {
+      cvLast = {secrets: Object.fromEntries(CV_PARTS.map((k) => [k, cvPartSecret(k)])), ok: Object.fromEntries(CV_PARTS.map((k) => [k, true]))}
+      cvMarkParts()
       $('#consoleview').classList.add('lit')
       cvScreen('word', word)
       cvSay(get(riddle, `console.udi.right.${lang}`), 0)
@@ -3201,6 +3320,7 @@
     const startConsole = () => {
       cv = cvLoad()
       cvBusy = false
+      cvLast = null
       buildConsole()
       $('#consoleview').classList.remove('lit')
       $('#cv-desk').classList.remove('shake')
@@ -3275,7 +3395,6 @@
     let svBase = {w: 0, h: 0}            // the drawing's size before zooming, in screen pixels
     let svView = {s: 1, x: 0, y: 0}      // zoom and pan
     const svBoxes = () => [...(get(riddle, 'skyline.boxes') || [])].sort((a, b) => a.n - b.n)
-    const svSeatCount = () => svBoxes().reduce((n, b) => n + b.seats.length, 0)
 
     let svSayTimer = 0
     let svSaidAt = 0
@@ -3387,21 +3506,47 @@
       $('#sv-printed').dataset.stamp = t('svPrinted')
     }
 
+    const svFilled = () => {
+      const ins = [...document.querySelectorAll('#sv-slots input')]
+      return ins.length > 0 && ins.every((x) => x.value)
+    }
+    const svQueueCheck = () => {
+      clearTimeout(svCheckTimer)
+      if (svFilled()) svCheckTimer = setTimeout(svCheck, 450)
+    }
+    // One letter per seat: the last one typed stays. The value is only rewritten when it has to be, since
+    // rewriting it while a phone keyboard is still composing can double the letter. (Capitals come from CSS.)
     $('#sv-slots').addEventListener('input', (e) => {
       const inp = e.target.closest('input')
       if (!inp || svDone) return
       const ch = [...inp.value.replace(/\s/g, '')].pop() || ''
-      inp.value = /[a-z]/.test(ch) ? ch.toUpperCase() : ch
-      svLetters[+inp.dataset.k] = inp.value
+      if (inp.value !== ch) inp.value = ch
+      svLetters[+inp.dataset.k] = ch
       store.set(SVSTORE, JSON.stringify(svLetters))
       svMarkChips()
-      if (inp.value) {
+      if (ch) {
         const next = $(`#sv-slots input[data-k="${+inp.dataset.k + 1}"]`)
         if (next) next.focus()
       }
-      clearTimeout(svCheckTimer)
-      if (document.querySelectorAll('#sv-slots input').length && [...document.querySelectorAll('#sv-slots input')].every((x) => x.value)) svCheckTimer = setTimeout(svCheck, 450)
+      svQueueCheck()
     })
+    // The phone's keyboard covers the bottom of the screen: keep the slot being typed in above it.
+    const svFitKeyboard = () => {
+      const vv = window.visualViewport
+      if (!vv) return
+      const view = $('#skyview')
+      view.style.setProperty('--vvh', `${Math.round(vv.height)}px`)
+      view.style.setProperty('--vvt', `${Math.round(vv.offsetTop)}px`)
+      const inp = document.activeElement
+      if (inp && inp.closest && inp.closest('#sv-slots') && document.body.classList.contains('skymode')) {
+        const r = inp.getBoundingClientRect()
+        if (r.bottom > vv.height - 8 || r.top < 0) inp.scrollIntoView({block: 'center'})
+      }
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', svFitKeyboard)
+      window.visualViewport.addEventListener('scroll', svFitKeyboard)
+    }
     $('#sv-slots').addEventListener('keydown', (e) => {
       const inp = e.target.closest('input')
       if (!inp || e.key !== 'Backspace' || inp.value) return
@@ -3418,6 +3563,7 @@
     $('#sv-slots').addEventListener('focusin', (e) => {
       const inp = e.target.closest('input')
       if (inp && +inp.dataset.box !== svPick) svPickBox(+inp.dataset.box)
+      if (inp) setTimeout(svFitKeyboard, 350)   // once the keyboard is up
     })
     $('#sv-chips').addEventListener('click', (e) => {
       const c = e.target.closest('button')
@@ -3509,13 +3655,20 @@
     }
     $('#sv-cam').addEventListener('click', () => svCamera(!document.body.classList.contains('skycam')))
 
+    let svAgain = false
     const svCheck = async () => {
-      if (svBusy || svDone) return
-      const typed = [...document.querySelectorAll('#sv-slots input')].map((x) => x.value).join('')
-      if (typed.length < svSeatCount()) return
+      if (svDone || !svFilled()) return
+      if (svBusy) {   // still checking the last letters: check these once it's done
+        svAgain = true
+        return
+      }
       svBusy = true
+      svAgain = false
+      const typed = [...document.querySelectorAll('#sv-slots input')].map((x) => x.value).join('')
       const title = await openLock(get(riddle, 'skyline.lock'), 'answer|' + normLetters(typed))
       svBusy = false
+      const now = [...document.querySelectorAll('#sv-slots input')].map((x) => x.value).join('')
+      if (svAgain || now !== typed) return svQueueCheck()   // the letters changed meanwhile
       if (title) return svPrinted(title)
       const prog = $('#sv-prog')
       prog.classList.remove('shake')
@@ -3549,6 +3702,7 @@
       if (!Array.isArray(svLetters)) svLetters = []
       svDone = false
       svBusy = false
+      svAgain = false
       $('#sv-slots').hidden = false
       $('#sv-printed').hidden = true
       document.body.classList.add('skymode')
@@ -3560,11 +3714,14 @@
       svCenterOn(0, false)
       svSay(get(riddle, `skyline.udi.start.${lang}`), 14000)
       keepAwake()
+      svQueueCheck()   // coming back with every seat already filled
     }
     const stopSky = () => {
       svCamera(false)
       document.body.classList.remove('skymode')
       clearTimeout(svCheckTimer)
+      $('#skyview').style.removeProperty('--vvh')
+      $('#skyview').style.removeProperty('--vvt')
       letSleep()
     }
     $('#sv-exit').addEventListener('click', () => {

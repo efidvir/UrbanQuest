@@ -65,7 +65,7 @@ If AR can't start, the page switches to a **compass mode**: a big arrow turns wi
 
 ### The key
 
-Udi's key has one tooth per tree in the real row of trees, from left to right, in four heights. Players hold up the camera, look at the trees, and pick a height for each tooth. When every tooth is right, the key turns and Udi shows the word to enter in TravelQuest. The word is encrypted with the tooth sequence, so neither is in the page or the repository: to change the lock, run `node riddle/tools/lock.mjs <levels, e.g. 2,3,1> "<word>"` and paste the result into the riddle file's `key.lock`.
+Udi's key has one tooth per tree in the real row of trees, from left to right, in four heights. Players hold up the camera, look at the trees, and pick a height for each tooth. When every tooth is right, the key turns and Udi shows the word to enter in TravelQuest. If it won't turn, Udi says which teeth already fit and which ones catch (the key is also locked in three parts, about a third of the teeth each), so one misjudged tree doesn't leave a team stuck. The word is encrypted with the tooth sequence, so neither is in the page or the repository: to change the lock, run `node riddle/tools/lock.mjs <levels, e.g. 2,3,1,4,4,2,3,1,2> "<word>"` and paste the result into the riddle file's `key.lock`.
 
 ### The lighting console
 
@@ -76,7 +76,7 @@ Mitzi has knocked Udi's coffee over the square's lighting console, and every set
 - **The benches:** the shape of the benches under the long middle row of pillars, and how many there are.
 - **The light stripes:** how many stripes of light are set into the ground between the garden and Habima.
 
-Players walk around the square and adjust the console until its drawing matches what they see. Then GO brings up the lights and the screen shows the word for TravelQuest. Like the key, the word is encrypted with all the settings together, so neither is in the page or the repository. To change the word, or if a count turns out different on site, run `node riddle/tools/lock.mjs --console --pillars <per group> --glass <1 or 0 per group> --stages <left,middle,right> --benches <shape>,<count> --stripes <count> "<word>"` and paste the result into `console.lock` in the riddle file.
+Players walk around the square and adjust the console until its drawing matches what they see. After each GO, the parts that are already right light up, with a lamp in their corner, and Udi gives a hint about one that's still dark. When everything is right, all the lights come on and the screen shows the word for TravelQuest. Like the key, the word is encrypted with the settings, each part locked on its own, so neither is in the page or the repository. To change the word, or if a count turns out different on site, run `node riddle/tools/lock.mjs --console --pillars <per group> --glass <1 or 0 per group> --stages <left,middle,right> --benches <shape>,<count> --stripes <count> "<word>"` and paste the result into `console.lock` in the riddle file. A count that's hard to be sure of can take two values with a slash, for example `--benches triangle,4/5`.
 
 ### The play's title
 
@@ -84,7 +84,7 @@ The programmes come back from the printer without the play's title, and the play
 
 ### The van downstairs (draft)
 
-A voice message from the stage manager, in theatre jargon, points to the production van in the car park under the square. The page shows the message with blanks for the details that still have to be collected on site, and a draft note; the clue picture can also be a voice message like this one (`clue.message` in the riddle file).
+A voice message from the stage manager, in theatre jargon, points to the production van in the car park under the square. The page shows the message with blanks for the details that still have to be collected on site, and a draft note; the clue picture can also be a voice message like this one (`clue.message` in the riddle file). Its rules come first: it's a working car park, so players stay on the walkways, and they open the page before going down, since there may be no signal underground.
 
 ### Making a new mission
 

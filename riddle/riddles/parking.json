@@ -27,6 +27,18 @@
       "Help Udi decode the message, go down to the car park and find the van, before the lead goes on stage in her pyjamas."
     ]
   },
+  "rules": {
+    "he": [
+      "זה חניון פעיל: הולכים רק בשבילים להולכי רגל, נזהרים ממכוניות, ולא נוגעים ברכבים.",
+      "למטה אולי אין קליטה. פתחו את הדף ושמעו את ההודעה לפני שיורדים.",
+      "פענחו את ההודעה, מצאו את המקום שבו חנה הוואן, ועלו בחזרה כדי להקליד בטרוול קווסט את מה שמצאתם שם."
+    ],
+    "en": [
+      "It's a working car park: stay on the pedestrian walkways, watch out for cars, and don't touch any vehicles.",
+      "There may be no signal downstairs. Open this page and hear the message before you go down.",
+      "Decode the message, find the spot where the van was parked, and come back up to enter what you found there in TravelQuest."
+    ]
+  },
   "clue": {
     "title": {
       "he": "ההודעה של דליה",
@@ -52,8 +64,8 @@
       "en": "Draft: the details will be filled in after a visit to the car park."
     },
     "task": {
-      "he": "פענחו את ההודעה, מצאו את הוואן, וחזרו לכאן להקליד את מה שמצאתם.",
-      "en": "Decode the message, find the van, and come back here to enter what you found."
+      "he": "פענחו את ההודעה, מצאו את המקום של הוואן, וחזרו לטרוול קווסט להקליד את מה שמצאתם שם.",
+      "en": "Decode the message, find where the van was parked, then go back to TravelQuest and enter what you found there."
     }
   },
   "travelQuest": {
