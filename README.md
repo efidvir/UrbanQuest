@@ -41,8 +41,9 @@ Web-based AR experiments for the Habima Square quest in Tel Aviv. Everything run
 | Walk in the garden | `garden` | Walk Udi's route in AR and work out the code it draws |
 | Lock | `key` | Set the teeth of Udi's key to match the row of trees, over the camera view |
 | Stop the water | `water` | Work out Udi's drawing (the original clue picture) |
+| Lighting console | `console` | Set Udi's coffee-soaked lighting console until its drawing matches the real square |
 
-Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`)
+Open on a phone: https://efidvir.github.io/UrbanQuest/riddle/?r=garden (or `r=start`, `sycamore`, `key`, `water`, `console`)
 
 ### Story film and animated pictures
 
@@ -62,11 +63,22 @@ If AR can't start, the page switches to a **compass mode**: a big arrow turns wi
 
 ### The key
 
-Udi's key has one tooth per tree in the real row of trees, from left to right, in four heights. Players hold up the camera, look at the trees, and pick a height for each tooth. When every tooth is right, the key turns and Udi shows the word to enter in TravelQuest. The word is encrypted with the tooth sequence, so neither is in the page or the repository: to change the lock, run `node riddle/tools/lock.mjs <levels, e.g. 4,4,3> "<word>"` and paste the result into the riddle file's `key.lock`.
+Udi's key has one tooth per tree in the real row of trees, from left to right, in four heights. Players hold up the camera, look at the trees, and pick a height for each tooth. When every tooth is right, the key turns and Udi shows the word to enter in TravelQuest. The word is encrypted with the tooth sequence, so neither is in the page or the repository: to change the lock, run `node riddle/tools/lock.mjs <levels, e.g. 2,3,1> "<word>"` and paste the result into the riddle file's `key.lock`.
+
+### The lighting console
+
+Mitzi has knocked Udi's coffee over the square's lighting console, and every setting is wiped. The console is laid out like the square seen from the pillars of Heichal HaTarbut along Huberman Street, with Habima at the top, and each control draws one thing on the real square:
+
+- **The pillars:** a fader for each group of pillars along the street, set to the number of pillars in the group, and a button for the groups that have glass. Udi's soaked cue sheet still shows the first groups and says the row looks the same in a mirror.
+- **The little stages:** three pads, each set to the shape of the stage in that spot.
+- **The benches:** the shape of the benches under the long middle row of pillars, and how many there are.
+- **The light stripes:** how many stripes of light are set into the ground between the garden and Habima.
+
+Players walk around the square and adjust the console until its drawing matches what they see. Then GO brings up the lights and the screen shows the word for TravelQuest. Like the key, the word is encrypted with all the settings together, so neither is in the page or the repository. To change the word, or if a count turns out different on site, run `node riddle/tools/lock.mjs --console --pillars <per group> --glass <1 or 0 per group> --stages <left,middle,right> --benches <shape>,<count> --stripes <count> "<word>"` and paste the result into `console.lock` in the riddle file.
 
 ### Making a new mission
 
-Copy the riddle file closest to what you need and change it: `garden.json` for a walk (story, start point, route in the same notation as the mystery walk, diary lines, Udi's opening and closing lines, story props), `key.json` for a key, `start.json` for a clue picture (put the picture in [`riddle/clues/`](riddle/clues/)). Every file has its story, ending and return address in both languages. The garden's starting point is a placeholder until it's marked on site.
+Copy the riddle file closest to what you need and change it: `garden.json` for a walk (story, start point, route in the same notation as the mystery walk, diary lines, Udi's opening and closing lines, story props), `key.json` for a key, `console.json` for the console, `start.json` for a clue picture (put the picture in [`riddle/clues/`](riddle/clues/)). Every file has its story, ending and return address in both languages. The garden's starting point is a placeholder until it's marked on site.
 
 The cartoon pictures and animations live in [`riddle/art/`](riddle/art/), with notes on how they were made and the scripts that cut figures out of their green background, turn a generated clip into a page's animation, and cut the story film. A riddle file lists its pictures and animations in its `art` block, and the starting page lists its film and the timing of its captions in `film`; anything missing falls back to the page's own drawings.
 

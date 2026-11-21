@@ -22,6 +22,8 @@ brown trousers, a belt with a wrench hanging from it, a small brown notebook. Th
 | `key-intro` | Lock | Original LOCK picture: the door won't open and the key won't turn |
 | `key-end` | Lock, solved | Original LOCK OPEN picture: the door opens, Udi raises the new key, the lights come on |
 | `water-intro` | Stop the water | Original WATER picture: the pool by Heichal HaTarbut overflows |
+| `console-intro` | Lighting console | Original HALL picture: behind the glass door the console smokes and sparks, and the cat sits by the spilled coffee |
+| `console-end` | Lighting console, solved | Original HALL OPEN picture: the smoke clears, the console lights up and the stage lights fade up over the hall |
 | `story` | The story film (starting point) | Cut from the start, garden, lock and water clips, with captions in `../riddles/start.json` |
 
 Each scene has three files: `<name>.mp4` (the clip), `<name>-first.webp` (shown until it plays) and

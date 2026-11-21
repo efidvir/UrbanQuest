@@ -1,0 +1,132 @@
+{
+  "id": "console",
+  "type": "console",
+  "defaultLang": "he",
+  "title": {
+    "he": "שולחן התאורה",
+    "en": "The lighting console"
+  },
+  "kicker": {
+    "he": "הבימה · היכל התרבות",
+    "en": "Habima · Heichal HaTarbut"
+  },
+  "art": {
+    "intro": "art/console-intro.webp",
+    "introVideo": "art/console-intro.mp4",
+    "end": "art/console-end.webp",
+    "endVideo": "art/console-end.mp4",
+    "mitziSit": "art/mitzi-sit.webp"
+  },
+  "story": {
+    "he": [
+      "המים נעצרו, ועכשיו אודי צריך להדליק את האורות של הכיכר לקראת הבכורה. אבל כשהוא נכנס להיכל התרבות, שולחן התאורה מעלה עשן: מיצי הפילה עליו את כוס הקפה שלו.",
+      "כל ההגדרות נמחקו. אודי לא זוכר אותן בעל פה, ודף ההגדרות שלו ספוג קפה. דבר אחד הוא יודע בטוח: את כל ההגדרות הוא לקח מהכיכר עצמה.",
+      "עזרו לו להחזיר כל פיידר וכל כפתור למקומו, לפני שהקהל מגיע."
+    ],
+    "en": [
+      "The water is off, and now Udi has to switch on the square's lights for the premiere. But when he walks into Heichal HaTarbut, the lighting console is smoking: Mitzi knocked his coffee all over it.",
+      "Every setting is wiped. Udi doesn't know them by heart, and his cue sheet is soaked in coffee. One thing he's sure of: he took every setting from the square itself.",
+      "Help him put every fader and button back before the audience arrives."
+    ]
+  },
+  "rules": {
+    "he": [
+      "עמדו מתחת לעמודים של היכל התרבות, לאורך רחוב הוברמן, והסתכלו אל הכיכר. השולחן מסודר בדיוק כמו מה שאתם רואים: הבימה למעלה, העמודים למטה.",
+      "כל חלק בשולחן מאיר משהו בכיכר: פסי האור באדמה, הבמות הקטנות, הספסלים והעמודים. השולחן מצייר אותם לפי ההגדרות שלכם.",
+      "הסתובבו בכיכר ושנו את ההגדרות עד שהציור על השולחן נראה בדיוק כמו הכיכר האמיתית. דף ההגדרות של אודי יעזור, במקומות שעוד אפשר לקרוא.",
+      "לחצו GO. אם הכול נכון, האורות נדלקים והמסך מראה מילה. הקלידו אותה בטרוול קווסט."
+    ],
+    "en": [
+      "Stand under the pillars of Heichal HaTarbut, along Huberman Street, and look out over the square. The console is laid out exactly like what you see: Habima at the top, the pillars at the bottom.",
+      "Each part of the console lights something on the square: the light stripes in the ground, the little stages, the benches and the pillars. The console draws them the way you set it.",
+      "Walk around the square and change the settings until the console's drawing looks exactly like the real square. Udi's cue sheet helps, where it can still be read.",
+      "Press GO. If everything is right, the lights come on and the screen shows a word. Enter it in TravelQuest."
+    ]
+  },
+  "console": {
+    "faders": 7,
+    "faderMax": 20,
+    "stages": 3,
+    "benchMax": 20,
+    "stripeMax": 24,
+    "lock": {
+      "iterations": 150000,
+      "salt": "99QwmDvbw0M9DkO2fDtOdg==",
+      "iv": "QW+HgGapRh+bIxq8",
+      "data": "n8Zyeue3ZGPJO36WHkszFxX1BNeoFdcv1AY="
+    },
+    "sheet": {
+      "title": {
+        "he": "תאורת הכיכר. בלי קפה ליד השולחן!!",
+        "en": "Square lights. NO COFFEE NEAR THE DESK!!"
+      },
+      "he": [
+        "עמודים: פיידר לכל קבוצת עמודים, בגובה מספר העמודים בה: 3 · 1 · 2 · {~5}",
+        "ההיכל נראה אותו דבר גם במראה.",
+        "זכוכית: מדליקים רק בקבוצות שיש בהן זכוכית.",
+        "במות: {~9}",
+        "ספסלים: האור נושם כמו הספסלים. אותה צורה, {~6}",
+        "פסי אור: {~4} לכל פס באדמה."
+      ],
+      "en": [
+        "Pillars: one fader per group of pillars, up to the number of pillars in it: 3 · 1 · 2 · {~5}",
+        "The hall looks the same in a mirror.",
+        "Glass: switch on only the groups that have glass.",
+        "Stages: {~9}",
+        "Benches: the light breathes like the benches. Same shape, {~6}",
+        "Light stripes: {~4} for each stripe in the ground."
+      ]
+    },
+    "udi": {
+      "start": {
+        "he": "השולחן מסודר כמו הכיכר: הבימה למעלה, ואנחנו כאן למטה, ליד העמודים. תדאגו שהציור שלו יהיה בדיוק כמו הכיכר האמיתית.",
+        "en": "The console is laid out like the square: Habima at the top, and us down here by the pillars. Make its drawing look exactly like the real square."
+      },
+      "wrong": {
+        "he": [
+          "פשש... זה לא נדלק. הציור על השולחן עוד לא נראה כמו הכיכר. השוו אותו חלק אחרי חלק.",
+          "ספרתם כל עמוד בשורה הארוכה שבאמצע?",
+          "תסתכלו שוב על הספסלים שמתחת לעמודים: איזו צורה יש להם, וכמה הם?",
+          "עמדו ליד העמודים עם הפנים לבימה: איזו במה קטנה משמאלכם?",
+          "ספרו את פסי האור באדמה, בין הגינה לבימה."
+        ],
+        "en": [
+          "Pfft... nothing. The console's drawing still isn't the real square. Compare it part by part.",
+          "Did you count every pillar in the long row in the middle?",
+          "Look at the benches under the pillars again: what shape are they, and how many?",
+          "Stand by the pillars facing Habima: which little stage is on your left?",
+          "Count the light stripes in the ground, between the garden and Habima."
+        ]
+      },
+      "right": {
+        "he": "אורות!!",
+        "en": "Lights!!"
+      },
+      "mitzi": {
+        "he": "מיצי! תרדי מהשולחן!",
+        "en": "Mitzi! Off the console!"
+      }
+    }
+  },
+  "end": {
+    "title": {
+      "he": "האורות דולקים!",
+      "en": "The lights are on!"
+    },
+    "udi": {
+      "he": "ידעתי שהכיכר תזכור בשבילי. ותראו מה מופיע על המסך:",
+      "en": "I knew the square would remember for me. And look what's on the screen:"
+    },
+    "task": {
+      "he": "הקלידו את המילה בטרוול קווסט.",
+      "en": "Enter the word in TravelQuest."
+    }
+  },
+  "travelQuest": {
+    "origin": "https://travelandquest.com",
+    "path": {
+      "he": "/iw/",
+      "en": "/en/"
+    }
+  }
+}
